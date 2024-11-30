@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>numericalderivative documentation &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="_static/Icon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User manual" href="user_manual/user_manual.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="numericalderivative-documentation">
+<h1>numericalderivative documentation<a class="headerlink" href="#numericalderivative-documentation" title="Link to this heading">¶</a></h1>
+<a class="reference internal image-reference" href="_images/error_vs_h.png"><img alt="_images/error_vs_h.png" class="align-left" src="_images/error_vs_h.png" style="width: 200.0px; height: 109.5px;" />
+</a>
+<p>numericalderivative is a module for numerical differentiation.</p>
+<p>The goal of this project is to compute the first derivative of a function using finite difference formulas.
+The difficulty with these formulas is that it must use a finite difference
+step which must be neither too large (otherwise truncation error dominates
+the error) nor too small (otherwise condition error dominates).
+To solve this issue, the module provides algorithms to compute an approximate
+optimal finite difference step.</p>
+<p>Furthermore, this package provides benchmark problems for numerical
+differentiation.</p>
+<p>Documentation about numericalderivative can be found <a class="reference external" href="https://numericalderivative.readthedocs.io/en/latest/">here</a></p>
+<section id="user-documentation">
+<h2>User documentation<a class="headerlink" href="#user-documentation" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_manual/user_manual.html">User manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_manual/user_manual.html#algorithms">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.NumericalDerivative.html">numericalderivative.NumericalDerivative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_manual/user_manual.html#finite-differences">Finite Differences</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.FiniteDifferenceFormula.html">numericalderivative.FiniteDifferenceFormula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.FiniteDifferenceOptimalStep.html">numericalderivative.FiniteDifferenceOptimalStep</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_manual/user_manual.html#benchmark-problems">Benchmark problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.DerivativeBenchmark.html">numericalderivative.DerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.ExponentialDerivativeBenchmark.html">numericalderivative.ExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.LogarithmicDerivativeBenchmark.html">numericalderivative.LogarithmicDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SquareRootDerivativeBenchmark.html">numericalderivative.SquareRootDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.AtanDerivativeBenchmark.html">numericalderivative.AtanDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SinDerivativeBenchmark.html">numericalderivative.SinDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.ScaledExponentialDerivativeBenchmark.html">numericalderivative.ScaledExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark.html">numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.BuildBenchmarkList.html">numericalderivative.BuildBenchmarkList</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_gill_murray_saunders_wright_benchmark.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Gill, P. E., Murray, W., Saunders, M. A., &amp; Wright, M. H. (1983). Computing forward-difference intervals for numerical optimization. SIAM Journal on Scientific and Statistical Computing, 4(2), 310-321.</p></li>
+<li><p>Adaptive numerical differentiation. R. S. Stepleman and N. D. Winarsky. Journal: Math. Comp. 33 (1979), 1257-1264</p></li>
+<li><p>Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.</p></li>
+</ul>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="user_manual/user_manual.html" title="next chapter">User manual</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

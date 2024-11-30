@@ -1,0 +1,28 @@
+﻿numericalderivative.DumontetVignes
+==================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: DumontetVignes
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DumontetVignes.__init__
+      ~DumontetVignes.compute_ell
+      ~DumontetVignes.compute_first_derivative
+      ~DumontetVignes.compute_step
+      ~DumontetVignes.compute_third_derivative
+      ~DumontetVignes.function_eval
+      ~DumontetVignes.get_number_of_function_evaluations
+   
+   
+
+   
+   
+   

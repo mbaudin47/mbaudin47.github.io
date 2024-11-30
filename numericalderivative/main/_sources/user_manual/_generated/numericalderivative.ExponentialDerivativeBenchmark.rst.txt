@@ -1,0 +1,22 @@
+﻿numericalderivative.ExponentialDerivativeBenchmark
+==================================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: ExponentialDerivativeBenchmark
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExponentialDerivativeBenchmark.__init__
+   
+   
+
+   
+   
+   

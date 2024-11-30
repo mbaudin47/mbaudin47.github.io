@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Experiments with Dumontet &amp; Vignes method &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Experiment with Gill, Murray, Saunders and Wright method" href="plot_gill_murray_saunders_wright.html" />
+    <link rel="prev" title="A simple demonstration of the methods" href="plot_numericalderivative.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-example-plot-dumontet-vignes-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="experiments-with-dumontet-vignes-method">
+<span id="sphx-glr-auto-example-plot-dumontet-vignes-py"></span><h1>Experiments with Dumontet &amp; Vignes method<a class="headerlink" href="#experiments-with-dumontet-vignes-method" title="Link to this heading">¶</a></h1>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_ell</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
+    <span class="n">ell</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_ell</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ell</span>
+
+
+<span class="k">def</span> <span class="nf">compute_f3_inf_sup</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
+    <span class="n">ell</span><span class="p">,</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_ell</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span>
+
+
+<span class="k">def</span> <span class="nf">perform</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">function_derivative</span><span class="p">,</span>
+    <span class="n">function_third_derivative</span><span class="p">,</span>
+    <span class="n">h_array</span><span class="p">,</span>
+    <span class="n">iteration_maximum</span><span class="o">=</span><span class="mi">53</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="mf">1.0e-15</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ &quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="c1"># 1. Plot the error vs h</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="c1"># 2. Algorithm to detect h*</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact f&#39;&#39;&#39;(x) = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">function_third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="n">estim_step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+        <span class="n">iteration_maximum</span><span class="o">=</span><span class="n">iteration_maximum</span><span class="p">,</span>
+        <span class="n">markdown</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+        <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fprime</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">estim_step</span><span class="p">)</span>
+    <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Function evaluations =&quot;</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estim. derivative = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fprime</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact. derivative = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">estim_step</span><span class="p">)</span>
+    <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact abs. error  = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">absolute_error</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact rel. error  = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">absolute_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+
+    <span class="n">fdstep</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceOptimalStep</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+    <span class="n">third_derivative_value</span> <span class="o">=</span> <span class="n">function_third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">optimal_step</span><span class="p">,</span> <span class="n">optimal_error</span> <span class="o">=</span> <span class="n">fdstep</span><span class="o">.</span><span class="n">compute_step_first_derivative_central</span><span class="p">(</span>
+        <span class="n">third_derivative_value</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact step     = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_step</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated step = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">estim_step</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal abs. error = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_error</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal rel. error = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+
+    <span class="n">minimum_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">error_array</span><span class="p">)</span>
+    <span class="n">maximum_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">error_array</span><span class="p">)</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">estim_step</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="n">minimum_error</span><span class="p">,</span> <span class="n">maximum_error</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\tilde</span><span class="si">{h}</span><span class="s2">$&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">optimal_step</span><span class="p">,</span> <span class="n">optimal_error</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^\star$&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Finite difference for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">ell_1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">15.0</span>  <span class="c1"># Eq. 34, fixed</span>
+    <span class="n">ell_2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">ell_3</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ell_2</span>
+    <span class="n">ell_4</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ell_1</span>
+
+    <span class="k">if</span> <span class="n">kmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Set default kmin&quot;</span><span class="p">)</span>
+        <span class="n">kmin</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">number_of_digits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Eq. 26</span>
+    <span class="k">if</span> <span class="n">kmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Set default kmax&quot;</span><span class="p">)</span>
+        <span class="n">kmax</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">number_of_digits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">k_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">kmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">kmax</span><span class="p">),</span> <span class="n">number_of_points</span><span class="p">)</span>
+    <span class="n">ell_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+        <span class="n">ell_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">compute_ell</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">precision</span><span class="p">)</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="n">ell_array</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot_L_constants</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ell_array</span><span class="p">)</span>
+        <span class="n">maximum_finite_ell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ell_array</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maximum L = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maximum_finite_ell</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">maximum_finite_ell</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="p">[</span><span class="n">ell_1</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_points</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$L_1$&quot;</span><span class="p">)</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="p">[</span><span class="n">ell_2</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_points</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$L_2$&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="p">[</span><span class="n">ell_3</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_points</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$L_3$&quot;</span><span class="p">)</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="p">[</span><span class="n">ell_4</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_points</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$L_4$&quot;</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">, x = </span><span class="si">%.3e</span><span class="s2">, p = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">precision</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y_logscale</span><span class="p">:</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Exponential</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.55e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-4</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_001.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_001.png" alt="exp, x = 1.000e+00, p = 1.000e-15" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum L = 2.100e+01
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-10</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">5.0e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_002.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_002.png" alt="exp, x = 1.000e+00, p = 1.000e-10" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum L = 1.527e+02
+
+(-20.0, 20.0)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">4.0e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_003.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_003.png" alt="exp, x = 1.000e+00, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-16</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_004.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_004.png" alt="exp, x = 4.000e+00, p = 1.000e-16" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">3.2e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_005.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_005.png" alt="exp, x = 4.000e+00, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum L = 2.420e+01
+
+(-20.0, 20.0)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Precision = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">precision</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Precision = 1.212e-14
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">4.1</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;exp&quot;</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
+<span class="n">function_derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span>
+<span class="n">function_third_derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">third_derivative</span>
+<span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">perform</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">function_derivative</span><span class="p">,</span>
+    <span class="n">function_third_derivative</span><span class="p">,</span>
+    <span class="n">h_array</span><span class="p">,</span>
+    <span class="n">iteration_maximum</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="mf">1.0e-15</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_006.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_006.png" alt="Finite difference for exp" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+  exp
+Exact f&#39;&#39;&#39;(x) = 6.034e+01
+Function evaluations = 51
+Estim. derivative = 6.034e+01
+Exact. derivative = 6.034e+01
+Exact abs. error  = 2.298e-09
+Exact rel. error  = 3.808e-11
+Exact step     = 3.677e-06
+Estimated step = 1.453e-05
+Optimal abs. error = 4.079e-10
+Optimal rel. error = 6.761e-12
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Scaled exponential</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scaled exp&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e2</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_007.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_007.png" alt="scaled exp, x = 1.000e+00, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum L = 9.422e-01
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scaled exp&quot;</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
+<span class="n">function_derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span>
+<span class="n">function_third_derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">third_derivative</span>
+<span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e2</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">perform</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">function_derivative</span><span class="p">,</span>
+    <span class="n">function_third_derivative</span><span class="p">,</span>
+    <span class="n">h_array</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_008.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_008.png" alt="Finite difference for scaled exp" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+  scaled exp
+Exact f&#39;&#39;&#39;(x) = -1.000e-18
+Function evaluations = 27
+Estim. derivative = -1.000e-06
+Exact. derivative = -1.000e-06
+Exact abs. error  = 3.431e-17
+Exact rel. error  = 3.431e-11
+Exact step     = 1.442e+01
+Estimated step = 1.438e+01
+Optimal abs. error = 1.040e-16
+Optimal rel. error = 1.040e-10
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ 3. Square root&quot;</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SquareRootDerivativeBenchmark</span><span class="p">()</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;square root&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">4.3e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-4</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_009.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_009.png" alt="square root, x = 1.000e+00, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ 3. Square root
+Maximum L = 2.690e+02
+
+(-20.0, 20.0)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">1.0e-3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;k = &quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SquareRootDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceFormula</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">approx_f3d</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute_third_derivative</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approx. f&#39;&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">approx_f3d</span><span class="p">)</span>
+<span class="n">exact_f3d</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact f&#39;&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">exact_f3d</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>x =  1.0
+k =  0.001
+Approx. f&#39;&#39;(x) =  0.37500080818375636
+Exact f&#39;&#39;(x) =  0.375
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;precision = &quot;</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+<span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">compute_f3_inf_sup</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f3inf = &quot;</span><span class="p">,</span> <span class="n">f3inf</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f3sup = &quot;</span><span class="p">,</span> <span class="n">f3sup</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>precision =  1e-14
+f3inf =  0.37497116522899887
+f3sup =  0.3750306731831188
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">k_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">6.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceFormula</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">f2nde_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_third_derivative</span><span class="p">(</span><span class="n">k_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f2nde_approx</span> <span class="o">-</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Finite difference of 3de derivative for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_010.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_010.png" alt="Finite difference of 3de derivative for square root" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-16</span>
+<span class="n">k_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">4.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">f3_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+    <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">compute_f3_inf_sup</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">precision</span><span class="p">)</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceFormula</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">f3_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_third_derivative</span><span class="p">(</span><span class="n">k_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">f3_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">f3inf</span><span class="p">,</span> <span class="n">f3_approx</span><span class="p">,</span> <span class="n">f3sup</span><span class="p">]</span>
+
+<span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="n">f3_array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;f3inf&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="n">f3_array</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$D^{(3)}_f$&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">k_array</span><span class="p">,</span> <span class="n">f3_array</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;f3sup&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Finite difference of 3de derivative for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_011.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_011.png" alt="Finite difference of 3de derivative for square root" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend object at 0x7fac9e23f610&gt;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;square root&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">4.4e-7</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-4</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_012.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_012.png" alt="square root, x = 1.000e-02, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum L = 3.186e+01
+
+(-20.0, 20.0)
+</pre></div>
+</div>
+<p>Search step</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-8</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-3</span>
+<span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+<span class="p">)</span>
+<span class="n">h_optimal</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;h optimal = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">h_optimal</span><span class="p">))</span>
+<span class="n">number_of_feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number_of_feval = </span><span class="si">{</span><span class="n">number_of_feval</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h_optimal</span><span class="p">)</span>
+<span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Abs. error = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">absolute_error</span><span class="p">))</span>
+
+<span class="n">ell_kmin</span><span class="p">,</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_ell</span><span class="p">(</span><span class="n">kmin</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L(kmin) = &quot;</span><span class="p">,</span> <span class="n">ell_kmin</span><span class="p">)</span>
+<span class="n">ell_kmax</span><span class="p">,</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_ell</span><span class="p">(</span><span class="n">kmax</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L(kmax) = &quot;</span><span class="p">,</span> <span class="n">ell_kmax</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>x = 1.000e-02
+iteration_maximum = 50
+kmin =  2.220446049250313e-18
+kmax =  0.001
+L(kmin) =  -1.0186915887850467
+L(kmax) =  1.0000000001563647
++ Iteration = 0, kmin = 2.220e-18, kmax = 1.000e-03
+  k = 5.000e-04, f3inf = 3.771e+04, f3sup = 3.771e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 1, kmin = 2.220e-18, kmax = 5.000e-04
+  k = 2.500e-04, f3inf = 3.755e+04, f3sup = 3.755e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 2, kmin = 2.220e-18, kmax = 2.500e-04
+  k = 1.250e-04, f3inf = 3.751e+04, f3sup = 3.751e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 3, kmin = 2.220e-18, kmax = 1.250e-04
+  k = 6.250e-05, f3inf = 3.750e+04, f3sup = 3.750e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 4, kmin = 2.220e-18, kmax = 6.250e-05
+  k = 3.125e-05, f3inf = 3.750e+04, f3sup = 3.750e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 5, kmin = 2.220e-18, kmax = 3.125e-05
+  k = 1.563e-05, f3inf = 3.750e+04, f3sup = 3.750e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 6, kmin = 2.220e-18, kmax = 1.563e-05
+  k = 7.813e-06, f3inf = 3.749e+04, f3sup = 3.751e+04, ell = 1.000e+00
+  k is too large : reduce kmax
++ Iteration = 7, kmin = 2.220e-18, kmax = 7.813e-06
+  k = 3.906e-06, f3inf = 3.745e+04, f3sup = 3.755e+04, ell = 1.003e+00
+  k is too large : reduce kmax
++ Iteration = 8, kmin = 2.220e-18, kmax = 3.906e-06
+  k = 1.953e-06, f3inf = 3.710e+04, f3sup = 3.790e+04, ell = 1.022e+00
+  k is too large : reduce kmax
++ Iteration = 9, kmin = 2.220e-18, kmax = 1.953e-06
+  k = 9.766e-07, f3inf = 3.427e+04, f3sup = 4.071e+04, ell = 1.188e+00
+  k is too large : reduce kmax
++ Iteration = 10, kmin = 2.220e-18, kmax = 9.766e-07
+  k = 4.883e-07, f3inf = 1.168e+04, f3sup = 6.318e+04, ell = 5.408e+00
+  k is OK : stop
+h optimal = 4.311e-07
+number_of_feval = 53
+Abs. error = 1.151e-09
+L(kmin) =  -1.0
+L(kmax) =  1.0000000001563647
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ 4. sin&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SinDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sin&quot;</span>
+<span class="n">number_of_digits</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-5</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-3</span>
+<span class="n">plot_ell_ratio</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">number_of_points</span><span class="p">,</span>
+    <span class="n">number_of_digits</span><span class="p">,</span>
+    <span class="n">precision</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">,</span>
+    <span class="n">plot_L_constants</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_dumontet_vignes_013.png" srcset="../_images/sphx_glr_plot_dumontet_vignes_013.png" alt="sin, x = 1.000e+00, p = 1.000e-14" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ 4. sin
+Maximum L = 9.999e-01
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">1.0e-3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;k = &quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceFormula</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">approx_f3d</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_third_derivative</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approx. f&#39;&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">approx_f3d</span><span class="p">)</span>
+<span class="n">exact_f3d</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact f&#39;&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">exact_f3d</span><span class="p">)</span>
+
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;precision = &quot;</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+<span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span> <span class="o">=</span> <span class="n">compute_f3_inf_sup</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f3inf = &quot;</span><span class="p">,</span> <span class="n">f3inf</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f3sup = &quot;</span><span class="p">,</span> <span class="n">f3sup</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>x =  1.0
+k =  0.001
+Approx. f&#39;&#39;(x) =  -0.5403020253424984
+Exact f&#39;&#39;(x) =  -0.5403023058681398
+precision =  1e-14
+f3inf =  -0.5403273384274598
+f3sup =  -0.5402767122575369
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.289 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-dumontet-vignes-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/1ebbb955969414ca4e5ea68f00199bc8/plot_dumontet_vignes.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_dumontet_vignes.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/000c31996f90a8f1a5787ffb3552c50f/plot_dumontet_vignes.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_dumontet_vignes.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ffb5d67fbc8f163bd04121df6d754980/plot_dumontet_vignes.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_dumontet_vignes.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Experiments with Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright_benchmark.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples/examples.html">Examples</a><ul>
+      <li>Previous: <a href="plot_numericalderivative.html" title="previous chapter">A simple demonstration of the methods</a></li>
+      <li>Next: <a href="plot_gill_murray_saunders_wright.html" title="next chapter">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/auto_example/plot_dumontet_vignes.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

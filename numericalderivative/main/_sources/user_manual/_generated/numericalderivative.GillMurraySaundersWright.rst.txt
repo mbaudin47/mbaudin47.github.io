@@ -1,0 +1,28 @@
+﻿numericalderivative.GillMurraySaundersWright
+============================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: GillMurraySaundersWright
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GillMurraySaundersWright.__init__
+      ~GillMurraySaundersWright.compute_condition
+      ~GillMurraySaundersWright.compute_first_derivative
+      ~GillMurraySaundersWright.compute_step
+      ~GillMurraySaundersWright.compute_step_for_second_derivative
+      ~GillMurraySaundersWright.function_eval
+      ~GillMurraySaundersWright.get_number_of_function_evaluations
+   
+   
+
+   
+   
+   

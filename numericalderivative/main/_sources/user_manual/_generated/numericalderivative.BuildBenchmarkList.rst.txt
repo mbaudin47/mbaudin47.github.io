@@ -1,0 +1,6 @@
+﻿numericalderivative.BuildBenchmarkList
+======================================
+
+.. currentmodule:: numericalderivative
+
+.. autofunction:: BuildBenchmarkList

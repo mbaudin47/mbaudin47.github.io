@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Experiment with Gill, Murray, Saunders and Wright method &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Benchmark Stepleman &amp; Winarsky&#39;s method" href="plot_stepleman_winarsky_benchmark.html" />
+    <link rel="prev" title="Experiments with Dumontet &amp; Vignes method" href="plot_dumontet_vignes.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-example-plot-gill-murray-saunders-wright-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="experiment-with-gill-murray-saunders-and-wright-method">
+<span id="sphx-glr-auto-example-plot-gill-murray-saunders-wright-py"></span><h1>Experiment with Gill, Murray, Saunders and Wright method<a class="headerlink" href="#experiment-with-gill-murray-saunders-and-wright-method" title="Link to this heading">¶</a></h1>
+<p>Find a step which is near to optimal for a centered finite difference
+formula.</p>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Gill, P. E., Murray, W., Saunders, M. A., &amp; Wright, M. H. (1983). Computing forward-difference intervals for numerical optimization. SIAM Journal on Scientific and Statistical Computing, 4(2), 310-321.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_first_derivative_GMSW</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">f_prime</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the approximate derivative from finite differences</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : function</span>
+<span class="sd">        The function.</span>
+<span class="sd">    x : float</span>
+<span class="sd">        The point where the derivative is to be evaluated</span>
+<span class="sd">    f_prime : function</span>
+<span class="sd">        The exact first derivative of the function.</span>
+<span class="sd">    kmin : float, &gt; 0</span>
+<span class="sd">        The minimum step k for the second derivative.</span>
+<span class="sd">    kmax : float, &gt; kmin</span>
+<span class="sd">        The maximum step k for the second derivative.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Set to True to print intermediate messages. The default is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    absolute_error : float, &gt; 0</span>
+<span class="sd">        The absolute error between the approximate first derivative</span>
+<span class="sd">        and the true first derivative.</span>
+
+<span class="sd">    feval : int</span>
+<span class="sd">        The number of function evaluations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="n">step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+    <span class="n">f_prime_exact</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computed step = </span><span class="si">{</span><span class="n">step</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of iterations = </span><span class="si">{</span><span class="n">number_of_iterations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;f_prime_approx = </span><span class="si">{</span><span class="n">f_prime_approx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;f_prime_exact = </span><span class="si">{</span><span class="n">f_prime_exact</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime_exact</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">feval</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Test on ExponentialDerivativeBenchmark&quot;</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e1</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">optimal_step_formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceOptimalStep</span><span class="p">()</span>
+<span class="n">second_derivative_value</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">second_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">optimal_step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">optimal_step_formula</span><span class="o">.</span><span class="n">compute_step_first_derivative_forward</span><span class="p">(</span><span class="n">second_derivative_value</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact h* = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_step</span><span class="p">))</span>
+<span class="p">(</span>
+    <span class="n">absolute_error</span><span class="p">,</span>
+    <span class="n">number_of_function_evaluations</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">=</span> <span class="n">compute_first_derivative_GMSW</span><span class="p">(</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
+    <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Test on ExponentialDerivativeBenchmark
+Exact h* = 1.213e-08
+kmin = 1.000e-15, c(kmin) = 9.007e+01
+kmax = 1.000e+01, c(kmax) = 6.681e-19
+Iter #0, kmin = 1.000e-15, kmax = 1.000e+01, k = 1.000e-07, c(k) = 1.430e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e+01, k = 1.000e-03, c(k) = 1.472e-08
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-03, k = 1.000e-05, c(k) = 1.472e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 1.000e-05, k = 1.000e-06, c(k) = 1.472e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.213e-07
+Number of iterations = 3
+f_prime_approx = 2.7182819953060307
+f_prime_exact = 2.7182819953060307
+x = 1.000, error = 0.000e+00, Func. eval. = 16
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Test on ScaledExponentialDerivativeBenchmark&quot;</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e8</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">optimal_step_formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FiniteDifferenceOptimalStep</span><span class="p">()</span>
+<span class="n">second_derivative_value</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">second_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">optimal_step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">optimal_step_formula</span><span class="o">.</span><span class="n">compute_step_first_derivative_forward</span><span class="p">(</span><span class="n">second_derivative_value</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact h* = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_step</span><span class="p">))</span>
+<span class="p">(</span>
+    <span class="n">absolute_error</span><span class="p">,</span>
+    <span class="n">number_of_function_evaluations</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">=</span> <span class="n">compute_first_derivative_GMSW</span><span class="p">(</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span>
+    <span class="n">kmin</span><span class="p">,</span>
+    <span class="n">kmax</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
+    <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Test on ScaledExponentialDerivativeBenchmark
+Exact h* = 2.000e-02
+kmin = 1.000e-09, c(kmin) = inf
+kmax = 1.000e+08, c(kmax) = 1.488e-57
+Iter #0, kmin = 1.000e-09, kmax = 1.000e+08, k = 3.162e-01, c(k) = 4.003e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 3.162e-01, kmax = 1.000e+08, k = 5.623e+03, c(k) = 1.265e-09
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 3.162e-01, kmax = 5.623e+03, k = 4.217e+01, c(k) = 2.249e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 3.162e-01, kmax = 4.217e+01, k = 3.652e+00, c(k) = 3.000e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 2.000e-01
+Number of iterations = 3
+f_prime_approx = -9.999988998317773e-07
+f_prime_exact = -9.999988998317773e-07
+x = 1.000, error = 0.000e+00, Func. eval. = 16
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_method</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">,</span> <span class="n">derivative_function</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Gill, Murray, Saunders &amp; Wright method to compute the approximate first</span>
+<span class="sd">    derivative using finite difference formula.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : function</span>
+<span class="sd">        The function.</span>
+<span class="sd">    derivative_function : function</span>
+<span class="sd">        The exact first derivative of the function</span>
+<span class="sd">    test_points : list(float)</span>
+<span class="sd">        The list of x points where the benchmark must be performed.</span>
+<span class="sd">    kmin : float, &gt; 0</span>
+<span class="sd">        The minimum step k for the second derivative.</span>
+<span class="sd">    kmax : float, &gt; kmin</span>
+<span class="sd">        The maximum step k for the second derivative.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Set to True to print intermediate messages. The default is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    absolute_error : float, &gt; 0</span>
+<span class="sd">        The absolute error between the approximate first derivative</span>
+<span class="sd">        and the true first derivative.</span>
+
+<span class="sd">    feval : int</span>
+<span class="sd">        The number of function evaluations.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_of_test_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_points</span><span class="p">)</span>
+    <span class="n">relative_error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="n">feval_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_test_points</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">test_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">(</span>
+            <span class="n">absolute_error</span><span class="p">,</span>
+            <span class="n">number_of_function_evaluations</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">compute_first_derivative_GMSW</span><span class="p">(</span>
+            <span class="n">function</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">derivative_function</span><span class="p">,</span>
+            <span class="n">kmin</span><span class="p">,</span>
+            <span class="n">kmax</span><span class="p">,</span>
+            <span class="n">verbose</span>
+        <span class="p">)</span>
+        <span class="n">relative_error</span> <span class="o">=</span> <span class="n">absolute_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">derivative_function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, abs. error = </span><span class="si">%.3e</span><span class="s2">, rel. error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">relative_error</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">relative_error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">relative_error</span>
+        <span class="n">feval_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">number_of_function_evaluations</span>
+
+    <span class="n">average_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">relative_error_array</span><span class="p">)</span>
+    <span class="n">average_feval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">feval_array</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average error =&quot;</span><span class="p">,</span> <span class="n">average_error</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average number of function evaluations =&quot;</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">average_error</span><span class="p">,</span> <span class="n">average_feval</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Benchmark on several points&quot;</span><span class="p">)</span>
+<span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">12.2</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-13</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">average_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
+    <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+
+
+<span class="c1"># For each function, at point x = 1, plot the error vs the step computed</span>
+<span class="c1"># by the method</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Benchmark on several points
+kmin = 1.000e-13, c(kmin) = 1.801e+02
+kmax = 1.000e-01, c(kmax) = 3.957e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.833e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 3.960e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 3.960e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.990e-07
+Number of iterations = 2
+f_prime_approx = 1.0100502676610508
+f_prime_exact = 1.0100502676610508
+x = 0.010, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 1.801e+02
+kmax = 1.000e-01, c(kmax) = 3.498e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.464e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 3.501e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 3.501e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.871e-07
+Number of iterations = 2
+f_prime_approx = 1.1424001079642616
+f_prime_exact = 1.1424001079642616
+x = 0.133, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.093e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.106e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 3.096e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 3.096e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.759e-07
+Number of iterations = 2
+f_prime_approx = 1.2920921348866687
+f_prime_exact = 1.2920921348866687
+x = 0.256, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.735e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.729e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.737e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.737e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.654e-07
+Number of iterations = 2
+f_prime_approx = 1.461398746584227
+f_prime_exact = 1.461398746584227
+x = 0.379, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 1.801e+02
+kmax = 1.000e-01, c(kmax) = 2.418e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.434e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.420e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.420e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.556e-07
+Number of iterations = 2
+f_prime_approx = 1.652890098062897
+f_prime_exact = 1.652890098062897
+x = 0.503, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 1.801e+02
+kmax = 1.000e-01, c(kmax) = 2.138e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.145e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.140e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.140e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.463e-07
+Number of iterations = 2
+f_prime_approx = 1.8694731241431353
+f_prime_exact = 1.8694731241431353
+x = 0.626, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 9.007e+01
+kmax = 1.000e-01, c(kmax) = 1.890e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.838e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.892e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.892e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.375e-07
+Number of iterations = 2
+f_prime_approx = 2.11443565847915
+f_prime_exact = 2.11443565847915
+x = 0.749, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.671e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.668e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.673e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.673e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.293e-07
+Number of iterations = 2
+f_prime_approx = 2.3914963468459978
+f_prime_exact = 2.3914963468459978
+x = 0.872, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 9.007e+01
+kmax = 1.000e-01, c(kmax) = 1.478e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.501e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.479e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.479e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.216e-07
+Number of iterations = 2
+f_prime_approx = 2.704861108616337
+f_prime_exact = 2.704861108616337
+x = 0.995, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 9.007e+01
+kmax = 1.000e-01, c(kmax) = 1.306e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.287e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.307e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.307e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.143e-07
+Number of iterations = 2
+f_prime_approx = 3.059286980583677
+f_prime_exact = 3.059286980583677
+x = 1.118, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 9.007e+01
+kmax = 1.000e-01, c(kmax) = 1.155e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.155e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.156e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.156e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.075e-07
+Number of iterations = 2
+f_prime_approx = 3.4601543062229614
+f_prime_exact = 3.4601543062229614
+x = 1.241, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = 9.007e+01
+kmax = 1.000e-01, c(kmax) = 1.021e-12
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.012e+00
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.022e-06
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.022e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.011e-07
+Number of iterations = 2
+f_prime_approx = 3.913548454565163
+f_prime_exact = 3.913548454565163
+x = 1.364, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 9.029e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 9.007e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 9.037e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 9.037e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 2.858e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 9.506e-08
+Number of iterations = 3
+f_prime_approx = 4.42635216505934
+f_prime_exact = 4.42635216505934
+x = 1.488, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 7.983e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 8.042e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 7.990e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 7.990e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 2.527e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 8.940e-08
+Number of iterations = 3
+f_prime_approx = 5.0063500400260885
+f_prime_exact = 5.0063500400260885
+x = 1.611, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 7.058e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 7.037e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 7.064e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 7.064e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 2.233e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 8.403e-08
+Number of iterations = 3
+f_prime_approx = 5.662346747560108
+f_prime_exact = 5.662346747560108
+x = 1.734, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 4.504e+01
+kmax = 1.000e-01, c(kmax) = 6.241e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 6.255e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 6.246e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 6.246e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.975e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 7.903e-08
+Number of iterations = 3
+f_prime_approx = 6.404300612639176
+f_prime_exact = 6.404300612639176
+x = 1.857, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 5.518e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.560e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 5.522e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 5.522e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.746e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 7.431e-08
+Number of iterations = 3
+f_prime_approx = 7.243474873630526
+f_prime_exact = 7.243474873630526
+x = 1.980, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.878e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.791e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 4.882e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 4.882e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.544e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 6.989e-08
+Number of iterations = 3
+f_prime_approx = 8.192608612998953
+f_prime_exact = 8.192608612998953
+x = 2.103, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.313e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.330e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 4.317e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 4.317e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.365e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 6.569e-08
+Number of iterations = 3
+f_prime_approx = 9.266110104722213
+f_prime_exact = 9.266110104722213
+x = 2.226, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 2.252e+01
+kmax = 1.000e-01, c(kmax) = 3.814e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.817e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 3.817e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 3.817e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.207e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 6.179e-08
+Number of iterations = 3
+f_prime_approx = 10.480275632835925
+f_prime_exact = 10.480275632835925
+x = 2.349, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 2.252e+01
+kmax = 1.000e-01, c(kmax) = 3.372e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.412e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 3.375e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 3.375e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 1.068e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 5.811e-08
+Number of iterations = 3
+f_prime_approx = 11.853536831769352
+f_prime_exact = 11.853536831769352
+x = 2.473, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 2.252e+01
+kmax = 1.000e-01, c(kmax) = 2.981e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.002e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.984e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.984e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 9.438e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 5.463e-08
+Number of iterations = 3
+f_prime_approx = 13.40674047369195
+f_prime_exact = 13.40674047369195
+x = 2.596, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.636e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.618e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.638e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.638e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 8.340e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 5.136e-08
+Number of iterations = 3
+f_prime_approx = 15.163464989119973
+f_prime_exact = 15.163464989119973
+x = 2.719, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.330e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.346e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.332e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.332e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 7.373e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.829e-08
+Number of iterations = 3
+f_prime_approx = 17.15037818201784
+f_prime_exact = 17.15037818201784
+x = 2.842, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 1.126e+01
+kmax = 1.000e-01, c(kmax) = 2.060e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.085e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 2.062e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 2.062e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 6.523e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.542e-08
+Number of iterations = 3
+f_prime_approx = 19.397642467173146
+f_prime_exact = 19.397642467173146
+x = 2.965, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.822e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.787e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.823e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.823e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 5.765e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.270e-08
+Number of iterations = 3
+f_prime_approx = 21.939372413917052
+f_prime_exact = 21.939372413917052
+x = 3.088, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.611e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.632e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.612e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.612e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 5.097e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.015e-08
+Number of iterations = 3
+f_prime_approx = 24.814152608084445
+f_prime_exact = 24.814152608084445
+x = 3.211, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 1.126e+01
+kmax = 1.000e-01, c(kmax) = 1.424e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.443e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.425e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.425e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 4.507e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.775e-08
+Number of iterations = 3
+f_prime_approx = 28.06562375496441
+f_prime_exact = 28.06562375496441
+x = 3.335, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 1.126e+01
+kmax = 1.000e-01, c(kmax) = 1.259e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.251e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.260e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.260e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 3.983e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.549e-08
+Number of iterations = 3
+f_prime_approx = 31.743144674918913
+f_prime_exact = 31.743144674918913
+x = 3.458, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.113e-13
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.126e-01
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #1, kmin = 1.000e-07, kmax = 1.000e-01, k = 1.000e-04, c(k) = 1.114e-07
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #2, kmin = 1.000e-07, kmax = 1.000e-04, k = 3.162e-06, c(k) = 1.114e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #3, kmin = 1.000e-07, kmax = 3.162e-06, k = 5.623e-07, c(k) = 3.525e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.339e-08
+Number of iterations = 3
+f_prime_approx = 35.902541779009475
+f_prime_exact = 35.902541779009475
+x = 3.581, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 9.842e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 9.876e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 3.143e-08
+Number of iterations = 0
+f_prime_approx = 40.606957115806175
+f_prime_exact = 40.606957115806175
+x = 3.704, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 8.702e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 8.796e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.966e-08
+Number of iterations = 0
+f_prime_approx = 45.92780568776094
+f_prime_exact = 45.92780568776094
+x = 3.827, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 5.629e+00
+kmax = 1.000e-01, c(kmax) = 7.694e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 7.607e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.758e-08
+Number of iterations = 0
+f_prime_approx = 51.94586059443602
+f_prime_exact = 51.94586059443602
+x = 3.950, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 5.629e+00
+kmax = 1.000e-01, c(kmax) = 6.803e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 6.865e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.620e-08
+Number of iterations = 0
+f_prime_approx = 58.75247886553364
+f_prime_exact = 58.75247886553364
+x = 4.073, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 6.014e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.989e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.447e-08
+Number of iterations = 0
+f_prime_approx = 66.45098823298329
+f_prime_exact = 66.45098823298329
+x = 4.196, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 5.318e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.311e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.305e-08
+Number of iterations = 0
+f_prime_approx = 75.1582559878477
+f_prime_exact = 75.1582559878477
+x = 4.320, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 2.815e+00
+kmax = 1.000e-01, c(kmax) = 4.702e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.691e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.166e-08
+Number of iterations = 0
+f_prime_approx = 85.00646250854376
+f_prime_exact = 85.00646250854376
+x = 4.443, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.157e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.139e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.035e-08
+Number of iterations = 0
+f_prime_approx = 96.14510878452822
+f_prime_exact = 96.14510878452822
+x = 4.566, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.675e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.656e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.912e-08
+Number of iterations = 0
+f_prime_approx = 108.74328401251961
+f_prime_exact = 108.74328401251961
+x = 4.689, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 2.815e+00
+kmax = 1.000e-01, c(kmax) = 3.250e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.235e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.799e-08
+Number of iterations = 0
+f_prime_approx = 122.99223474966192
+f_prime_exact = 122.99223474966192
+x = 4.812, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.873e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.932e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.712e-08
+Number of iterations = 0
+f_prime_approx = 139.10826734609404
+f_prime_exact = 139.10826734609404
+x = 4.935, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 1.407e+00
+kmax = 1.000e-01, c(kmax) = 2.540e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.606e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.614e-08
+Number of iterations = 0
+f_prime_approx = 157.33603001739013
+f_prime_exact = 157.33603001739013
+x = 5.058, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 1.407e+00
+kmax = 1.000e-01, c(kmax) = 2.246e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.270e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.507e-08
+Number of iterations = 0
+f_prime_approx = 177.9522316519585
+f_prime_exact = 177.9522316519585
+x = 5.182, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 1.407e+00
+kmax = 1.000e-01, c(kmax) = 1.986e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.011e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.418e-08
+Number of iterations = 0
+f_prime_approx = 201.26983391225275
+f_prime_exact = 201.26983391225275
+x = 5.305, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.756e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.759e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.326e-08
+Number of iterations = 0
+f_prime_approx = 227.6428111578355
+f_prime_exact = 227.6428111578355
+x = 5.428, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 7.037e-01
+kmax = 1.000e-01, c(kmax) = 1.552e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.530e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.237e-08
+Number of iterations = 0
+f_prime_approx = 257.47151523977703
+f_prime_exact = 257.47151523977703
+x = 5.551, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.372e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.353e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.163e-08
+Number of iterations = 0
+f_prime_approx = 291.20876430656017
+f_prime_exact = 291.20876430656017
+x = 5.674, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 7.037e-01
+kmax = 1.000e-01, c(kmax) = 1.213e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.193e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.092e-08
+Number of iterations = 0
+f_prime_approx = 329.36670257266695
+f_prime_exact = 329.36670257266695
+x = 5.797, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.073e-14
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.083e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.040e-08
+Number of iterations = 0
+f_prime_approx = 372.52458418016465
+f_prime_exact = 372.52458418016465
+x = 5.920, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 9.486e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 9.640e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 9.818e-09
+Number of iterations = 0
+f_prime_approx = 421.3375752110686
+f_prime_exact = 421.3375752110686
+x = 6.043, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 7.037e-01
+kmax = 1.000e-01, c(kmax) = 8.387e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 8.377e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 9.153e-09
+Number of iterations = 0
+f_prime_approx = 476.5466714423192
+f_prime_exact = 476.5466714423192
+x = 6.167, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 3.518e-01
+kmax = 1.000e-01, c(kmax) = 7.415e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 7.486e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 8.652e-09
+Number of iterations = 0
+f_prime_approx = 538.9899713575879
+f_prime_exact = 538.9899713575879
+x = 6.290, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 3.518e-01
+kmax = 1.000e-01, c(kmax) = 6.556e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 6.766e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 8.226e-09
+Number of iterations = 0
+f_prime_approx = 609.615399441311
+f_prime_exact = 609.615399441311
+x = 6.413, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 5.797e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.768e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 7.595e-09
+Number of iterations = 0
+f_prime_approx = 689.4951124793428
+f_prime_exact = 689.4951124793428
+x = 6.536, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 3.518e-01
+kmax = 1.000e-01, c(kmax) = 5.125e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.026e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 7.090e-09
+Number of iterations = 0
+f_prime_approx = 779.8416728303376
+f_prime_exact = 779.8416728303376
+x = 6.659, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.531e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.569e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 6.760e-09
+Number of iterations = 0
+f_prime_approx = 882.0266130304858
+f_prime_exact = 882.0266130304858
+x = 6.782, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 3.518e-01
+kmax = 1.000e-01, c(kmax) = 4.006e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.044e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 6.359e-09
+Number of iterations = 0
+f_prime_approx = 997.6011264750978
+f_prime_exact = 997.6011264750978
+x = 6.905, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.542e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.518e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 5.932e-09
+Number of iterations = 0
+f_prime_approx = 1128.3197599437592
+f_prime_exact = 1128.3197599437592
+x = 7.028, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.132e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.086e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 5.555e-09
+Number of iterations = 0
+f_prime_approx = 1276.1667901160158
+f_prime_exact = 1276.1667901160158
+x = 7.152, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.769e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.749e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 5.243e-09
+Number of iterations = 0
+f_prime_approx = 1443.3866681755146
+f_prime_exact = 1443.3866681755146
+x = 7.275, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.448e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.443e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.943e-09
+Number of iterations = 0
+f_prime_approx = 1632.5178660435745
+f_prime_exact = 1632.5178660435745
+x = 7.398, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.165e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.172e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.660e-09
+Number of iterations = 0
+f_prime_approx = 1846.431457989729
+f_prime_exact = 1846.431457989729
+x = 7.521, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.914e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.912e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.373e-09
+Number of iterations = 0
+f_prime_approx = 2088.3747729976417
+f_prime_exact = 2088.3747729976417
+x = 7.644, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.692e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.692e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.113e-09
+Number of iterations = 0
+f_prime_approx = 2362.0206134718132
+f_prime_exact = 2362.0206134718132
+x = 7.767, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 8.796e-02
+Computed step = 2.977e-14
+Number of iterations = 0
+f_prime_approx = 2680.470588235294
+f_prime_exact = 2680.470588235294
+x = 7.890, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.323e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.313e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.623e-09
+Number of iterations = 0
+f_prime_approx = 3021.5805686181457
+f_prime_exact = 3021.5805686181457
+x = 8.014, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.169e-15
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.173e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.425e-09
+Number of iterations = 0
+f_prime_approx = 3417.5071419753535
+f_prime_exact = 3417.5071419753535
+x = 8.137, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 10
+kmin = 1.000e-13, c(kmin) = 8.796e-02
+Computed step = 2.950e-14
+Number of iterations = 0
+f_prime_approx = 3870.1176470588234
+f_prime_exact = 3870.1176470588234
+x = 8.260, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 9.142e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 9.163e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = 4.398e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 6.632e-10
+Number of iterations = 2
+f_prime_approx = 4371.7964300255
+f_prime_exact = 4371.7964300255
+x = 8.383, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 8.083e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 8.145e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 4.398e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.097e-11
+Number of iterations = 1
+f_prime_approx = 4944.664069117398
+f_prime_exact = 4944.664069117398
+x = 8.506, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = 4.398e-02
+Computed step = 2.086e-14
+Number of iterations = 0
+f_prime_approx = 5589.333333333333
+f_prime_exact = 5589.333333333333
+x = 8.629, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 6.318e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 6.374e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 4.398e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.097e-11
+Number of iterations = 1
+f_prime_approx = 6325.364052176859
+f_prime_exact = 6325.364052176859
+x = 8.752, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 5.586e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 5.639e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 2.199e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.637e-09
+Number of iterations = 3
+f_prime_approx = 7154.197695543662
+f_prime_exact = 7154.197695543662
+x = 8.875, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.939e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.887e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 4.398e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 2.097e-11
+Number of iterations = 1
+f_prime_approx = 8091.646959173302
+f_prime_exact = 8091.646959173302
+x = 8.999, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = 2.199e-02
+Computed step = 1.475e-14
+Number of iterations = 0
+f_prime_approx = 9088.0
+f_prime_exact = 9088.0
+x = 9.122, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = 2.199e-02
+Computed step = 1.475e-14
+Number of iterations = 0
+f_prime_approx = 10240.0
+f_prime_exact = 10240.0
+x = 9.245, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.414e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.436e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 2.199e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.483e-11
+Number of iterations = 1
+f_prime_approx = 11707.430761859128
+f_prime_exact = 11707.430761859128
+x = 9.368, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.018e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.054e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 1.100e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.865e-09
+Number of iterations = 3
+f_prime_approx = 13241.50013860958
+f_prime_exact = 13241.50013860958
+x = 9.491, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.669e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.682e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 1.100e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.865e-09
+Number of iterations = 3
+f_prime_approx = 14976.572256554424
+f_prime_exact = 14976.572256554424
+x = 9.614, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.359e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.339e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 1.100e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.049e-11
+Number of iterations = 1
+f_prime_approx = 16939.107572420802
+f_prime_exact = 16939.107572420802
+x = 9.737, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.086e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.075e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 5.498e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.319e-09
+Number of iterations = 3
+f_prime_approx = 19158.563798571387
+f_prime_exact = 19158.563798571387
+x = 9.861, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 1.100e-02
+Computed step = 1.043e-14
+Number of iterations = 0
+f_prime_approx = 21504.0
+f_prime_exact = 21504.0
+x = 9.984, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.631e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.617e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 1.100e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.049e-11
+Number of iterations = 1
+f_prime_approx = 24508.346264611213
+f_prime_exact = 24508.346264611213
+x = 10.107, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.442e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.428e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 1.100e-02
+  c in [0.001, 0.1]: stop!
+Computed step = 1.049e-11
+Number of iterations = 1
+f_prime_approx = 27719.990513298322
+f_prime_exact = 27719.990513298322
+x = 10.230, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.275e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.279e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 5.498e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.319e-09
+Number of iterations = 3
+f_prime_approx = 31351.905693168683
+f_prime_exact = 31351.905693168683
+x = 10.353, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 1.127e-16
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 1.122e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = 5.498e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 2.345e-10
+Number of iterations = 2
+f_prime_approx = 35460.03218328106
+f_prime_exact = 35460.03218328106
+x = 10.476, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 9.965e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 9.996e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 5.498e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.319e-09
+Number of iterations = 3
+f_prime_approx = 40106.46846783733
+f_prime_exact = 40106.46846783733
+x = 10.599, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 8.811e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 8.867e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 2.749e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 9.323e-10
+Number of iterations = 3
+f_prime_approx = 45361.73966524088
+f_prime_exact = 45361.73966524088
+x = 10.722, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 5.498e-03
+Computed step = 7.376e-15
+Number of iterations = 0
+f_prime_approx = 51200.0
+f_prime_exact = 51200.0
+x = 10.846, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 6.887e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 6.872e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 5.498e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 7.415e-12
+Number of iterations = 1
+f_prime_approx = 58027.97508385242
+f_prime_exact = 58027.97508385242
+x = 10.969, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = 2.749e-03
+Computed step = 5.215e-15
+Number of iterations = 0
+f_prime_approx = 65536.0
+f_prime_exact = 65536.0
+x = 11.092, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = 2.749e-03
+Computed step = 5.215e-15
+Number of iterations = 0
+f_prime_approx = 73728.0
+f_prime_exact = 73728.0
+x = 11.215, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.760e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.739e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = 2.749e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 1.658e-10
+Number of iterations = 2
+f_prime_approx = 83958.74018042728
+f_prime_exact = 83958.74018042728
+x = 11.338, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 14
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 4.209e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.229e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 1.374e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 6.593e-10
+Number of iterations = 3
+f_prime_approx = 94960.1107539427
+f_prime_exact = 94960.1107539427
+x = 11.461, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 2.749e-03
+Computed step = 5.215e-15
+Number of iterations = 0
+f_prime_approx = 109226.66666666667
+f_prime_exact = 109226.66666666667
+x = 11.584, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 3.290e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.312e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 1.374e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 6.593e-10
+Number of iterations = 3
+f_prime_approx = 121476.34393431933
+f_prime_exact = 121476.34393431933
+x = 11.707, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 16
+kmin = 1.000e-13, c(kmin) = 1.374e-03
+Computed step = 3.688e-15
+Number of iterations = 0
+f_prime_approx = 139264.0
+f_prime_exact = 139264.0
+x = 11.831, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.572e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.593e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = 1.374e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 3.707e-12
+Number of iterations = 1
+f_prime_approx = 155392.85864877814
+f_prime_exact = 155392.85864877814
+x = 11.954, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 12
+kmin = 1.000e-13, c(kmin) = 1.374e-03
+Computed step = 3.688e-15
+Number of iterations = 0
+f_prime_approx = 172032.0
+f_prime_exact = 172032.0
+x = 12.077, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 6
+kmin = 1.000e-13, c(kmin) = inf
+kmax = 1.000e-01, c(kmax) = 2.011e-17
+Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 2.021e-05
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #1, kmin = 1.000e-13, kmax = 1.000e-07, k = 1.000e-10, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #2, kmin = 1.000e-10, kmax = 1.000e-07, k = 3.162e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #3, kmin = 3.162e-09, kmax = 1.000e-07, k = 1.778e-08, c(k) = 6.872e-04
+  c(k) &lt; c_threshold_min: reduce kmax.
+Iter #4, kmin = 3.162e-09, kmax = 1.778e-08, k = 7.499e-09, c(k) = inf
+  c(k) &gt;= c_threshold_min: increase kmin.
+Iter #5, kmin = 7.499e-09, kmax = 1.778e-08, k = 1.155e-08, c(k) = 1.374e-03
+  c in [0.001, 0.1]: stop!
+Computed step = 4.281e-10
+Number of iterations = 5
+f_prime_approx = 198789.1432839289
+f_prime_exact = 198789.1432839289
+x = 12.200, abs. error = 0.000e+00, rel. error = 0.000e+00, Func. eval. = 20
+Average error = 0.0
+Average number of function evaluations = 12.02
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_error_vs_h_with_GMSW_steps</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">function_derivative</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">number_of_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">h_array</span><span class="p">)</span>
+    <span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step h* = </span><span class="si">{</span><span class="n">step</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> using </span><span class="si">{</span><span class="n">number_of_iterations</span><span class="si">}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>
+
+    <span class="n">minimum_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">error_array</span><span class="p">)</span>
+    <span class="n">maximum_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">error_array</span><span class="p">)</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">minimum_error</span><span class="p">,</span> <span class="n">maximum_error</span><span class="p">],</span>
+        <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\hat</span><span class="si">{h}</span><span class="s2">$&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(GMS &amp; W). </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> at point x = </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">plot_error_vs_h_with_GMSW_steps</span><span class="p">(</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">h_array</span><span class="p">,</span>
+        <span class="n">kmin</span><span class="p">,</span>
+        <span class="n">kmax</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_001.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_001.png" alt="(GMS & W). exp at point x = 1.0" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>exp
+Step h* = 1.213e-07 using 2 iterations
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">12.0</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_002.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_002.png" alt="(GMS & W). exp at point x = 12.0" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-10</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e8</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_003.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_003.png" alt="(GMS & W). scaled exp at point x = 1.0" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.1</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_004.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_004.png" alt="(GMS & W). log at point x = 1.1" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>log
+Step h* = 2.200e-07 using 2 iterations
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SinDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_005.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_005.png" alt="(GMS & W). sin at point x = 1.0" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SquareRootDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_006.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_006.png" alt="(GMS & W). sqrt at point x = 1.0" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>sqrt
+Step h* = 4.000e-07 using 3 iterations
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">AtanDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.1</span>
+<span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">plot_error_vs_h_benchmark</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h_array</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_gill_murray_saunders_wright_007.png" srcset="../_images/sphx_glr_plot_gill_murray_saunders_wright_007.png" alt="(GMS & W). atan at point x = 1.1" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.519 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-gill-murray-saunders-wright-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2353d809f4356f9b0bbe3361aa40f871/plot_gill_murray_saunders_wright.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_gill_murray_saunders_wright.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c25a0f2f8d4ac18168a606d7c59420e9/plot_gill_murray_saunders_wright.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_gill_murray_saunders_wright.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/0434498d654eb9b13ee66b994a69bce3/plot_gill_murray_saunders_wright.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_gill_murray_saunders_wright.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright_benchmark.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples/examples.html">Examples</a><ul>
+      <li>Previous: <a href="plot_dumontet_vignes.html" title="previous chapter">Experiments with Dumontet &amp; Vignes method</a></li>
+      <li>Next: <a href="plot_stepleman_winarsky_benchmark.html" title="next chapter">Benchmark Stepleman &amp; Winarsky's method</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/auto_example/plot_gill_murray_saunders_wright.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,61 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**00:03.398** total execution time for 9 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py` (``examples/plot_dumontet_vignes.py``)
+     - 00:01.289
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``examples/plot_stepleman_winarsky_plots.py``)
+     - 00:00.714
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py` (``examples/plot_gill_murray_saunders_wright.py``)
+     - 00:00.519
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py` (``examples/plot_stepleman_winarsky.py``)
+     - 00:00.399
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``examples/plot_openturns.py``)
+     - 00:00.243
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py` (``examples/plot_dumontet_vignes_benchmark.py``)
+     - 00:00.143
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_numericalderivative.py` (``examples/plot_numericalderivative.py``)
+     - 00:00.035
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py` (``examples/plot_gill_murray_saunders_wright_benchmark.py``)
+     - 00:00.032
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py` (``examples/plot_stepleman_winarsky_benchmark.py``)
+     - 00:00.024
+     - 0.0

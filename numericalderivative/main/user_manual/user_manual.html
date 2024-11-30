@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User manual &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="numericalderivative.NumericalDerivative" href="_generated/numericalderivative.NumericalDerivative.html" />
+    <link rel="prev" title="numericalderivative documentation" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="user-manual">
+<h1>User manual<a class="headerlink" href="#user-manual" title="Link to this heading">¶</a></h1>
+<section id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.NumericalDerivative.html#numericalderivative.NumericalDerivative" title="numericalderivative.NumericalDerivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalDerivative</span></code></a>(function, x[, args])</p></td>
+<td><p>Compute an approximately optimal step for the forward finite difference first derivative.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.DumontetVignes.html#numericalderivative.DumontetVignes" title="numericalderivative.DumontetVignes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DumontetVignes</span></code></a>(function, x[, ...])</p></td>
+<td><p>Use Dumontet &amp; Vignes method to compute the optimum step size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.GillMurraySaundersWright.html#numericalderivative.GillMurraySaundersWright" title="numericalderivative.GillMurraySaundersWright"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GillMurraySaundersWright</span></code></a>(function, x[, ...])</p></td>
+<td><p>Compute an approximately optimal step for the forward finite difference first derivative.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky" title="numericalderivative.SteplemanWinarsky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SteplemanWinarsky</span></code></a>(function, x[, ...])</p></td>
+<td><p>Use Stepleman &amp; Winarsky method to compute the optimum step size for the first derivative.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="finite-differences">
+<h2>Finite Differences<a class="headerlink" href="#finite-differences" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.FiniteDifferenceFormula.html#numericalderivative.FiniteDifferenceFormula" title="numericalderivative.FiniteDifferenceFormula"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FiniteDifferenceFormula</span></code></a>(function, x[, args])</p></td>
+<td><p>Compute a derivative of the function using finite difference formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.FiniteDifferenceOptimalStep.html#numericalderivative.FiniteDifferenceOptimalStep" title="numericalderivative.FiniteDifferenceOptimalStep"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FiniteDifferenceOptimalStep</span></code></a>([absolute_precision])</p></td>
+<td><p>Compute the optimum step for finite differences</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="benchmark-problems">
+<h2>Benchmark problems<a class="headerlink" href="#benchmark-problems" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.DerivativeBenchmark.html#numericalderivative.DerivativeBenchmark" title="numericalderivative.DerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivativeBenchmark</span></code></a>(name, function, ...)</p></td>
+<td><p>Create a benchmark for numerical derivatives of a function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.ExponentialDerivativeBenchmark.html#numericalderivative.ExponentialDerivativeBenchmark" title="numericalderivative.ExponentialDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExponentialDerivativeBenchmark</span></code></a>()</p></td>
+<td><p>Create an exponential derivative benchmark</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.LogarithmicDerivativeBenchmark.html#numericalderivative.LogarithmicDerivativeBenchmark" title="numericalderivative.LogarithmicDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogarithmicDerivativeBenchmark</span></code></a>()</p></td>
+<td><p>Create a logarithmic derivative benchmark</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SquareRootDerivativeBenchmark.html#numericalderivative.SquareRootDerivativeBenchmark" title="numericalderivative.SquareRootDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SquareRootDerivativeBenchmark</span></code></a>()</p></td>
+<td><p>Create a square root derivative benchmark</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.AtanDerivativeBenchmark.html#numericalderivative.AtanDerivativeBenchmark" title="numericalderivative.AtanDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtanDerivativeBenchmark</span></code></a>()</p></td>
+<td><p>Create an arctangent derivative benchmark</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SinDerivativeBenchmark.html#numericalderivative.SinDerivativeBenchmark" title="numericalderivative.SinDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SinDerivativeBenchmark</span></code></a>()</p></td>
+<td><p>Create a sine derivative benchmark</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.ScaledExponentialDerivativeBenchmark.html#numericalderivative.ScaledExponentialDerivativeBenchmark" title="numericalderivative.ScaledExponentialDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledExponentialDerivativeBenchmark</span></code></a>([alpha])</p></td>
+<td><p>Create a scaled exponential derivative benchmark</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark.html#numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark" title="numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GillMurraySaundersWrightExponentialDerivativeBenchmark</span></code></a>([alpha])</p></td>
+<td><p>Create an exponential derivative benchmark</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.BuildBenchmarkList.html#numericalderivative.BuildBenchmarkList" title="numericalderivative.BuildBenchmarkList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildBenchmarkList</span></code></a>()</p></td>
+<td><p>Create a list of benchmark problems.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#algorithms">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.NumericalDerivative.html">numericalderivative.NumericalDerivative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#finite-differences">Finite Differences</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.FiniteDifferenceFormula.html">numericalderivative.FiniteDifferenceFormula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.FiniteDifferenceOptimalStep.html">numericalderivative.FiniteDifferenceOptimalStep</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark-problems">Benchmark problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.DerivativeBenchmark.html">numericalderivative.DerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.ExponentialDerivativeBenchmark.html">numericalderivative.ExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.LogarithmicDerivativeBenchmark.html">numericalderivative.LogarithmicDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SquareRootDerivativeBenchmark.html">numericalderivative.SquareRootDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.AtanDerivativeBenchmark.html">numericalderivative.AtanDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SinDerivativeBenchmark.html">numericalderivative.SinDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.ScaledExponentialDerivativeBenchmark.html">numericalderivative.ScaledExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark.html">numericalderivative.GillMurraySaundersWrightExponentialDerivativeBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.BuildBenchmarkList.html">numericalderivative.BuildBenchmarkList</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">numericalderivative documentation</a></li>
+      <li>Next: <a href="_generated/numericalderivative.NumericalDerivative.html" title="next chapter">numericalderivative.NumericalDerivative</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/user_manual/user_manual.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

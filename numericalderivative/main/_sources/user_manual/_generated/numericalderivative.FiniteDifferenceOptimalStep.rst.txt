@@ -1,0 +1,25 @@
+﻿numericalderivative.FiniteDifferenceOptimalStep
+===============================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: FiniteDifferenceOptimalStep
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FiniteDifferenceOptimalStep.__init__
+      ~FiniteDifferenceOptimalStep.compute_step_first_derivative_central
+      ~FiniteDifferenceOptimalStep.compute_step_first_derivative_forward
+      ~FiniteDifferenceOptimalStep.compute_step_second_derivative
+   
+   
+
+   
+   
+   

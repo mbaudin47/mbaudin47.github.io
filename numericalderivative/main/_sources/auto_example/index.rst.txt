@@ -1,0 +1,196 @@
+:orphan:
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Finds a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_numericalderivative_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_numericalderivative.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A simple demonstration of the methods</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_benchmark_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Experiment with Gill, Murray, Saunders and Wright method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_dumontet_vignes_benchmark_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Benchmark Dumontet & Vignes method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Experiment with Stepleman & Winarsky method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_benchmark_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Benchmark Stepleman & Winarsky's method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_plots_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot Stepleman & Winarsky's method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a centered finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Experiment with Gill, Murray, Saunders and Wright method</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Applies Stepleman &amp; Winarsky method to an OpenTURNS function">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_openturns_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_openturns.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Applies Stepleman & Winarsky method to an OpenTURNS function</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="References ---------- - Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_dumontet_vignes_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Experiments with Dumontet & Vignes method</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_example/plot_numericalderivative
+   /auto_example/plot_gill_murray_saunders_wright_benchmark
+   /auto_example/plot_dumontet_vignes_benchmark
+   /auto_example/plot_stepleman_winarsky
+   /auto_example/plot_stepleman_winarsky_benchmark
+   /auto_example/plot_stepleman_winarsky_plots
+   /auto_example/plot_gill_murray_saunders_wright
+   /auto_example/plot_openturns
+   /auto_example/plot_dumontet_vignes
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: auto_example_python.zip </auto_example/auto_example_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: auto_example_jupyter.zip </auto_example/auto_example_jupyter.zip>`

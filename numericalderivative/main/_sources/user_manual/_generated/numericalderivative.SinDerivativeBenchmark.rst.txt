@@ -1,0 +1,22 @@
+﻿numericalderivative.SinDerivativeBenchmark
+==========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: SinDerivativeBenchmark
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SinDerivativeBenchmark.__init__
+   
+   
+
+   
+   
+   
