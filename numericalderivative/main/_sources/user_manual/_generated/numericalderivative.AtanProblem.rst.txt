@@ -1,0 +1,30 @@
+﻿numericalderivative.AtanProblem
+===============================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: AtanProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AtanProblem.__init__
+      ~AtanProblem.get_first_derivative
+      ~AtanProblem.get_fourth_derivative
+      ~AtanProblem.get_function
+      ~AtanProblem.get_interval
+      ~AtanProblem.get_name
+      ~AtanProblem.get_second_derivative
+      ~AtanProblem.get_third_derivative
+      ~AtanProblem.get_x
+   
+   
+
+   
+   
+   

@@ -19,8 +19,7 @@
     <link rel="icon" href="../_static/Icon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Applies Stepleman &amp; Winarsky method to an OpenTURNS function" href="plot_openturns.html" />
-    <link rel="prev" title="Experiment with Gill, Murray, Saunders and Wright method" href="plot_gill_murray_saunders_wright.html" />
+    <link rel="prev" title="Plot Stepleman &amp; Winarsky&#39;s method" href="plot_stepleman_winarsky_plots.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -98,21 +97,24 @@ Journal: Math. Comp. 33 (1979), 1257-1264</p></li>
 <span class="sd">    feval : int</span>
 <span class="sd">        The number of function evaluations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-    <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
-        <span class="n">initial_step</span><span class="p">,</span>
-        <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-    <span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
-    <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+            <span class="n">initial_step</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+        <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">feval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="k">return</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">feval</span>
 </pre></div>
 </div>
 <p>Test</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">bracket_step</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0e-7</span><span class="p">,</span> <span class="mf">1.0e1</span><span class="p">]</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
 <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span>
     <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
     <span class="n">x</span><span class="p">,</span>
@@ -126,7 +128,8 @@ Journal: Math. Comp. 33 (1979), 1257-1264</p></li>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact h* = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_step</span><span class="p">))</span>
 
 <span class="n">h0</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
-    <span class="n">bracket_step</span><span class="p">,</span>
+    <span class="mf">1.0e-7</span><span class="p">,</span>
+    <span class="mf">1.0e1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pas initial = &quot;</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="s2">&quot;, iterations = &quot;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
 <span class="n">lost_digits</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">number_of_lost_digits</span><span class="p">(</span><span class="n">h0</span><span class="p">)</span>
@@ -161,7 +164,7 @@ n_min = 6.699, n_treshold = 4.731, n_max = -4.343
   h is just right : stop !
 Pas initial =  0.001 , iterations =  0
 lost_digits =  2.6989699319536102
-+ search_step_using_motony()
++ compute_step()
 initial_step=1.000e+01
 number_of_iterations=0, h=1.0000e+00, |FD(h_current) - FD(h_previous)|=2.9905e+03
 number_of_iterations=1, h=1.0000e-01, |FD(h_current) - FD(h_previous)|=4.7171e-01
@@ -175,7 +178,7 @@ Stop because no monotony anymore.
 x = 1.000, error = 6.017e-11, Func. eval. = 20
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_method</span><span class="p">(</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_SteplemanWinarsky_method</span><span class="p">(</span>
     <span class="n">function</span><span class="p">,</span> <span class="n">derivative_function</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -240,8 +243,8 @@ x = 1.000, error = 6.017e-11, Func. eval. = 20
 <span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">12.2</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
 <span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
-<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
-<span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_SteplemanWinarsky_method</span><span class="p">(</span>
     <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">,</span> <span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
@@ -352,27 +355,40 @@ Average number of function evaluations = 22.22
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">function_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>  <span class="c1"># x &gt; 0</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SquareRootDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>  <span class="c1"># x &gt; 0</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">AtanDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SinDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">(),</span> <span class="mf">1.0e5</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">InverseProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e-1</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicProblem</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>  <span class="c1"># x &gt; 0</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SquareRootProblem</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>  <span class="c1"># x &gt; 0</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">AtanProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SinProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e5</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">GMSWExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>  <span class="c1"># Fails</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem3</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem4</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem3</span><span class="p">(),</span> <span class="mf">1.e-3</span><span class="p">],</span>
 <span class="p">]</span>
 </pre></div>
 </div>
 <p>Benchmark SteplemanWinarsky</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">number_of_functions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span>
 <span class="n">average_relative_error_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">average_feval_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_functions</span><span class="p">):</span>
-    <span class="n">benchmark</span><span class="p">,</span> <span class="n">initial_step</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
-        <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">initial_step</span>
+    <span class="n">problem</span><span class="p">,</span> <span class="n">initial_step</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+    <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
+    <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_SteplemanWinarsky_method</span><span class="p">(</span>
+        <span class="n">function</span><span class="p">,</span> <span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">initial_step</span>
     <span class="p">)</span>
     <span class="n">average_relative_error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_relative_error</span><span class="p">)</span>
     <span class="n">average_feval_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_feval</span><span class="p">)</span>
@@ -385,7 +401,7 @@ Average number of function evaluations = 22.22
         <span class="p">)</span>
     <span class="p">)</span>
 <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;Average&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">average_relative_error_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">average_feval_list</span><span class="p">)]</span>
+    <span class="p">[</span><span class="s2">&quot;Average&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_relative_error_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_feval_list</span><span class="p">)]</span>
 <span class="p">)</span>
 <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
@@ -394,24 +410,52 @@ Average number of function evaluations = 22.22
 <span class="p">)</span>
 </pre></div>
 </div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Function #0, inverse
+Function #1, exp
+Function #2, log
+Function #3, sqrt
+Function #4, atan
+Function #5, sin
+Function #6, scaled exp
+Function #7, GMSW
+/home/runner/work/numericalderivative/numericalderivative/doc/examples/plot_stepleman_winarsky_benchmark.py:167: RuntimeWarning: invalid value encountered in scalar divide
+  relative_error = absolute_error / abs(derivative_function(x))
+Function #8, SXXN1
+Function #9, SXXN2
+Function #10, SXXN3
+Function #11, SXXN4
+Function #12, Oliver1
+Function #13, Oliver2
+Function #14, Oliver3
+</pre></div>
+</div>
 <div class="output_subarea output_html rendered_html output_result">
 <table>
 <thead>
 <tr><th>Name      </th><th>h0      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
 </thead>
 <tbody>
-<tr><td>exp       </td><td>0.1     </td><td style="text-align: right;">         1.68766e-11</td><td style="text-align: right;">             22.34  </td></tr>
-<tr><td>log       </td><td>0.001   </td><td style="text-align: right;">         2.71892e-11</td><td style="text-align: right;">             13.4   </td></tr>
-<tr><td>sqrt      </td><td>0.001   </td><td style="text-align: right;">         2.19193e-11</td><td style="text-align: right;">             12.72  </td></tr>
-<tr><td>atan      </td><td>1.0     </td><td style="text-align: right;">         1.19392e-10</td><td style="text-align: right;">             22.36  </td></tr>
-<tr><td>sin       </td><td>1.0     </td><td style="text-align: right;">         1.88069e-11</td><td style="text-align: right;">             24.74  </td></tr>
-<tr><td>scaled exp</td><td>100000.0</td><td style="text-align: right;">         1.3095e-11 </td><td style="text-align: right;">             21.64  </td></tr>
-<tr><td>Average   </td><td>-       </td><td style="text-align: right;">         3.62131e-11</td><td style="text-align: right;">             19.5333</td></tr>
+<tr><td>inverse   </td><td>1.0     </td><td style="text-align: right;">         0.0238099  </td><td style="text-align: right;">             22.98  </td></tr>
+<tr><td>exp       </td><td>0.1     </td><td style="text-align: right;">         1.81258e-11</td><td style="text-align: right;">             22.34  </td></tr>
+<tr><td>log       </td><td>0.001   </td><td style="text-align: right;">         2.73807e-11</td><td style="text-align: right;">             13.24  </td></tr>
+<tr><td>sqrt      </td><td>0.001   </td><td style="text-align: right;">         2.43901e-11</td><td style="text-align: right;">             12.86  </td></tr>
+<tr><td>atan      </td><td>1.0     </td><td style="text-align: right;">         1.02142e-10</td><td style="text-align: right;">             22.28  </td></tr>
+<tr><td>sin       </td><td>1.0     </td><td style="text-align: right;">         3.09318e-11</td><td style="text-align: right;">             25.02  </td></tr>
+<tr><td>scaled exp</td><td>100000.0</td><td style="text-align: right;">         1.32527e-11</td><td style="text-align: right;">             21.88  </td></tr>
+<tr><td>GMSW      </td><td>1.0     </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">             26.34  </td></tr>
+<tr><td>SXXN1     </td><td>1.0     </td><td style="text-align: right;">         2.67332e-09</td><td style="text-align: right;">             24.3   </td></tr>
+<tr><td>SXXN2     </td><td>1.0     </td><td style="text-align: right;">         1.90792e-11</td><td style="text-align: right;">             31.64  </td></tr>
+<tr><td>SXXN3     </td><td>1.0     </td><td style="text-align: right;">         1.46924e-11</td><td style="text-align: right;">             23.88  </td></tr>
+<tr><td>SXXN4     </td><td>1.0     </td><td style="text-align: right;">         1.18405e-11</td><td style="text-align: right;">             23.48  </td></tr>
+<tr><td>Oliver1   </td><td>1.0     </td><td style="text-align: right;">         1.63577e-11</td><td style="text-align: right;">             27     </td></tr>
+<tr><td>Oliver2   </td><td>1.0     </td><td style="text-align: right;">         1.8908e-10 </td><td style="text-align: right;">             27.04  </td></tr>
+<tr><td>Oliver3   </td><td>0.001   </td><td style="text-align: right;">         1.04484e-11</td><td style="text-align: right;">             13.2   </td></tr>
+<tr><td>Average   </td><td>-       </td><td style="text-align: right;">         0.00170071 </td><td style="text-align: right;">             22.4987</td></tr>
 </tbody>
 </table>
 </div>
 <br />
-<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.024 seconds)</p>
+<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.060 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-stepleman-winarsky-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a0449d2221d09e479e64e17f00a8b98c/plot_stepleman_winarsky_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_stepleman_winarsky_benchmark.ipynb</span></code></a></p>
@@ -458,14 +502,11 @@ Average number of function evaluations = 22.22
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Benchmark Stepleman &amp; Winarsky's method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright_benchmark.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
 </ul>
 </li>
 </ul>
@@ -475,8 +516,7 @@ Average number of function evaluations = 22.22
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../examples/examples.html">Examples</a><ul>
-      <li>Previous: <a href="plot_gill_murray_saunders_wright.html" title="previous chapter">Experiment with Gill, Murray, Saunders and Wright method</a></li>
-      <li>Next: <a href="plot_openturns.html" title="next chapter">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+      <li>Previous: <a href="plot_stepleman_winarsky_plots.html" title="previous chapter">Plot Stepleman &amp; Winarsky's method</a></li>
   </ul></li>
   </ul></li>
 </ul>

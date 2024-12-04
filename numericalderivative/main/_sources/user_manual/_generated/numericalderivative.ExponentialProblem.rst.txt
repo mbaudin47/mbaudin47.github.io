@@ -1,0 +1,30 @@
+﻿numericalderivative.ExponentialProblem
+======================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: ExponentialProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExponentialProblem.__init__
+      ~ExponentialProblem.get_first_derivative
+      ~ExponentialProblem.get_fourth_derivative
+      ~ExponentialProblem.get_function
+      ~ExponentialProblem.get_interval
+      ~ExponentialProblem.get_name
+      ~ExponentialProblem.get_second_derivative
+      ~ExponentialProblem.get_third_derivative
+      ~ExponentialProblem.get_x
+   
+   
+
+   
+   
+   

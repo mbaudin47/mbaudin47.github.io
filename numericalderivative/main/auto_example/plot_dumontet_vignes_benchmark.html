@@ -19,8 +19,8 @@
     <link rel="icon" href="../_static/Icon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Experiment with Gill, Murray, Saunders and Wright method" href="plot_gill_murray_saunders_wright_benchmark.html" />
-    <link rel="prev" title="Plot Stepleman &amp; Winarsky&#39;s method" href="plot_stepleman_winarsky_plots.html" />
+    <link rel="next" title="Experiment with Gill, Murray, Saunders and Wright method" href="plot_gill_murray_saunders_wright.html" />
+    <link rel="prev" title="Experiments with Dumontet &amp; Vignes method" href="plot_dumontet_vignes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -57,7 +57,7 @@ formula.</p>
 <span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_method</span><span class="p">(</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_DumontetVignes_method</span><span class="p">(</span>
     <span class="n">function</span><span class="p">,</span>
     <span class="n">derivative_function</span><span class="p">,</span>
     <span class="n">test_points</span><span class="p">,</span>
@@ -99,15 +99,19 @@ formula.</p>
     <span class="n">feval_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">number_of_test_points</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_test_points</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">test_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span>
-            <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
-        <span class="p">)</span>
-        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
-        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-        <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
-        <span class="n">exact_first_derivative</span> <span class="o">=</span> <span class="n">derivative_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">exact_first_derivative</span><span class="p">)</span>
-        <span class="n">relative_error</span> <span class="o">=</span> <span class="n">absolute_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exact_first_derivative</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span>
+                <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+            <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
+            <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+            <span class="n">exact_first_derivative</span> <span class="o">=</span> <span class="n">derivative_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">exact_first_derivative</span><span class="p">)</span>
+            <span class="n">relative_error</span> <span class="o">=</span> <span class="n">absolute_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exact_first_derivative</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">relative_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, abs. error = </span><span class="si">%.3e</span><span class="s2">, rel. error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
@@ -125,13 +129,13 @@ formula.</p>
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.1</span>
-<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicProblem</span><span class="p">()</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
-<span class="n">f_prime</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span>
+<span class="n">f_prime</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
 <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
 <span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e-3</span>
 <span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
-<span class="n">absolute_error</span><span class="p">,</span> <span class="n">feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
+<span class="n">absolute_error</span><span class="p">,</span> <span class="n">feval</span> <span class="o">=</span> <span class="n">benchmark_DumontetVignes_method</span><span class="p">(</span>
     <span class="n">f</span><span class="p">,</span>
     <span class="n">f_prime</span><span class="p">,</span>
     <span class="p">[</span><span class="n">x</span><span class="p">],</span>
@@ -178,11 +182,11 @@ feval = 35.0
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Benchmark on several points&quot;</span><span class="p">)</span>
 <span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
-<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">()</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
 <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
 <span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
-<span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
+<span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_DumontetVignes_method</span><span class="p">(</span>
     <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
     <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">,</span>
     <span class="n">test_points</span><span class="p">,</span>
@@ -5998,49 +6002,51 @@ Average rel. error = 1.5979528781841093e-10
 Average number of function evaluations = 79.0
 </pre></div>
 </div>
-<p>Define a collection of benchmark problems</p>
+<p>Define a collection of benchmark problems
+function_list = nd.BuildBenchmark()</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">function_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ExponentialDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-1</span><span class="p">]],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-3</span><span class="p">]],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SquareRootDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-3</span><span class="p">]],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">AtanDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e0</span><span class="p">]],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SinDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e0</span><span class="p">]],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialDerivativeBenchmark</span><span class="p">(),</span> <span class="p">[</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e5</span><span class="p">]],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">InverseProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e-1</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicProblem</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SquareRootProblem</span><span class="p">(),</span> <span class="mf">1.0e-3</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">AtanProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SinProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e5</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">GMSWExponentialProblem</span><span class="p">(),</span> <span class="mf">1.0e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>  <span class="c1"># Fails</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem3</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem4</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem3</span><span class="p">(),</span> <span class="mf">1.e-3</span><span class="p">],</span>
 <span class="p">]</span>
-</pre></div>
-</div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">benchmark_problem</span><span class="p">(</span><span class="n">benchmark</span><span class="p">,</span> <span class="n">bracket</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
-    <span class="n">derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span>
-    <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span> <span class="o">=</span> <span class="n">bracket</span>
-    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_method</span><span class="p">(</span>
-        <span class="n">function</span><span class="p">,</span>
-        <span class="n">derivative</span><span class="p">,</span>
-        <span class="n">test_points</span><span class="p">,</span>
-        <span class="n">kmin</span><span class="p">,</span>
-        <span class="n">kmax</span><span class="p">,</span>
-        <span class="n">relative_precision</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span>
 </pre></div>
 </div>
 <p>Benchmark DumontetVignes</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
-<span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">number_of_functions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span>
 <span class="n">average_relative_error_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">average_feval_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_functions</span><span class="p">):</span>
-    <span class="n">benchmark</span><span class="p">,</span> <span class="n">bracket_k</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">function</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span>
-    <span class="n">derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span>
-    <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span> <span class="o">=</span> <span class="n">bracket_k</span>
-    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_problem</span><span class="p">(</span>
-        <span class="n">benchmark</span><span class="p">,</span> <span class="n">bracket_k</span><span class="p">,</span> <span class="n">relative_precision</span>
+    <span class="n">problem</span><span class="p">,</span> <span class="n">kmax</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.e-16</span> <span class="o">*</span> <span class="n">kmax</span>
+    <span class="n">name</span><span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+    <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
+    <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span> <span class="o">=</span> <span class="n">benchmark_DumontetVignes_method</span><span class="p">(</span>
+        <span class="n">function</span><span class="p">,</span>
+        <span class="n">first_derivative</span><span class="p">,</span>
+        <span class="n">test_points</span><span class="p">,</span>
+        <span class="n">kmin</span><span class="p">,</span>
+        <span class="n">kmax</span><span class="p">,</span>
+        <span class="n">relative_precision</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">average_relative_error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_relative_error</span><span class="p">)</span>
     <span class="n">average_feval_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_feval</span><span class="p">)</span>
@@ -6058,8 +6064,8 @@ Average number of function evaluations = 79.0
         <span class="s2">&quot;Average&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">average_relative_error_list</span><span class="p">),</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">average_feval_list</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_relative_error_list</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_feval_list</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
@@ -6070,24 +6076,50 @@ Average number of function evaluations = 79.0
 <span class="p">)</span>
 </pre></div>
 </div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Function #0, inverse
+Function #1, exp
+Function #2, log
+Function #3, sqrt
+Function #4, atan
+Function #5, sin
+Function #6, scaled exp
+Function #7, GMSW
+Function #8, SXXN1
+Function #9, SXXN2
+Function #10, SXXN3
+Function #11, SXXN4
+Function #12, Oliver1
+Function #13, Oliver2
+Function #14, Oliver3
+</pre></div>
+</div>
 <div class="output_subarea output_html rendered_html output_result">
 <table>
 <thead>
 <tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
 </thead>
 <tbody>
-<tr><td>exp       </td><td>1e-10 </td><td>0.1     </td><td style="text-align: right;">         1.60567e-10</td><td style="text-align: right;">               63   </td></tr>
-<tr><td>log       </td><td>1e-10 </td><td>0.001   </td><td style="text-align: right;">         2.8132e-10 </td><td style="text-align: right;">               25.24</td></tr>
-<tr><td>sqrt      </td><td>1e-10 </td><td>0.001   </td><td style="text-align: right;">         2.32261e-10</td><td style="text-align: right;">               22.64</td></tr>
-<tr><td>atan      </td><td>1e-10 </td><td>1.0     </td><td style="text-align: right;">         1.17191e-09</td><td style="text-align: right;">               63.4 </td></tr>
-<tr><td>sin       </td><td>1e-10 </td><td>1.0     </td><td style="text-align: right;">         2.8202e-10 </td><td style="text-align: right;">               73.28</td></tr>
-<tr><td>scaled exp</td><td>1e-10 </td><td>100000.0</td><td style="text-align: right;">         1.60974e-10</td><td style="text-align: right;">               63   </td></tr>
-<tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">         3.81509e-10</td><td style="text-align: right;">               51.76</td></tr>
+<tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.92323e-10</td><td style="text-align: right;">             68.16  </td></tr>
+<tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">         1.61537e-10</td><td style="text-align: right;">             63     </td></tr>
+<tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.77694e-10</td><td style="text-align: right;">             25.4   </td></tr>
+<tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.3205e-10 </td><td style="text-align: right;">             23.2   </td></tr>
+<tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.14667e-09</td><td style="text-align: right;">             63.88  </td></tr>
+<tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.72551e-10</td><td style="text-align: right;">             73.96  </td></tr>
+<tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">         1.6088e-10 </td><td style="text-align: right;">             63     </td></tr>
+<tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">            nan     </td></tr>
+<tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.03436e-08</td><td style="text-align: right;">             73     </td></tr>
+<tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.66078e-10</td><td style="text-align: right;">            103     </td></tr>
+<tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.28154e-10</td><td style="text-align: right;">             69.56  </td></tr>
+<tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         9.73696e-11</td><td style="text-align: right;">             67.88  </td></tr>
+<tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.60721e-10</td><td style="text-align: right;">             87     </td></tr>
+<tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.97439e-10</td><td style="text-align: right;">             86.36  </td></tr>
+<tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         1.12381e-10</td><td style="text-align: right;">             25.56  </td></tr>
+<tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">         1.69639e-09</td><td style="text-align: right;">             63.7829</td></tr>
 </tbody>
 </table>
 </div>
 <br />
-<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.143 seconds)</p>
+<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.272 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-dumontet-vignes-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a69e918a6e29899918381745d1196dcf/plot_dumontet_vignes_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_dumontet_vignes_benchmark.ipynb</span></code></a></p>
@@ -6134,14 +6166,11 @@ Average number of function evaluations = 79.0
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Benchmark Dumontet &amp; Vignes method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_gill_murray_saunders_wright_benchmark.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
 </ul>
 </li>
 </ul>
@@ -6151,8 +6180,8 @@ Average number of function evaluations = 79.0
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../examples/examples.html">Examples</a><ul>
-      <li>Previous: <a href="plot_stepleman_winarsky_plots.html" title="previous chapter">Plot Stepleman &amp; Winarsky's method</a></li>
-      <li>Next: <a href="plot_gill_murray_saunders_wright_benchmark.html" title="next chapter">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+      <li>Previous: <a href="plot_dumontet_vignes.html" title="previous chapter">Experiments with Dumontet &amp; Vignes method</a></li>
+      <li>Next: <a href="plot_gill_murray_saunders_wright.html" title="next chapter">Experiment with Gill, Murray, Saunders and Wright method</a></li>
   </ul></li>
   </ul></li>
 </ul>

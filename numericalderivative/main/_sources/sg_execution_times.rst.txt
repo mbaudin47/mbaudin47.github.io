@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:03.398** total execution time for 9 files **from all galleries**:
+**00:03.924** total execution time for 10 files **from all galleries**:
 
 .. container::
 
@@ -33,29 +33,32 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py` (``examples/plot_dumontet_vignes.py``)
-     - 00:01.289
+     - 00:01.272
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``examples/plot_stepleman_winarsky_plots.py``)
-     - 00:00.714
+     - 00:00.762
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py` (``examples/plot_gill_murray_saunders_wright.py``)
-     - 00:00.519
+     - 00:00.511
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_use_benchmark.py` (``examples/plot_use_benchmark.py``)
+     - 00:00.381
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py` (``examples/plot_stepleman_winarsky.py``)
-     - 00:00.399
-     - 0.0
-   * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``examples/plot_openturns.py``)
-     - 00:00.243
+     - 00:00.347
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py` (``examples/plot_dumontet_vignes_benchmark.py``)
-     - 00:00.143
+     - 00:00.272
      - 0.0
-   * - :ref:`sphx_glr_auto_example_plot_numericalderivative.py` (``examples/plot_numericalderivative.py``)
-     - 00:00.035
+   * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``examples/plot_openturns.py``)
+     - 00:00.244
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py` (``examples/plot_gill_murray_saunders_wright_benchmark.py``)
-     - 00:00.032
+     - 00:00.072
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py` (``examples/plot_stepleman_winarsky_benchmark.py``)
-     - 00:00.024
+     - 00:00.060
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_numericalderivative.py` (``examples/plot_numericalderivative.py``)
+     - 00:00.003
      - 0.0

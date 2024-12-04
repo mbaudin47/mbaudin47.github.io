@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="numericalderivative.GillMurraySaundersWright" href="numericalderivative.GillMurraySaundersWright.html" />
-    <link rel="prev" title="numericalderivative.NumericalDerivative" href="numericalderivative.NumericalDerivative.html" />
+    <link rel="prev" title="User manual" href="../user_manual.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -55,13 +55,13 @@ from the third derivative.</p>
 </dd>
 <dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The point where the derivative is to be evaluated.</p>
 </dd>
-<dt><strong>relative_precision</strong><span class="classifier">float, &gt; 0, optional</span></dt><dd><p>The relative precision of evaluation of f. The default is 1.0e-16.</p>
+<dt><strong>relative_precision</strong><span class="classifier">float, &gt; 0, optional</span></dt><dd><p>The relative precision of evaluation of f.</p>
 </dd>
 <dt><strong>number_of_digits</strong><span class="classifier">int</span></dt><dd><p>The maximum number of digits of the floating point system.</p>
 </dd>
 <dt><strong>ell_1</strong><span class="classifier">float</span></dt><dd><p>The minimum bound of the L ratio.</p>
 </dd>
-<dt><strong>ell_2</strong><span class="classifier">float</span></dt><dd><p>The maximum bound of the L ratio.</p>
+<dt><strong>ell_2</strong><span class="classifier">float, &gt; ell_1</span></dt><dd><p>The maximum bound of the L ratio.</p>
 </dd>
 <dt><strong>args</strong><span class="classifier">list</span></dt><dd><p>A list of optional arguments that the function takes as inputs.
 By default, there is no extra argument and calling sequence of
@@ -84,6 +84,24 @@ arg1, arg2, ..., are the items in the args list.</p>
 <ul class="simple">
 <li><p>Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.</p></li>
 </ul>
+<p class="rubric">Examples</p>
+<p>Compute the step of a badly scaled function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.e6</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kmax</span> <span class="o">=</span> <span class="mf">1.0e+8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h_optimal</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h_optimal</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.__init__" title="Link to this definition">¶</a></dt>
@@ -107,10 +125,7 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_third_derivative</span></code>([...])</p></td>
 <td><p>Compute an approximate third derivative of the function</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">function_eval</span></code>(x)</p></td>
-<td><p>Evaluates the function at point x</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
 </tr>
 </tbody>
@@ -176,11 +191,11 @@ This is used to compute the step h for f'.</p>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>iteration_maximum</strong><span class="classifier">int, optional</span></dt><dd><p>The number of number_of_iterations. The default is 53.</p>
 </dd>
-<dt><strong>kmin</strong><span class="classifier">float, kmin &gt; 0</span></dt><dd><p>A minimum bound for k. The default is None.
+<dt><strong>kmin</strong><span class="classifier">float, kmin &gt; 0</span></dt><dd><p>A minimum bound for the finite difference step of the third derivative.
 If no value is provided, the default is to compute the smallest
 possible kmin using number_of_digits and x.</p>
 </dd>
-<dt><strong>kmax</strong><span class="classifier">float, kmax &gt; kmin &gt; 0</span></dt><dd><p>A maximum bound for k. The default is None.
+<dt><strong>kmax</strong><span class="classifier">float, kmax &gt; kmin &gt; 0</span></dt><dd><p>A maximum bound for the finite difference step of the third derivative.
 If no value is provided, the default is to compute the largest
 possible kmax using number_of_digits and x.</p>
 </dd>
@@ -215,12 +230,7 @@ Hence, the main goal is to compute a step k which is supposed to be
 optimal to compute the third derivative f'''(x) using central finite
 differences.
 The finite difference formula for the third derivative is:</p>
-<dl class="simple">
-<dt>f'''(x) ~ [f(x + 2 * k) - f(x - 2 * k)</dt><dd><ul class="simple">
-<li><p>2 * f(x + k) + 2 * f(x - k)] / (2 * k**3)</p></li>
-</ul>
-</dd>
-</dl>
+<p>f'''(x) ~ [f(x + 2 * k) - f(x - 2 * k) - 2 * f(x + k) + 2 * f(x - k)] / (2 * k**3)</p>
 <p>The method computes the optimal step k for f'''(x).
 Then this step is used to compute an approximate value of f'''(x).</p>
 <dl class="field-list simple">
@@ -252,27 +262,6 @@ The default is False.</p>
 k.</p>
 </dd>
 <dt><strong>number_of_iterations</strong><span class="classifier">int</span></dt><dd><p>The number of number_of_iterations required to reach that optimum.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="numericalderivative.DumontetVignes.function_eval">
-<span class="sig-name descname"><span class="pre">function_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.function_eval" title="Link to this definition">¶</a></dt>
-<dd><p>Evaluates the function at point x</p>
-<p>Manages the extra input arguments, if any.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The input point.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>y</strong><span class="classifier">float</span></dt><dd><p>The output point.</p>
 </dd>
 </dl>
 </dd>
@@ -326,7 +315,6 @@ k.</p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../user_manual.html">User manual</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../user_manual.html#algorithms">Algorithms</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="numericalderivative.NumericalDerivative.html">numericalderivative.NumericalDerivative</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
@@ -346,7 +334,7 @@ k.</p>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../user_manual.html">User manual</a><ul>
-      <li>Previous: <a href="numericalderivative.NumericalDerivative.html" title="previous chapter">numericalderivative.NumericalDerivative</a></li>
+      <li>Previous: <a href="../user_manual.html" title="previous chapter">User manual</a></li>
       <li>Next: <a href="numericalderivative.GillMurraySaundersWright.html" title="next chapter">numericalderivative.GillMurraySaundersWright</a></li>
   </ul></li>
   </ul></li>

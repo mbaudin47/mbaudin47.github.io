@@ -1,0 +1,6 @@
+﻿numericalderivative.BuildBenchmark
+==================================
+
+.. currentmodule:: numericalderivative
+
+.. autofunction:: BuildBenchmark

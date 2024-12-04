@@ -1,0 +1,30 @@
+﻿numericalderivative.LogarithmicProblem
+======================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: LogarithmicProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LogarithmicProblem.__init__
+      ~LogarithmicProblem.get_first_derivative
+      ~LogarithmicProblem.get_fourth_derivative
+      ~LogarithmicProblem.get_function
+      ~LogarithmicProblem.get_interval
+      ~LogarithmicProblem.get_name
+      ~LogarithmicProblem.get_second_derivative
+      ~LogarithmicProblem.get_third_derivative
+      ~LogarithmicProblem.get_x
+   
+   
+
+   
+   
+   

@@ -1,0 +1,30 @@
+﻿numericalderivative.SXXNProblem2
+================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: SXXNProblem2
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SXXNProblem2.__init__
+      ~SXXNProblem2.get_first_derivative
+      ~SXXNProblem2.get_fourth_derivative
+      ~SXXNProblem2.get_function
+      ~SXXNProblem2.get_interval
+      ~SXXNProblem2.get_name
+      ~SXXNProblem2.get_second_derivative
+      ~SXXNProblem2.get_third_derivative
+      ~SXXNProblem2.get_x
+   
+   
+
+   
+   
+   

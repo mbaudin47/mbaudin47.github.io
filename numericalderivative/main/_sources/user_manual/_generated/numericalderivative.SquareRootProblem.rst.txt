@@ -1,0 +1,30 @@
+﻿numericalderivative.SquareRootProblem
+=====================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: SquareRootProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SquareRootProblem.__init__
+      ~SquareRootProblem.get_first_derivative
+      ~SquareRootProblem.get_fourth_derivative
+      ~SquareRootProblem.get_function
+      ~SquareRootProblem.get_interval
+      ~SquareRootProblem.get_name
+      ~SquareRootProblem.get_second_derivative
+      ~SquareRootProblem.get_third_derivative
+      ~SquareRootProblem.get_x
+   
+   
+
+   
+   
+   

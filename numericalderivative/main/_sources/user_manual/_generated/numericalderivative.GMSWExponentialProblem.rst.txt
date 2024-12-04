@@ -1,0 +1,30 @@
+﻿numericalderivative.GMSWExponentialProblem
+==========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: GMSWExponentialProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GMSWExponentialProblem.__init__
+      ~GMSWExponentialProblem.get_first_derivative
+      ~GMSWExponentialProblem.get_fourth_derivative
+      ~GMSWExponentialProblem.get_function
+      ~GMSWExponentialProblem.get_interval
+      ~GMSWExponentialProblem.get_name
+      ~GMSWExponentialProblem.get_second_derivative
+      ~GMSWExponentialProblem.get_third_derivative
+      ~GMSWExponentialProblem.get_x
+   
+   
+
+   
+   
+   

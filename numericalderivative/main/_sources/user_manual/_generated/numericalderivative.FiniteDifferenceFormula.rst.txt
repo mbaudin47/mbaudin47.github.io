@@ -14,13 +14,10 @@
    .. autosummary::
    
       ~FiniteDifferenceFormula.__init__
-      ~FiniteDifferenceFormula.compute_first_derivative
       ~FiniteDifferenceFormula.compute_first_derivative_central
       ~FiniteDifferenceFormula.compute_first_derivative_forward
       ~FiniteDifferenceFormula.compute_second_derivative_central
-      ~FiniteDifferenceFormula.compute_step
       ~FiniteDifferenceFormula.compute_third_derivative
-      ~FiniteDifferenceFormula.function_eval
       ~FiniteDifferenceFormula.get_number_of_function_evaluations
    
    

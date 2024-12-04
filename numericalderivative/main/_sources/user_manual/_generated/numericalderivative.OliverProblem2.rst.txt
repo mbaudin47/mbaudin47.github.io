@@ -1,0 +1,30 @@
+﻿numericalderivative.OliverProblem2
+==================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: OliverProblem2
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OliverProblem2.__init__
+      ~OliverProblem2.get_first_derivative
+      ~OliverProblem2.get_fourth_derivative
+      ~OliverProblem2.get_function
+      ~OliverProblem2.get_interval
+      ~OliverProblem2.get_name
+      ~OliverProblem2.get_second_derivative
+      ~OliverProblem2.get_third_derivative
+      ~OliverProblem2.get_x
+   
+   
+
+   
+   
+   

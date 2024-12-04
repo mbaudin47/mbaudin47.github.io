@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>numericalderivative.ExponentialProblem &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="numericalderivative.LogarithmicProblem" href="numericalderivative.LogarithmicProblem.html" />
+    <link rel="prev" title="numericalderivative.InverseProblem" href="numericalderivative.InverseProblem.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="numericalderivative-exponentialproblem">
+<h1>numericalderivative.ExponentialProblem<a class="headerlink" href="#numericalderivative-exponentialproblem" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">ExponentialProblem</span></span><a class="headerlink" href="#numericalderivative.ExponentialProblem" title="Link to this definition">¶</a></dt>
+<dd><p>Create an exponential derivative benchmark problem</p>
+<p>The function is:</p>
+<div class="math notranslate nohighlight">
+\[f(x) = \exp(x)\]</div>
+<p>for any x.
+The test point is <span class="math notranslate nohighlight">\(x = 1\)</span>.</p>
+<p>See problem #1 in (Dumontet &amp; Vignes, 1977) page 23.
+See (Stepleman &amp; Wirnarsky, 1979) page 1263.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_first_derivative" title="numericalderivative.ExponentialProblem.get_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_first_derivative</span></code></a>()</p></td>
+<td><p>Return the first derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_fourth_derivative" title="numericalderivative.ExponentialProblem.get_fourth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fourth_derivative</span></code></a>()</p></td>
+<td><p>Return the fourth derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_function" title="numericalderivative.ExponentialProblem.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Return the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_interval" title="numericalderivative.ExponentialProblem.get_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interval</span></code></a>()</p></td>
+<td><p>Return the interval of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_name" title="numericalderivative.ExponentialProblem.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</p></td>
+<td><p>Return the name of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_second_derivative" title="numericalderivative.ExponentialProblem.get_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_second_derivative</span></code></a>()</p></td>
+<td><p>Return the second derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_third_derivative" title="numericalderivative.ExponentialProblem.get_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_third_derivative</span></code></a>()</p></td>
+<td><p>Return the third derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_x" title="numericalderivative.ExponentialProblem.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
+<td><p>Return the input point of the problem</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.__init__" title="numericalderivative.ExponentialProblem.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_first_derivative" title="numericalderivative.ExponentialProblem.get_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_first_derivative</span></code></a>()</p></td>
+<td><p>Return the first derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_fourth_derivative" title="numericalderivative.ExponentialProblem.get_fourth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fourth_derivative</span></code></a>()</p></td>
+<td><p>Return the fourth derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_function" title="numericalderivative.ExponentialProblem.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Return the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_interval" title="numericalderivative.ExponentialProblem.get_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interval</span></code></a>()</p></td>
+<td><p>Return the interval of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_name" title="numericalderivative.ExponentialProblem.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</p></td>
+<td><p>Return the name of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_second_derivative" title="numericalderivative.ExponentialProblem.get_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_second_derivative</span></code></a>()</p></td>
+<td><p>Return the second derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_third_derivative" title="numericalderivative.ExponentialProblem.get_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_third_derivative</span></code></a>()</p></td>
+<td><p>Return the third derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ExponentialProblem.get_x" title="numericalderivative.ExponentialProblem.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
+<td><p>Return the input point of the problem</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_first_derivative">
+<span class="sig-name descname"><span class="pre">get_first_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_first_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Return the first derivative of the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>first_derivative</strong><span class="classifier">function</span></dt><dd><p>The first derivative of the function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_fourth_derivative">
+<span class="sig-name descname"><span class="pre">get_fourth_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_fourth_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Return the fourth derivative of the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fourth_derivative</strong><span class="classifier">function</span></dt><dd><p>The fourth derivative of the function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_function">
+<span class="sig-name descname"><span class="pre">get_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_function" title="Link to this definition">¶</a></dt>
+<dd><p>Return the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>function</strong><span class="classifier">function</span></dt><dd><p>The function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_interval">
+<span class="sig-name descname"><span class="pre">get_interval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_interval" title="Link to this definition">¶</a></dt>
+<dd><p>Return the interval of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>interval</strong><span class="classifier">list of 2 floats</span></dt><dd><p>The interval</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_name">
+<span class="sig-name descname"><span class="pre">get_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_name" title="Link to this definition">¶</a></dt>
+<dd><p>Return the name of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>The name</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_second_derivative">
+<span class="sig-name descname"><span class="pre">get_second_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_second_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Return the second derivative of the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>second_derivative</strong><span class="classifier">function</span></dt><dd><p>The second derivative of the function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_third_derivative">
+<span class="sig-name descname"><span class="pre">get_third_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_third_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Return the third derivative of the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>third_derivative</strong><span class="classifier">function</span></dt><dd><p>The third derivative of the function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ExponentialProblem.get_x">
+<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ExponentialProblem.get_x" title="Link to this definition">¶</a></dt>
+<dd><p>Return the input point of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The input point</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../user_manual.html">User manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.DerivativeBenchmarkProblem.html">numericalderivative.DerivativeBenchmarkProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.InverseProblem.html">numericalderivative.InverseProblem</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.ExponentialProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.LogarithmicProblem.html">numericalderivative.LogarithmicProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SquareRootProblem.html">numericalderivative.SquareRootProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.AtanProblem.html">numericalderivative.AtanProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SinProblem.html">numericalderivative.SinProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.ScaledExponentialProblem.html">numericalderivative.ScaledExponentialProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.GMSWExponentialProblem.html">numericalderivative.GMSWExponentialProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.BuildBenchmark.html">numericalderivative.BuildBenchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem1.html">numericalderivative.SXXNProblem1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem2.html">numericalderivative.SXXNProblem2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem3.html">numericalderivative.SXXNProblem3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem4.html">numericalderivative.SXXNProblem4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.OliverProblem1.html">numericalderivative.OliverProblem1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.OliverProblem2.html">numericalderivative.OliverProblem2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.OliverProblem3.html">numericalderivative.OliverProblem3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../user_manual.html">User manual</a><ul>
+      <li>Previous: <a href="numericalderivative.InverseProblem.html" title="previous chapter">numericalderivative.InverseProblem</a></li>
+      <li>Next: <a href="numericalderivative.LogarithmicProblem.html" title="next chapter">numericalderivative.LogarithmicProblem</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/user_manual/_generated/numericalderivative.ExponentialProblem.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

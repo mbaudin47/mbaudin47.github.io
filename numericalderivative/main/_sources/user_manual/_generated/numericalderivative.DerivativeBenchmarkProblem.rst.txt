@@ -1,0 +1,30 @@
+﻿numericalderivative.DerivativeBenchmarkProblem
+==============================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: DerivativeBenchmarkProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DerivativeBenchmarkProblem.__init__
+      ~DerivativeBenchmarkProblem.get_first_derivative
+      ~DerivativeBenchmarkProblem.get_fourth_derivative
+      ~DerivativeBenchmarkProblem.get_function
+      ~DerivativeBenchmarkProblem.get_interval
+      ~DerivativeBenchmarkProblem.get_name
+      ~DerivativeBenchmarkProblem.get_second_derivative
+      ~DerivativeBenchmarkProblem.get_third_derivative
+      ~DerivativeBenchmarkProblem.get_x
+   
+   
+
+   
+   
+   

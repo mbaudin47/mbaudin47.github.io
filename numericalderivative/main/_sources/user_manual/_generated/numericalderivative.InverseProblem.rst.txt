@@ -1,0 +1,30 @@
+﻿numericalderivative.InverseProblem
+==================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: InverseProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~InverseProblem.__init__
+      ~InverseProblem.get_first_derivative
+      ~InverseProblem.get_fourth_derivative
+      ~InverseProblem.get_function
+      ~InverseProblem.get_interval
+      ~InverseProblem.get_name
+      ~InverseProblem.get_second_derivative
+      ~InverseProblem.get_third_derivative
+      ~InverseProblem.get_x
+   
+   
+
+   
+   
+   

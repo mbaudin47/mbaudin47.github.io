@@ -30,7 +30,7 @@ References
   R. S. Stepleman and N. D. Winarsky
   Journal: Math. Comp. 33 (1979), 1257-1264 
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-23
+.. GENERATED FROM PYTHON SOURCE LINES 18-22
 
 .. code-block:: Python
 
@@ -45,16 +45,51 @@ References
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 23-24
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-25
+Consider this problem.
 
-1. Plot the error vs h
-
-.. GENERATED FROM PYTHON SOURCE LINES 25-36
+.. GENERATED FROM PYTHON SOURCE LINES 26-40
 
 .. code-block:: Python
 
-    benchmark = nd.ScaledExponentialDerivativeBenchmark()
+    benchmark = nd.ScaledExponentialProblem()
+    name = benchmark.get_name()
+    x = benchmark.get_x()
+    third_derivative = benchmark.get_third_derivative()
+    third_derivative_value = third_derivative(x)
+    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
+    optimum_step, absolute_error = (
+        optimal_step_formula.compute_step_first_derivative_central(third_derivative_value)
+    )
+    print(f"Name = {name}, x = {x}")
+    print(f"Optimal step for central finite difference formula = {optimum_step}")
+    print(f"Minimum absolute error= {absolute_error}")
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Name = scaled exp, x = 1.0
+    Optimal step for central finite difference formula = 6.694331732265233
+    Minimum absolute error= 2.2407016263779204e-17
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 41-42
+
+1. Plot the error vs h
+
+.. GENERATED FROM PYTHON SOURCE LINES 42-52
+
+.. code-block:: Python
+
     x = 1.0
     finite_difference = nd.FiniteDifferenceFormula(benchmark.function, x)
     number_of_points = 1000
@@ -72,36 +107,44 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-46
+.. GENERATED FROM PYTHON SOURCE LINES 53-64
 
 .. code-block:: Python
 
     pl.figure(figsize=(3.0, 2.0))
     pl.plot(h_array, error_array)
-    pl.title("Finite difference")
+    pl.plot([optimum_step] * 2, [min(error_array), max(error_array)], label=r"$h^*$")
+    pl.title("Central finite difference")
     pl.xlabel("h")
     pl.ylabel("Error")
     pl.xscale("log")
     pl.yscale("log")
+    pl.legend(bbox_to_anchor=(1, 1))
 
 
 
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_stepleman_winarsky_001.png
-   :alt: Finite difference
+   :alt: Central finite difference
    :srcset: /auto_example/images/sphx_glr_plot_stepleman_winarsky_001.png
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.legend.Legend object at 0x7f712b784550>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-48
+.. GENERATED FROM PYTHON SOURCE LINES 65-66
 
 2. Algorithm to detect h*
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-61
+.. GENERATED FROM PYTHON SOURCE LINES 66-79
 
 .. code-block:: Python
 
@@ -126,7 +169,7 @@ References
 
  .. code-block:: none
 
-    + search_step_using_motony()
+    + compute_step()
     initial_step=1.000e+08
     number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.3441e+35
     number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=1.4401e+03
@@ -151,7 +194,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-70
+.. GENERATED FROM PYTHON SOURCE LINES 80-88
 
 .. code-block:: Python
 
@@ -170,11 +213,11 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-72
+.. GENERATED FROM PYTHON SOURCE LINES 89-90
 
 3. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-79
+.. GENERATED FROM PYTHON SOURCE LINES 90-97
 
 .. code-block:: Python
 
@@ -192,7 +235,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-89
+.. GENERATED FROM PYTHON SOURCE LINES 98-107
 
 .. code-block:: Python
 
@@ -217,11 +260,11 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-91
+.. GENERATED FROM PYTHON SOURCE LINES 108-109
 
 3. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-104
+.. GENERATED FROM PYTHON SOURCE LINES 109-122
 
 .. code-block:: Python
 
@@ -245,7 +288,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-113
+.. GENERATED FROM PYTHON SOURCE LINES 123-131
 
 .. code-block:: Python
 
@@ -269,11 +312,11 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-115
+.. GENERATED FROM PYTHON SOURCE LINES 132-133
 
 4. Compute suggested step
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-120
+.. GENERATED FROM PYTHON SOURCE LINES 133-138
 
 .. code-block:: Python
 
@@ -295,11 +338,11 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-122
+.. GENERATED FROM PYTHON SOURCE LINES 139-140
 
 5. Plot number of lost digits vs h
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-140
+.. GENERATED FROM PYTHON SOURCE LINES 140-158
 
 .. code-block:: Python
 
@@ -310,9 +353,9 @@ References
     threshold = np.log10(p ** (-1.0 / 3.0) / beta)
     print("Threshold = ", threshold)
 
-    bracket_step = [1.0e-5, 1.0e7]
     step_zero, iterations = algorithm.search_step_with_bisection(
-        bracket_step,
+        1.0e-5,
+        1.0e7,
     )
     print("step_zero = ", step_zero)
     print("iterations = ", iterations)
@@ -341,7 +384,7 @@ References
       h is just right : stop !
     step_zero =  10.0
     iterations =  0
-    + search_step_using_motony()
+    + compute_step()
     initial_step=1.000e+01
     number_of_iterations=0, h=6.6667e+00, |FD(h_current) - FD(h_previous)|=2.4980e-17
     number_of_iterations=1, h=4.4444e+00, |FD(h_current) - FD(h_previous)|=4.1634e-18
@@ -353,7 +396,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-148
+.. GENERATED FROM PYTHON SOURCE LINES 159-166
 
 .. code-block:: Python
 
@@ -371,7 +414,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-168
+.. GENERATED FROM PYTHON SOURCE LINES 167-186
 
 .. code-block:: Python
 
@@ -406,7 +449,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-180
+.. GENERATED FROM PYTHON SOURCE LINES 187-198
 
 .. code-block:: Python
 
@@ -433,21 +476,21 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 181-183
+.. GENERATED FROM PYTHON SOURCE LINES 199-201
 
 6. Benchmark
 Test with single point
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-193
+.. GENERATED FROM PYTHON SOURCE LINES 201-211
 
 .. code-block:: Python
 
     x = 1.0
-    bracket_step = [1.0e-7, 1.0e7]
     f_prime_approx, number_of_iterations = algorithm.search_step_with_bisection(
-        bracket_step,
+        1.0e-7,
+        1.0e7,
     )
-    feval = algorithm.number_of_function_evaluations
+    feval = algorithm.get_number_of_function_evaluations()
     print("FD(x) = ", f_prime_approx)
     print("number_of_iterations = ", number_of_iterations)
     print("Func. eval = ", feval)
@@ -472,31 +515,32 @@ Test with single point
       h is just right : stop !
     FD(x) =  3162.2776601683795
     number_of_iterations =  1
-    Func. eval =  1009
+    Func. eval =  3067
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 194-195
+.. GENERATED FROM PYTHON SOURCE LINES 212-213
 
 Algorithme de dichotomie pour le pas initial
 
-.. GENERATED FROM PYTHON SOURCE LINES 195-212
+.. GENERATED FROM PYTHON SOURCE LINES 213-231
 
 .. code-block:: Python
 
-    bracket_step = [1.0e-7, 1.0e1]
     x = 1.0
     maximum_bisection = 53
     log_scale = False
     h0, iterations = algorithm.search_step_with_bisection(
-        bracket_step,
+        1.0e-7,
+        1.0e1,
         maximum_bisection=53,
         log_scale=False,
     )
     print("Pas initial = ", h0, ", iterations = ", iterations)
     h0, iterations = algorithm.search_step_with_bisection(
-        bracket_step,
+        1.0e-7,
+        1.0e1,
         maximum_bisection=53,
         log_scale=True,
     )
@@ -524,30 +568,31 @@ Algorithme de dichotomie pour le pas initial
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 213-214
+.. GENERATED FROM PYTHON SOURCE LINES 232-233
 
 Test
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-230
+.. GENERATED FROM PYTHON SOURCE LINES 233-250
 
 .. code-block:: Python
 
-    benchmark = nd.ExponentialDerivativeBenchmark()
-    bracket_step = [1.0e-6, 100.0 * x]
+    benchmark = nd.ExponentialProblem()
     x = 1.0
     algorithm = nd.SteplemanWinarsky(benchmark.function, x, verbose=True)
     f_prime_approx, estim_relative_error = algorithm.search_step_with_bisection(
-        bracket_step,
+        1.0e-6,
+        100.0 * x,
         beta=4.0,
     )
     absolute_error = abs(f_prime_approx - benchmark.first_derivative(x))
-    feval = algorithm.number_of_function_evaluations
+    feval = algorithm.get_number_of_function_evaluations()
     print(
         "x = %.3f, abs. error = %.3e, estim. rel. error = %.3e, Func. eval. = %d"
         % (x, absolute_error, estim_relative_error, number_of_function_evaluations)
     )
 
     #
+
 
 
 
@@ -571,7 +616,7 @@ Test
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.399 seconds)
+   **Total running time of the script:** (0 minutes 0.347 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_stepleman_winarsky.py:

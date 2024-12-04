@@ -1,0 +1,30 @@
+﻿numericalderivative.SinProblem
+==============================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: SinProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SinProblem.__init__
+      ~SinProblem.get_first_derivative
+      ~SinProblem.get_fourth_derivative
+      ~SinProblem.get_function
+      ~SinProblem.get_interval
+      ~SinProblem.get_name
+      ~SinProblem.get_second_derivative
+      ~SinProblem.get_third_derivative
+      ~SinProblem.get_x
+   
+   
+
+   
+   
+   

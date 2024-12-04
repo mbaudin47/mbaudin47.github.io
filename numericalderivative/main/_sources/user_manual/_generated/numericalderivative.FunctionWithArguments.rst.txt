@@ -1,0 +1,25 @@
+﻿numericalderivative.FunctionWithArguments
+=========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: FunctionWithArguments
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FunctionWithArguments.__init__
+      ~FunctionWithArguments.get_args
+      ~FunctionWithArguments.get_function
+      ~FunctionWithArguments.get_number_of_evaluations
+   
+   
+
+   
+   
+   

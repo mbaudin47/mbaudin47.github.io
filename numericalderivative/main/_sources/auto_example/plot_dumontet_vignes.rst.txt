@@ -42,18 +42,18 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-100
+.. GENERATED FROM PYTHON SOURCE LINES 21-101
 
 .. code-block:: Python
 
-    def compute_ell(function, x, k, precision):
-        algorithm = nd.DumontetVignes(function, x, relative_precision=precision)
+    def compute_ell(function, x, k, relative_precision):
+        algorithm = nd.DumontetVignes(function, x, relative_precision=relative_precision)
         ell = algorithm.compute_ell(k)
         return ell
 
 
-    def compute_f3_inf_sup(function, x, k, precision):
-        algorithm = nd.DumontetVignes(function, x, relative_precision=precision)
+    def compute_f3_inf_sup(function, x, k, relative_precision):
+        algorithm = nd.DumontetVignes(function, x, relative_precision=relative_precision)
         ell, f3inf, f3sup = algorithm.compute_ell(k)
         return f3inf, f3sup
 
@@ -66,7 +66,7 @@ References
         function_third_derivative,
         h_array,
         iteration_maximum=53,
-        precision=1.0e-15,
+        relative_precision=1.0e-15,
         kmin=None,
         kmax=None,
     ):
@@ -79,7 +79,7 @@ References
             error_array[i] = abs(f_prime_approx - function_derivative(x))
 
         # 2. Algorithm to detect h*
-        algorithm = nd.DumontetVignes(function, x, relative_precision=precision)
+        algorithm = nd.DumontetVignes(function, x, relative_precision=relative_precision)
         print("Exact f'''(x) = %.3e" % (function_third_derivative(x)))
         estim_step, number_of_iterations = algorithm.compute_step(
             iteration_maximum=iteration_maximum,
@@ -96,8 +96,9 @@ References
         absolute_error = abs(f_prime_approx - function_derivative(x))
         print("Exact abs. error  = %.3e" % (absolute_error))
         print("Exact rel. error  = %.3e" % (absolute_error / abs(function_derivative(x))))
-
-        fdstep = nd.FiniteDifferenceOptimalStep(precision)
+        # Compute exact step
+        absolute_precision = abs(function(x) * relative_precision)
+        fdstep = nd.FiniteDifferenceOptimalStep(absolute_precision)
         third_derivative_value = function_third_derivative(x)
         optimal_step, optimal_error = fdstep.compute_step_first_derivative_central(
             third_derivative_value
@@ -132,7 +133,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-151
+.. GENERATED FROM PYTHON SOURCE LINES 102-154
 
 .. code-block:: Python
 
@@ -142,7 +143,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=None,
         kmax=None,
         y_logscale=False,
@@ -162,7 +163,9 @@ References
         k_array = np.logspace(np.log10(kmin), np.log10(kmax), number_of_points)
         ell_array = np.zeros((number_of_points))
         for i in range(number_of_points):
-            ell_array[i], f3inf, f3sup = compute_ell(function, x, k_array[i], precision)
+            ell_array[i], f3inf, f3sup = compute_ell(
+                function, x, k_array[i], relative_precision
+            )
 
         pl.figure(figsize=(4.0, 3.0))
         pl.plot(k_array, ell_array)
@@ -177,7 +180,7 @@ References
                 pl.plot(k_array, [ell_3] * number_of_points, ":", label="$L_3$")
                 pl.plot(k_array, [ell_4] * number_of_points, "--", label="$L_4$")
             pl.legend()
-        pl.title("%s, x = %.3e, p = %.3e" % (name, x, precision))
+        pl.title("%s, x = %.3e, p = %.3e" % (name, x, relative_precision))
         pl.xlabel("k")
         pl.ylabel("L")
         pl.xscale("log")
@@ -193,19 +196,19 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-153
+.. GENERATED FROM PYTHON SOURCE LINES 155-156
 
 1. Exponential
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-174
+.. GENERATED FROM PYTHON SOURCE LINES 156-177
 
 .. code-block:: Python
 
 
     number_of_points = 1000
-    precision = 1.0e-15
+    relative_precision = 1.0e-15
     x = 1.0
-    function = nd.ExponentialDerivativeBenchmark().function
+    function = nd.ExponentialProblem().get_function()
     name = "exp"
     number_of_digits = 53
     kmin = 1.55e-5
@@ -216,7 +219,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         plot_L_constants=True,
@@ -240,13 +243,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-196
+.. GENERATED FROM PYTHON SOURCE LINES 178-199
 
 .. code-block:: Python
 
-    precision = 1.0e-10
+    relative_precision = 1.0e-10
     x = 1.0
-    function = nd.ExponentialDerivativeBenchmark().function
+    function = nd.ExponentialProblem().get_function()
     name = "exp"
     number_of_digits = 53
     kmin = 5.0e-5
@@ -257,7 +260,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         y_logscale=False,
@@ -284,13 +287,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 197-215
+.. GENERATED FROM PYTHON SOURCE LINES 200-218
 
 .. code-block:: Python
 
-    precision = 1.0e-14
+    relative_precision = 1.0e-14
     x = 1.0
-    function = nd.ExponentialDerivativeBenchmark().function
+    function = nd.ExponentialProblem().get_function()
     name = "exp"
     number_of_digits = 53
     kmin = 4.0e-5
@@ -301,7 +304,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
     )
@@ -318,13 +321,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-234
+.. GENERATED FROM PYTHON SOURCE LINES 219-237
 
 .. code-block:: Python
 
-    precision = 1.0e-16
+    relative_precision = 1.0e-16
     x = 4.0
-    function = nd.ExponentialDerivativeBenchmark().function
+    function = nd.ExponentialProblem().get_function()
     name = "exp"
     number_of_digits = 53
     kmin = 1.0e-5
@@ -335,7 +338,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
     )
@@ -352,13 +355,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 235-256
+.. GENERATED FROM PYTHON SOURCE LINES 238-259
 
 .. code-block:: Python
 
-    precision = 1.0e-14
+    relative_precision = 1.0e-14
     x = 4.0
-    function = nd.ExponentialDerivativeBenchmark().function
+    function = nd.ExponentialProblem().get_function()
     name = "exp"
     number_of_digits = 53
     kmin = 3.2e-5
@@ -369,7 +372,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         y_logscale=False,
@@ -396,14 +399,15 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 257-262
+.. GENERATED FROM PYTHON SOURCE LINES 260-266
 
 .. code-block:: Python
 
     x = 4.0
-    benchmark = nd.ExponentialDerivativeBenchmark()
-    precision = sys.float_info.epsilon * benchmark.function(x)
-    print("Precision = %.3e" % (precision))
+    benchmark = nd.ExponentialProblem()
+    function = benchmark.get_function()
+    absolute_precision = sys.float_info.epsilon * function(x)
+    print("absolute_precision = %.3e" % (absolute_precision))
 
 
 
@@ -413,21 +417,21 @@ References
 
  .. code-block:: none
 
-    Precision = 1.212e-14
+    absolute_precision = 1.212e-14
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 263-286
+.. GENERATED FROM PYTHON SOURCE LINES 267-290
 
 .. code-block:: Python
 
     x = 4.1
-    precision = sys.float_info.epsilon * benchmark.function(x)
+    function = benchmark.get_function()
+    relative_precision = sys.float_info.epsilon
     name = "exp"
-    function = benchmark.function
-    function_derivative = benchmark.first_derivative
-    function_third_derivative = benchmark.third_derivative
+    function_derivative = benchmark.get_first_derivative()
+    function_third_derivative = benchmark.get_third_derivative()
     number_of_points = 1000
     h_array = np.logspace(-15.0, 0.0, number_of_points)
     kmin = 1.0e-5
@@ -440,7 +444,7 @@ References
         function_third_derivative,
         h_array,
         iteration_maximum=20,
-        precision=1.0e-15,
+        relative_precision=1.0e-15,
         kmin=kmin,
         kmax=kmax,
     )
@@ -465,26 +469,26 @@ References
     Exact. derivative = 6.034e+01
     Exact abs. error  = 2.298e-09
     Exact rel. error  = 3.808e-11
-    Exact step     = 3.677e-06
+    Exact step     = 1.442e-05
     Estimated step = 1.453e-05
-    Optimal abs. error = 4.079e-10
-    Optimal rel. error = 6.761e-12
+    Optimal abs. error = 6.276e-09
+    Optimal rel. error = 1.040e-10
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 287-288
+.. GENERATED FROM PYTHON SOURCE LINES 291-292
 
 2. Scaled exponential
 
-.. GENERATED FROM PYTHON SOURCE LINES 288-308
+.. GENERATED FROM PYTHON SOURCE LINES 292-312
 
 .. code-block:: Python
 
 
     x = 1.0
-    precision = 1.0e-14
-    function = nd.ScaledExponentialDerivativeBenchmark().function
+    relative_precision = 1.0e-14
+    function = nd.ScaledExponentialProblem().get_function()
     name = "scaled exp"
     number_of_digits = 53
     kmin = 1.0e-1
@@ -495,7 +499,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         plot_L_constants=True,
@@ -519,13 +523,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 309-332
+.. GENERATED FROM PYTHON SOURCE LINES 313-336
 
 .. code-block:: Python
 
     x = 1.0
     name = "scaled exp"
-    benchmark = nd.ScaledExponentialDerivativeBenchmark()
+    benchmark = nd.ScaledExponentialProblem()
     function = benchmark.function
     function_derivative = benchmark.first_derivative
     function_third_derivative = benchmark.third_derivative
@@ -533,7 +537,7 @@ References
     h_array = np.logspace(-7.0, 6.0, number_of_points)
     kmin = 1.0e-2
     kmax = 1.0e2
-    precision = 1.0e-15
+    relative_precision = 1.0e-15
     perform(
         x,
         name,
@@ -541,7 +545,7 @@ References
         function_derivative,
         function_third_derivative,
         h_array,
-        precision=precision,
+        relative_precision=relative_precision,
         kmin=kmin,
         kmax=kmax,
     )
@@ -574,15 +578,15 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 334-357
+.. GENERATED FROM PYTHON SOURCE LINES 338-361
 
 .. code-block:: Python
 
     print("+ 3. Square root")
 
     x = 1.0
-    precision = 1.0e-14
-    function = nd.SquareRootDerivativeBenchmark().function
+    relative_precision = 1.0e-14
+    function = nd.SquareRootProblem().get_function()
     name = "square root"
     number_of_digits = 53
     kmin = 4.3e-5
@@ -593,7 +597,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         plot_L_constants=True,
@@ -621,7 +625,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 358-369
+.. GENERATED FROM PYTHON SOURCE LINES 362-373
 
 .. code-block:: Python
 
@@ -629,7 +633,7 @@ References
     k = 1.0e-3
     print("x = ", x)
     print("k = ", k)
-    benchmark = nd.SquareRootDerivativeBenchmark()
+    benchmark = nd.SquareRootProblem()
     finite_difference = nd.FiniteDifferenceFormula(benchmark.function, x)
     approx_f3d = finite_difference.compute_third_derivative(k)
     print("Approx. f''(x) = ", approx_f3d)
@@ -652,13 +656,13 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 370-376
+.. GENERATED FROM PYTHON SOURCE LINES 374-380
 
 .. code-block:: Python
 
-    precision = 1.0e-14
-    print("precision = ", precision)
-    f3inf, f3sup = compute_f3_inf_sup(benchmark.function, x, k, precision)
+    relative_precision = 1.0e-14
+    print("relative_precision = ", relative_precision)
+    f3inf, f3sup = compute_f3_inf_sup(benchmark.function, x, k, relative_precision)
     print("f3inf = ", f3inf)
     print("f3sup = ", f3sup)
 
@@ -670,14 +674,14 @@ References
 
  .. code-block:: none
 
-    precision =  1e-14
+    relative_precision =  1e-14
     f3inf =  0.37497116522899887
     f3sup =  0.3750306731831188
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 377-385
+.. GENERATED FROM PYTHON SOURCE LINES 381-389
 
 .. code-block:: Python
 
@@ -696,7 +700,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 386-395
+.. GENERATED FROM PYTHON SOURCE LINES 390-399
 
 .. code-block:: Python
 
@@ -721,17 +725,18 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 396-417
+.. GENERATED FROM PYTHON SOURCE LINES 400-422
 
 .. code-block:: Python
 
     number_of_points = 1000
-    precision = 1.0e-16
+    relative_precision = 1.0e-16
     k_array = np.logspace(-4.9, -4.0, number_of_points)
     f3_array = np.zeros((number_of_points, 3))
+    function = benchmark.get_function()
     for i in range(number_of_points):
-        f3inf, f3sup = compute_f3_inf_sup(benchmark.function, x, k_array[i], precision)
-        algorithm = nd.FiniteDifferenceFormula(benchmark.function, x)
+        f3inf, f3sup = compute_f3_inf_sup(function, x, k_array[i], relative_precision)
+        algorithm = nd.FiniteDifferenceFormula(function, x)
         f3_approx = algorithm.compute_third_derivative(k_array[i])
         f3_array[i] = [f3inf, f3_approx, f3sup]
 
@@ -760,17 +765,17 @@ References
  .. code-block:: none
 
 
-    <matplotlib.legend.Legend object at 0x7fac9e23f610>
+    <matplotlib.legend.Legend object at 0x7f711f1002d0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 418-438
+.. GENERATED FROM PYTHON SOURCE LINES 423-443
 
 .. code-block:: Python
 
     x = 1.0e-2
-    precision = 1.0e-14
-    function = benchmark.function
+    relative_precision = 1.0e-14
+    function = benchmark.get_function()
     name = "square root"
     number_of_digits = 53
     kmin = 4.4e-7
@@ -781,7 +786,7 @@ References
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         plot_L_constants=True,
@@ -807,21 +812,22 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 439-440
+.. GENERATED FROM PYTHON SOURCE LINES 444-445
 
 Search step
 
-.. GENERATED FROM PYTHON SOURCE LINES 440-463
+.. GENERATED FROM PYTHON SOURCE LINES 445-470
 
 .. code-block:: Python
 
     x = 1.0e-2
-    precision = 1.0e-14
+    relative_precision = 1.0e-14
     kmin = 1.0e-8
     kmax = 1.0e-3
     verbose = True
+    function = benchmark.get_function()
     algorithm = nd.DumontetVignes(
-        benchmark.function, x, relative_precision=precision, verbose=verbose
+        function, x, relative_precision=relative_precision, verbose=verbose
     )
     h_optimal, _ = algorithm.compute_step(kmax=kmax)
     print("h optimal = %.3e" % (h_optimal))
@@ -829,7 +835,8 @@ Search step
     print(f"number_of_feval = {number_of_feval}")
     f_prime_approx = algorithm.compute_first_derivative(h_optimal)
     feval = algorithm.get_number_of_function_evaluations()
-    absolute_error = abs(f_prime_approx - benchmark.first_derivative(x))
+    first_derivative = benchmark.get_first_derivative()
+    absolute_error = abs(f_prime_approx - first_derivative(x))
     print("Abs. error = %.3e" % (absolute_error))
 
     ell_kmin, f3inf, f3sup = algorithm.compute_ell(kmin)
@@ -894,14 +901,14 @@ Search step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 465-487
+.. GENERATED FROM PYTHON SOURCE LINES 472-494
 
 .. code-block:: Python
 
     print("+ 4. sin")
     x = 1.0
-    precision = 1.0e-14
-    benchmark = nd.SinDerivativeBenchmark()
+    relative_precision = 1.0e-14
+    benchmark = nd.SinProblem()
     function = benchmark.function
     name = "sin"
     number_of_digits = 53
@@ -913,7 +920,7 @@ Search step
         x,
         number_of_points,
         number_of_digits,
-        precision,
+        relative_precision,
         kmin=kmin,
         kmax=kmax,
         plot_L_constants=True,
@@ -939,7 +946,7 @@ Search step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 488-504
+.. GENERATED FROM PYTHON SOURCE LINES 495-511
 
 .. code-block:: Python
 
@@ -953,9 +960,9 @@ Search step
     exact_f3d = benchmark.third_derivative(x)
     print("Exact f''(x) = ", exact_f3d)
 
-    precision = 1.0e-14
-    print("precision = ", precision)
-    f3inf, f3sup = compute_f3_inf_sup(benchmark.function, x, k, precision)
+    relative_precision = 1.0e-14
+    print("relative_precision = ", relative_precision)
+    f3inf, f3sup = compute_f3_inf_sup(benchmark.function, x, k, relative_precision)
     print("f3inf = ", f3inf)
     print("f3sup = ", f3sup)
 
@@ -971,7 +978,7 @@ Search step
     k =  0.001
     Approx. f''(x) =  -0.5403020253424984
     Exact f''(x) =  -0.5403023058681398
-    precision =  1e-14
+    relative_precision =  1e-14
     f3inf =  -0.5403273384274598
     f3sup =  -0.5402767122575369
 
@@ -981,7 +988,7 @@ Search step
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.289 seconds)
+   **Total running time of the script:** (0 minutes 1.272 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_dumontet_vignes.py:

@@ -1,0 +1,30 @@
+﻿numericalderivative.ScaledExponentialProblem
+============================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: ScaledExponentialProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ScaledExponentialProblem.__init__
+      ~ScaledExponentialProblem.get_first_derivative
+      ~ScaledExponentialProblem.get_fourth_derivative
+      ~ScaledExponentialProblem.get_function
+      ~ScaledExponentialProblem.get_interval
+      ~ScaledExponentialProblem.get_name
+      ~ScaledExponentialProblem.get_second_derivative
+      ~ScaledExponentialProblem.get_third_derivative
+      ~ScaledExponentialProblem.get_x
+   
+   
+
+   
+   
+   
