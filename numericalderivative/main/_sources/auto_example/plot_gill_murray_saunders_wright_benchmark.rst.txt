@@ -45,7 +45,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-84
+.. GENERATED FROM PYTHON SOURCE LINES 24-86
 
 .. code-block:: Python
 
@@ -87,7 +87,9 @@ References
                 algorithm = nd.GillMurraySaundersWright(function, x, verbose=verbose)
                 step, _ = algorithm.compute_step(kmin, kmax)
                 f_prime_approx = algorithm.compute_first_derivative(step)
-                number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+                number_of_function_evaluations = (
+                    algorithm.get_number_of_function_evaluations()
+                )
                 absolute_error = abs(f_prime_approx - derivative_function(x))
                 relative_error = absolute_error / abs(derivative_function(x))
             except:
@@ -116,7 +118,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-96
+.. GENERATED FROM PYTHON SOURCE LINES 87-98
 
 .. code-block:: Python
 
@@ -1146,27 +1148,32 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-115
+.. GENERATED FROM PYTHON SOURCE LINES 99-100
+
+Map from the problem name to kmax
+
+.. GENERATED FROM PYTHON SOURCE LINES 102-121
 
 .. code-block:: Python
 
-    function_list = [
-        [nd.InverseProblem(), 1.e-1],
-        [nd.ExponentialProblem(), 1.e-1],
-        [nd.LogarithmicProblem(), 1.e-3],
-        [nd.SquareRootProblem(), 1.e-3],
-        [nd.AtanProblem(), 1.e-1],
-        [nd.SinProblem(), 1.e-1],
-        [nd.ScaledExponentialProblem(), 1.e-1],
-        [nd.GMSWExponentialProblem(), 1.e-1],
-        [nd.SXXNProblem1(), 1.e0],
-        [nd.SXXNProblem2(), 1.e0],  # Fails
-        [nd.SXXNProblem3(), 1.e0],
-        [nd.SXXNProblem4(), 1.e0],
-        [nd.OliverProblem1(), 1.e0],
-        [nd.OliverProblem2(), 1.e0],
-        [nd.OliverProblem3(), 1.e-3],
-    ]
+    kmax_map = {
+        "polynomial": 1.0,
+        "inverse": 1.0e0,
+        "exp": 1.0e-1,
+        "log": 1.0e-3,  # x > 0
+        "sqrt": 1.0e-3,  # x > 0
+        "atan": 1.0e0,
+        "sin": 1.0e0,
+        "scaled exp": 1.0e5,
+        "GMSW": 1.0e0,
+        "SXXN1": 1.0e0,
+        "SXXN2": 1.0e0,  # Fails
+        "SXXN3": 1.0e0,
+        "SXXN4": 1.0e0,
+        "Oliver1": 1.0e0,
+        "Oliver2": 1.0e0,
+        "Oliver3": 1.0e-3,
+    }
 
 
 
@@ -1175,25 +1182,27 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-117
+.. GENERATED FROM PYTHON SOURCE LINES 122-123
 
 Benchmark GillMurraySaundersWright
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-164
+.. GENERATED FROM PYTHON SOURCE LINES 123-172
 
 .. code-block:: Python
 
     number_of_test_points = 100
     data = []
+    function_list = nd.BuildBenchmark()
     number_of_functions = len(function_list)
     average_relative_error_list = []
     average_feval_list = []
     for i in range(number_of_functions):
-        problem, kmax = function_list[i]
+        problem = function_list[i]
         function = problem.get_function()
         first_derivative = problem.get_first_derivative()
-        kmin = 1.e-16 * kmax
         name = problem.get_name()
+        kmax = kmax_map[name]
+        kmin = 1.0e-16 * kmax
         interval = problem.get_interval()
         test_points = np.linspace(interval[0], interval[1], number_of_test_points)
         print(f"Function #{i}, {name}")
@@ -1238,21 +1247,22 @@ Benchmark GillMurraySaundersWright
 
  .. code-block:: none
 
-    Function #0, inverse
-    Function #1, exp
-    Function #2, log
-    Function #3, sqrt
-    Function #4, atan
-    Function #5, sin
-    Function #6, scaled exp
-    Function #7, GMSW
-    Function #8, SXXN1
-    Function #9, SXXN2
-    Function #10, SXXN3
-    Function #11, SXXN4
-    Function #12, Oliver1
-    Function #13, Oliver2
-    Function #14, Oliver3
+    Function #0, polynomial
+    Function #1, inverse
+    Function #2, exp
+    Function #3, log
+    Function #4, sqrt
+    Function #5, atan
+    Function #6, sin
+    Function #7, scaled exp
+    Function #8, GMSW
+    Function #9, SXXN1
+    Function #10, SXXN2
+    Function #11, SXXN3
+    Function #12, SXXN4
+    Function #13, Oliver1
+    Function #14, Oliver2
+    Function #15, Oliver3
 
 
 .. raw:: html
@@ -1260,25 +1270,26 @@ Benchmark GillMurraySaundersWright
     <div class="output_subarea output_html rendered_html output_result">
     <table>
     <thead>
-    <tr><th>Name      </th><th>kmin  </th><th>kmax  </th><th style="text-align: right;">  Average error</th><th style="text-align: right;">  Average func. eval</th></tr>
+    <tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
-    <tr><td>inverse   </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    1.45449e-08</td><td style="text-align: right;">             17.6   </td></tr>
-    <tr><td>exp       </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    1.00524e-08</td><td style="text-align: right;">             16     </td></tr>
-    <tr><td>log       </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    1.24012e-08</td><td style="text-align: right;">             17.18  </td></tr>
-    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    9.94109e-09</td><td style="text-align: right;">             17.12  </td></tr>
-    <tr><td>atan      </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    3.92191e-08</td><td style="text-align: right;">             16.12  </td></tr>
-    <tr><td>sin       </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>scaled exp</td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    9.93016e-09</td><td style="text-align: right;">             10     </td></tr>
-    <tr><td>GMSW      </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    3.3459e-07 </td><td style="text-align: right;">             17.26  </td></tr>
-    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    9.46657e-09</td><td style="text-align: right;">             16.86  </td></tr>
-    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    8.8805e-09 </td><td style="text-align: right;">             16.42  </td></tr>
-    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    9.71593e-09</td><td style="text-align: right;">             18     </td></tr>
-    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    1.21023e-07</td><td style="text-align: right;">             13.44  </td></tr>
-    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    1.00215e-08</td><td style="text-align: right;">             16.94  </td></tr>
-    <tr><td>Average   </td><td>-     </td><td>-     </td><td style="text-align: right;">    4.91489e-08</td><td style="text-align: right;">             16.0783</td></tr>
+    <tr><td>polynomial</td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    7.20687e-09</td><td style="text-align: right;">             16.24  </td></tr>
+    <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.45449e-08</td><td style="text-align: right;">             16.32  </td></tr>
+    <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">    1.00524e-08</td><td style="text-align: right;">             16     </td></tr>
+    <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.24012e-08</td><td style="text-align: right;">             17.18  </td></tr>
+    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    9.94109e-09</td><td style="text-align: right;">             17.12  </td></tr>
+    <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.92191e-08</td><td style="text-align: right;">             17.04  </td></tr>
+    <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+    <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">    9.93016e-09</td><td style="text-align: right;">             16     </td></tr>
+    <tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.3459e-07 </td><td style="text-align: right;">             17.26  </td></tr>
+    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.46657e-09</td><td style="text-align: right;">             16.86  </td></tr>
+    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    8.8805e-09 </td><td style="text-align: right;">             16.42  </td></tr>
+    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.71593e-09</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.21023e-07</td><td style="text-align: right;">             13.44  </td></tr>
+    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.00215e-08</td><td style="text-align: right;">             16.94  </td></tr>
+    <tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">    4.59226e-08</td><td style="text-align: right;">             16.5246</td></tr>
     </tbody>
     </table>
     </div>
@@ -1288,7 +1299,7 @@ Benchmark GillMurraySaundersWright
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.072 seconds)
+   **Total running time of the script:** (0 minutes 0.076 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright_benchmark.py:

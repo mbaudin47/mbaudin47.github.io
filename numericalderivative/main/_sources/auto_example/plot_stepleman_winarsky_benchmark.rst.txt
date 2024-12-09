@@ -115,7 +115,7 @@ References
 
 Test
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-122
+.. GENERATED FROM PYTHON SOURCE LINES 81-121
 
 .. code-block:: Python
 
@@ -126,10 +126,9 @@ Test
         x,
         verbose=True,
     )
-    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
     third_derivative_value = benchmark.third_derivative(x)
-    optimal_step, absolute_error = (
-        optimal_step_formula.compute_step_first_derivative_central(third_derivative_value)
+    optimal_step, absolute_error = nd.FirstDerivativeCentral.compute_step(
+        third_derivative_value
     )
     print("Exact h* = %.3e" % (optimal_step))
 
@@ -194,7 +193,7 @@ Test
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-184
+.. GENERATED FROM PYTHON SOURCE LINES 122-183
 
 .. code-block:: Python
 
@@ -266,7 +265,7 @@ Test
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 185-194
+.. GENERATED FROM PYTHON SOURCE LINES 184-193
 
 .. code-block:: Python
 
@@ -394,27 +393,32 @@ Test
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 195-213
+.. GENERATED FROM PYTHON SOURCE LINES 194-195
+
+Map from the problem name to the initial step
+
+.. GENERATED FROM PYTHON SOURCE LINES 197-216
 
 .. code-block:: Python
 
-    function_list = [
-        [nd.InverseProblem(), 1.0e0],
-        [nd.ExponentialProblem(), 1.0e-1],
-        [nd.LogarithmicProblem(), 1.0e-3],  # x > 0
-        [nd.SquareRootProblem(), 1.0e-3],  # x > 0
-        [nd.AtanProblem(), 1.0e0],
-        [nd.SinProblem(), 1.0e0],
-        [nd.ScaledExponentialProblem(), 1.0e5],
-        [nd.GMSWExponentialProblem(), 1.0e0],
-        [nd.SXXNProblem1(), 1.e0],
-        [nd.SXXNProblem2(), 1.e0],  # Fails
-        [nd.SXXNProblem3(), 1.e0],
-        [nd.SXXNProblem4(), 1.e0],
-        [nd.OliverProblem1(), 1.e0],
-        [nd.OliverProblem2(), 1.e0],
-        [nd.OliverProblem3(), 1.e-3],
-    ]
+    initial_step_map = {
+        "polynomial": 1.0,
+        "inverse": 1.0e0,
+        "exp": 1.0e-1,
+        "log": 1.0e-3,  # x > 0
+        "sqrt": 1.0e-3,  # x > 0
+        "atan": 1.0e0,
+        "sin": 1.0e0,
+        "scaled exp": 1.0e5,
+        "GMSW": 1.0e0,
+        "SXXN1": 1.0e0,
+        "SXXN2": 1.0e0,  # Fails
+        "SXXN3": 1.0e0,
+        "SXXN4": 1.0e0,
+        "Oliver1": 1.0e0,
+        "Oliver2": 1.0e0,
+        "Oliver3": 1.0e-3,
+    }
 
 
 
@@ -423,22 +427,24 @@ Test
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-215
+.. GENERATED FROM PYTHON SOURCE LINES 217-218
 
 Benchmark SteplemanWinarsky
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-250
+.. GENERATED FROM PYTHON SOURCE LINES 218-260
 
 .. code-block:: Python
 
     number_of_test_points = 100
     data = []
+    function_list = nd.BuildBenchmark()
     number_of_functions = len(function_list)
     average_relative_error_list = []
     average_feval_list = []
     for i in range(number_of_functions):
-        problem, initial_step = function_list[i]
+        problem = function_list[i]
         name = problem.get_name()
+        initial_step = initial_step_map[name]
         function = problem.get_function()
         first_derivative = problem.get_first_derivative()
         interval = problem.get_interval()
@@ -458,7 +464,12 @@ Benchmark SteplemanWinarsky
             )
         )
     data.append(
-        ["Average", "-", np.nanmean(average_relative_error_list), np.nanmean(average_feval_list)]
+        [
+            "Average",
+            "-",
+            np.nanmean(average_relative_error_list),
+            np.nanmean(average_feval_list),
+        ]
     )
     tabulate.tabulate(
         data,
@@ -474,23 +485,24 @@ Benchmark SteplemanWinarsky
 
  .. code-block:: none
 
-    Function #0, inverse
-    Function #1, exp
-    Function #2, log
-    Function #3, sqrt
-    Function #4, atan
-    Function #5, sin
-    Function #6, scaled exp
-    Function #7, GMSW
-    /home/runner/work/numericalderivative/numericalderivative/doc/examples/plot_stepleman_winarsky_benchmark.py:167: RuntimeWarning: invalid value encountered in scalar divide
+    Function #0, polynomial
+    Function #1, inverse
+    Function #2, exp
+    Function #3, log
+    Function #4, sqrt
+    Function #5, atan
+    Function #6, sin
+    Function #7, scaled exp
+    Function #8, GMSW
+    /home/runner/work/numericalderivative/numericalderivative/doc/examples/plot_stepleman_winarsky_benchmark.py:166: RuntimeWarning: invalid value encountered in scalar divide
       relative_error = absolute_error / abs(derivative_function(x))
-    Function #8, SXXN1
-    Function #9, SXXN2
-    Function #10, SXXN3
-    Function #11, SXXN4
-    Function #12, Oliver1
-    Function #13, Oliver2
-    Function #14, Oliver3
+    Function #9, SXXN1
+    Function #10, SXXN2
+    Function #11, SXXN3
+    Function #12, SXXN4
+    Function #13, Oliver1
+    Function #14, Oliver2
+    Function #15, Oliver3
 
 
 .. raw:: html
@@ -501,6 +513,7 @@ Benchmark SteplemanWinarsky
     <tr><th>Name      </th><th>h0      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
+    <tr><td>polynomial</td><td>1.0     </td><td style="text-align: right;">         2.7803e-16 </td><td style="text-align: right;">              7.28  </td></tr>
     <tr><td>inverse   </td><td>1.0     </td><td style="text-align: right;">         0.0238099  </td><td style="text-align: right;">             22.98  </td></tr>
     <tr><td>exp       </td><td>0.1     </td><td style="text-align: right;">         1.81258e-11</td><td style="text-align: right;">             22.34  </td></tr>
     <tr><td>log       </td><td>0.001   </td><td style="text-align: right;">         2.73807e-11</td><td style="text-align: right;">             13.24  </td></tr>
@@ -516,7 +529,7 @@ Benchmark SteplemanWinarsky
     <tr><td>Oliver1   </td><td>1.0     </td><td style="text-align: right;">         1.63577e-11</td><td style="text-align: right;">             27     </td></tr>
     <tr><td>Oliver2   </td><td>1.0     </td><td style="text-align: right;">         1.8908e-10 </td><td style="text-align: right;">             27.04  </td></tr>
     <tr><td>Oliver3   </td><td>0.001   </td><td style="text-align: right;">         1.04484e-11</td><td style="text-align: right;">             13.2   </td></tr>
-    <tr><td>Average   </td><td>-       </td><td style="text-align: right;">         0.00170071 </td><td style="text-align: right;">             22.4987</td></tr>
+    <tr><td>Average   </td><td>-       </td><td style="text-align: right;">         0.00158733 </td><td style="text-align: right;">             21.5475</td></tr>
     </tbody>
     </table>
     </div>
@@ -526,7 +539,7 @@ Benchmark SteplemanWinarsky
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.060 seconds)
+   **Total running time of the script:** (0 minutes 0.058 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_stepleman_winarsky_benchmark.py:

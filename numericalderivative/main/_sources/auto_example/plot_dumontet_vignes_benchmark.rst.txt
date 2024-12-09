@@ -44,7 +44,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-93
+.. GENERATED FROM PYTHON SOURCE LINES 22-95
 
 .. code-block:: Python
 
@@ -96,7 +96,9 @@ References
                 )
                 step, _ = algorithm.compute_step(kmin=kmin, kmax=kmax)
                 f_prime_approx = algorithm.compute_first_derivative(step)
-                number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+                number_of_function_evaluations = (
+                    algorithm.get_number_of_function_evaluations()
+                )
                 exact_first_derivative = derivative_function(x)
                 absolute_error = abs(f_prime_approx - exact_first_derivative)
                 relative_error = absolute_error / abs(exact_first_derivative)
@@ -126,7 +128,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-113
+.. GENERATED FROM PYTHON SOURCE LINES 96-115
 
 .. code-block:: Python
 
@@ -190,7 +192,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-131
+.. GENERATED FROM PYTHON SOURCE LINES 116-133
 
 .. code-block:: Python
 
@@ -6026,32 +6028,32 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-134
+.. GENERATED FROM PYTHON SOURCE LINES 134-135
 
-Define a collection of benchmark problems
-function_list = nd.BuildBenchmark()
+Map from the problem name to kmax
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-153
+.. GENERATED FROM PYTHON SOURCE LINES 137-157
 
 .. code-block:: Python
 
-    function_list = [
-        [nd.InverseProblem(), 1.0e0],
-        [nd.ExponentialProblem(), 1.0e-1],
-        [nd.LogarithmicProblem(), 1.0e-3],
-        [nd.SquareRootProblem(), 1.0e-3],
-        [nd.AtanProblem(), 1.0e0],
-        [nd.SinProblem(), 1.0e0],
-        [nd.ScaledExponentialProblem(), 1.0e5],
-        [nd.GMSWExponentialProblem(), 1.0e0],
-        [nd.SXXNProblem1(), 1.e0],
-        [nd.SXXNProblem2(), 1.e0],  # Fails
-        [nd.SXXNProblem3(), 1.e0],
-        [nd.SXXNProblem4(), 1.e0],
-        [nd.OliverProblem1(), 1.e0],
-        [nd.OliverProblem2(), 1.e0],
-        [nd.OliverProblem3(), 1.e-3],
-    ]
+    kmax_map = {
+        "polynomial": 1.0,
+        "inverse": 1.0e0,
+        "exp": 1.0e-1,
+        "log": 1.0e-3,  # x > 0
+        "sqrt": 1.0e-3,  # x > 0
+        "atan": 1.0e0,
+        "sin": 1.0e0,
+        "scaled exp": 1.0e5,
+        "GMSW": 1.0e0,
+        "SXXN1": 1.0e0,
+        "SXXN2": 1.0e0,  # Fails
+        "SXXN3": 1.0e0,
+        "SXXN4": 1.0e0,
+        "Oliver1": 1.0e0,
+        "Oliver2": 1.0e0,
+        "Oliver3": 1.0e-3,
+    }
 
 
 
@@ -6061,24 +6063,26 @@ function_list = nd.BuildBenchmark()
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 154-155
+.. GENERATED FROM PYTHON SOURCE LINES 158-159
 
 Benchmark DumontetVignes
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-205
+.. GENERATED FROM PYTHON SOURCE LINES 159-211
 
 .. code-block:: Python
 
     number_of_test_points = 100
     relative_precision = 1.0e-14
     data = []
+    function_list = nd.BuildBenchmark()
     number_of_functions = len(function_list)
     average_relative_error_list = []
     average_feval_list = []
     for i in range(number_of_functions):
-        problem, kmax = function_list[i]
-        kmin = 1.e-16 * kmax
-        name= problem.get_name()
+        problem = function_list[i]
+        name = problem.get_name()
+        kmax = kmax_map[name]
+        kmin = 1.0e-16 * kmax
         function = problem.get_function()
         first_derivative = problem.get_first_derivative()
         interval = problem.get_interval()
@@ -6127,21 +6131,22 @@ Benchmark DumontetVignes
 
  .. code-block:: none
 
-    Function #0, inverse
-    Function #1, exp
-    Function #2, log
-    Function #3, sqrt
-    Function #4, atan
-    Function #5, sin
-    Function #6, scaled exp
-    Function #7, GMSW
-    Function #8, SXXN1
-    Function #9, SXXN2
-    Function #10, SXXN3
-    Function #11, SXXN4
-    Function #12, Oliver1
-    Function #13, Oliver2
-    Function #14, Oliver3
+    Function #0, polynomial
+    Function #1, inverse
+    Function #2, exp
+    Function #3, log
+    Function #4, sqrt
+    Function #5, atan
+    Function #6, sin
+    Function #7, scaled exp
+    Function #8, GMSW
+    Function #9, SXXN1
+    Function #10, SXXN2
+    Function #11, SXXN3
+    Function #12, SXXN4
+    Function #13, Oliver1
+    Function #14, Oliver2
+    Function #15, Oliver3
 
 
 .. raw:: html
@@ -6152,10 +6157,11 @@ Benchmark DumontetVignes
     <tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
+    <tr><td>polynomial</td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">            nan     </td></tr>
     <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.92323e-10</td><td style="text-align: right;">             68.16  </td></tr>
     <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">         1.61537e-10</td><td style="text-align: right;">             63     </td></tr>
     <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.77694e-10</td><td style="text-align: right;">             25.4   </td></tr>
-    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.3205e-10 </td><td style="text-align: right;">             23.2   </td></tr>
+    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.32082e-10</td><td style="text-align: right;">             23.2   </td></tr>
     <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.14667e-09</td><td style="text-align: right;">             63.88  </td></tr>
     <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.72551e-10</td><td style="text-align: right;">             73.96  </td></tr>
     <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">         1.6088e-10 </td><td style="text-align: right;">             63     </td></tr>
@@ -6177,7 +6183,7 @@ Benchmark DumontetVignes
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.272 seconds)
+   **Total running time of the script:** (0 minutes 0.266 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_dumontet_vignes_benchmark.py:

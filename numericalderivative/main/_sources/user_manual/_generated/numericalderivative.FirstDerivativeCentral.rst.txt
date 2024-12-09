@@ -1,0 +1,27 @@
+﻿numericalderivative.FirstDerivativeCentral
+==========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: FirstDerivativeCentral
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FirstDerivativeCentral.__init__
+      ~FirstDerivativeCentral.compute
+      ~FirstDerivativeCentral.compute_error
+      ~FirstDerivativeCentral.compute_step
+      ~FirstDerivativeCentral.get_function
+      ~FirstDerivativeCentral.get_x
+   
+   
+
+   
+   
+   

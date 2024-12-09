@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~SXXNProblem1.__init__
+      ~SXXNProblem1.get_fifth_derivative
       ~SXXNProblem1.get_first_derivative
       ~SXXNProblem1.get_fourth_derivative
       ~SXXNProblem1.get_function

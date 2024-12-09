@@ -14,11 +14,8 @@
    .. autosummary::
    
       ~FiniteDifferenceFormula.__init__
-      ~FiniteDifferenceFormula.compute_first_derivative_central
-      ~FiniteDifferenceFormula.compute_first_derivative_forward
-      ~FiniteDifferenceFormula.compute_second_derivative_central
-      ~FiniteDifferenceFormula.compute_third_derivative
-      ~FiniteDifferenceFormula.get_number_of_function_evaluations
+      ~FiniteDifferenceFormula.get_function
+      ~FiniteDifferenceFormula.get_x
    
    
 

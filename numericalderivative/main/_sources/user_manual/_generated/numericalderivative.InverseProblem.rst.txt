@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~InverseProblem.__init__
+      ~InverseProblem.get_fifth_derivative
       ~InverseProblem.get_first_derivative
       ~InverseProblem.get_fourth_derivative
       ~InverseProblem.get_function

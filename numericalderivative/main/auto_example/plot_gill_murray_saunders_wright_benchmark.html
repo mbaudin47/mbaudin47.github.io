@@ -96,7 +96,9 @@ formula.</p>
             <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
             <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
             <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-            <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+            <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+            <span class="p">)</span>
             <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">derivative_function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
             <span class="n">relative_error</span> <span class="o">=</span> <span class="n">absolute_error</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">derivative_function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="k">except</span><span class="p">:</span>
@@ -1134,37 +1136,41 @@ Average error = 9.75463767456613e-09
 Average number of function evaluations = 16.0
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">function_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">InverseProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">LogarithmicProblem</span><span class="p">(),</span> <span class="mf">1.e-3</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SquareRootProblem</span><span class="p">(),</span> <span class="mf">1.e-3</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">AtanProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SinProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">GMSWExponentialProblem</span><span class="p">(),</span> <span class="mf">1.e-1</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>  <span class="c1"># Fails</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem3</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">SXXNProblem4</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem1</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem2</span><span class="p">(),</span> <span class="mf">1.e0</span><span class="p">],</span>
-    <span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">OliverProblem3</span><span class="p">(),</span> <span class="mf">1.e-3</span><span class="p">],</span>
-<span class="p">]</span>
+<p>Map from the problem name to kmax</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">kmax_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;polynomial&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="mf">1.0e-1</span><span class="p">,</span>
+    <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>  <span class="c1"># x &gt; 0</span>
+    <span class="s2">&quot;sqrt&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>  <span class="c1"># x &gt; 0</span>
+    <span class="s2">&quot;atan&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;sin&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;scaled exp&quot;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+    <span class="s2">&quot;GMSW&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>  <span class="c1"># Fails</span>
+    <span class="s2">&quot;SXXN3&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN4&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver3&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Benchmark GillMurraySaundersWright</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">function_list</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BuildBenchmark</span><span class="p">()</span>
 <span class="n">number_of_functions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span>
 <span class="n">average_relative_error_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">average_feval_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_functions</span><span class="p">):</span>
-    <span class="n">problem</span><span class="p">,</span> <span class="n">kmax</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
     <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
-    <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.e-16</span> <span class="o">*</span> <span class="n">kmax</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+    <span class="n">kmax</span> <span class="o">=</span> <span class="n">kmax_map</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-16</span> <span class="o">*</span> <span class="n">kmax</span>
     <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
     <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1202,50 +1208,52 @@ Average number of function evaluations = 16.0
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Function #0, inverse
-Function #1, exp
-Function #2, log
-Function #3, sqrt
-Function #4, atan
-Function #5, sin
-Function #6, scaled exp
-Function #7, GMSW
-Function #8, SXXN1
-Function #9, SXXN2
-Function #10, SXXN3
-Function #11, SXXN4
-Function #12, Oliver1
-Function #13, Oliver2
-Function #14, Oliver3
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Function #0, polynomial
+Function #1, inverse
+Function #2, exp
+Function #3, log
+Function #4, sqrt
+Function #5, atan
+Function #6, sin
+Function #7, scaled exp
+Function #8, GMSW
+Function #9, SXXN1
+Function #10, SXXN2
+Function #11, SXXN3
+Function #12, SXXN4
+Function #13, Oliver1
+Function #14, Oliver2
+Function #15, Oliver3
 </pre></div>
 </div>
 <div class="output_subarea output_html rendered_html output_result">
 <table>
 <thead>
-<tr><th>Name      </th><th>kmin  </th><th>kmax  </th><th style="text-align: right;">  Average error</th><th style="text-align: right;">  Average func. eval</th></tr>
+<tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average error</th><th style="text-align: right;">  Average func. eval</th></tr>
 </thead>
 <tbody>
-<tr><td>inverse   </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    1.45449e-08</td><td style="text-align: right;">             17.6   </td></tr>
-<tr><td>exp       </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    1.00524e-08</td><td style="text-align: right;">             16     </td></tr>
-<tr><td>log       </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    1.24012e-08</td><td style="text-align: right;">             17.18  </td></tr>
-<tr><td>sqrt      </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    9.94109e-09</td><td style="text-align: right;">             17.12  </td></tr>
-<tr><td>atan      </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    3.92191e-08</td><td style="text-align: right;">             16.12  </td></tr>
-<tr><td>sin       </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-<tr><td>scaled exp</td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">    9.93016e-09</td><td style="text-align: right;">             10     </td></tr>
-<tr><td>GMSW      </td><td>1e-17 </td><td>0.1   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-<tr><td>SXXN1     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    3.3459e-07 </td><td style="text-align: right;">             17.26  </td></tr>
-<tr><td>SXXN2     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-<tr><td>SXXN3     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    9.46657e-09</td><td style="text-align: right;">             16.86  </td></tr>
-<tr><td>SXXN4     </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    8.8805e-09 </td><td style="text-align: right;">             16.42  </td></tr>
-<tr><td>Oliver1   </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    9.71593e-09</td><td style="text-align: right;">             18     </td></tr>
-<tr><td>Oliver2   </td><td>1e-16 </td><td>1.0   </td><td style="text-align: right;">    1.21023e-07</td><td style="text-align: right;">             13.44  </td></tr>
-<tr><td>Oliver3   </td><td>1e-19 </td><td>0.001 </td><td style="text-align: right;">    1.00215e-08</td><td style="text-align: right;">             16.94  </td></tr>
-<tr><td>Average   </td><td>-     </td><td>-     </td><td style="text-align: right;">    4.91489e-08</td><td style="text-align: right;">             16.0783</td></tr>
+<tr><td>polynomial</td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    7.20687e-09</td><td style="text-align: right;">             16.24  </td></tr>
+<tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.45449e-08</td><td style="text-align: right;">             16.32  </td></tr>
+<tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">    1.00524e-08</td><td style="text-align: right;">             16     </td></tr>
+<tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.24012e-08</td><td style="text-align: right;">             17.18  </td></tr>
+<tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    9.94109e-09</td><td style="text-align: right;">             17.12  </td></tr>
+<tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.92191e-08</td><td style="text-align: right;">             17.04  </td></tr>
+<tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+<tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">    9.93016e-09</td><td style="text-align: right;">             16     </td></tr>
+<tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+<tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.3459e-07 </td><td style="text-align: right;">             17.26  </td></tr>
+<tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
+<tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.46657e-09</td><td style="text-align: right;">             16.86  </td></tr>
+<tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    8.8805e-09 </td><td style="text-align: right;">             16.42  </td></tr>
+<tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.71593e-09</td><td style="text-align: right;">             18     </td></tr>
+<tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.21023e-07</td><td style="text-align: right;">             13.44  </td></tr>
+<tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.00215e-08</td><td style="text-align: right;">             16.94  </td></tr>
+<tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">    4.59226e-08</td><td style="text-align: right;">             16.5246</td></tr>
 </tbody>
 </table>
 </div>
 <br />
-<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.072 seconds)</p>
+<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.076 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-gill-murray-saunders-wright-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/429b76c1b8dff6c25a13057506f2adfd/plot_gill_murray_saunders_wright_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_gill_murray_saunders_wright_benchmark.ipynb</span></code></a></p>
@@ -1290,15 +1298,7 @@ Function #14, Oliver3
 <li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
 </ul>
 
 <div class="relations">

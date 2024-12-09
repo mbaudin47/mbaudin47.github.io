@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:03.924** total execution time for 10 files **from all galleries**:
+**00:07.404** total execution time for 12 files **from all galleries**:
 
 .. container::
 
@@ -33,31 +33,37 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py` (``examples/plot_dumontet_vignes.py``)
-     - 00:01.272
-     - 0.0
-   * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``examples/plot_stepleman_winarsky_plots.py``)
-     - 00:00.762
+     - 00:02.176
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py` (``examples/plot_gill_murray_saunders_wright.py``)
-     - 00:00.511
+     - 00:01.451
      - 0.0
-   * - :ref:`sphx_glr_auto_example_plot_use_benchmark.py` (``examples/plot_use_benchmark.py``)
-     - 00:00.381
+   * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``examples/plot_stepleman_winarsky_plots.py``)
+     - 00:00.914
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py` (``examples/plot_stepleman_winarsky.py``)
-     - 00:00.347
+     - 00:00.842
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_finite_differences.py` (``examples/plot_finite_differences.py``)
+     - 00:00.593
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_use_benchmark.py` (``examples/plot_use_benchmark.py``)
+     - 00:00.402
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_general_fd.py` (``examples/plot_general_fd.py``)
+     - 00:00.382
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py` (``examples/plot_dumontet_vignes_benchmark.py``)
-     - 00:00.272
+     - 00:00.266
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``examples/plot_openturns.py``)
-     - 00:00.244
+     - 00:00.241
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py` (``examples/plot_gill_murray_saunders_wright_benchmark.py``)
-     - 00:00.072
+     - 00:00.076
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py` (``examples/plot_stepleman_winarsky_benchmark.py``)
-     - 00:00.060
+     - 00:00.058
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_numericalderivative.py` (``examples/plot_numericalderivative.py``)
      - 00:00.003

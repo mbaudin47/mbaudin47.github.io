@@ -104,7 +104,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-100
+.. GENERATED FROM PYTHON SOURCE LINES 73-99
 
 .. code-block:: Python
 
@@ -113,10 +113,9 @@ References
     kmax = 1.0e1
     x = 1.0
     benchmark = nd.ExponentialProblem()
-    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
     second_derivative_value = benchmark.second_derivative(x)
-    optimal_step, absolute_error = (
-        optimal_step_formula.compute_step_first_derivative_forward(second_derivative_value)
+    optimal_step, absolute_error = nd.FirstDerivativeForward.compute_step(
+        second_derivative_value
     )
     print("Exact h* = %.3e" % (optimal_step))
     (
@@ -158,7 +157,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-129
+.. GENERATED FROM PYTHON SOURCE LINES 100-127
 
 .. code-block:: Python
 
@@ -167,10 +166,9 @@ References
     kmax = 1.0e8
     x = 1.0
     benchmark = nd.ScaledExponentialProblem()
-    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
     second_derivative_value = benchmark.second_derivative(x)
-    optimal_step, absolute_error = (
-        optimal_step_formula.compute_step_first_derivative_forward(second_derivative_value)
+    optimal_step, absolute_error = nd.FirstDerivativeForward.compute_step(
+        second_derivative_value
     )
     print("Exact h* = %.3e" % (optimal_step))
     (
@@ -207,13 +205,13 @@ References
     Computed step = 2.001e-02
     Number of iterations = 0
     f_prime_approx = -9.999989916566017e-07
-    f_prime_exact = -9.999990000005e-07
+    f_prime_exact = -9.999990000004999e-07
     x = 1.000, error = 8.344e-15, Func. eval. = 12
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-190
+.. GENERATED FROM PYTHON SOURCE LINES 128-188
 
 .. code-block:: Python
 
@@ -284,7 +282,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 191-206
+.. GENERATED FROM PYTHON SOURCE LINES 189-204
 
 .. code-block:: Python
 
@@ -1218,7 +1216,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 207-244
+.. GENERATED FROM PYTHON SOURCE LINES 205-243
 
 .. code-block:: Python
 
@@ -1242,7 +1240,7 @@ References
         minimum_error = np.nanmin(error_array)
         maximum_error = np.nanmax(error_array)
 
-        pl.figure(figsize=(3.0, 2.0))
+        pl.figure()
         pl.plot(h_array, error_array)
         pl.plot(
             [step] * 2,
@@ -1256,6 +1254,7 @@ References
         pl.xscale("log")
         pl.yscale("log")
         pl.legend(bbox_to_anchor=(1.0, 1.0))
+        pl.tight_layout()
         return
 
 
@@ -1266,7 +1265,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 245-258
+.. GENERATED FROM PYTHON SOURCE LINES 244-257
 
 .. code-block:: Python
 
@@ -1290,7 +1289,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 259-267
+.. GENERATED FROM PYTHON SOURCE LINES 258-266
 
 .. code-block:: Python
 
@@ -1321,7 +1320,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 268-272
+.. GENERATED FROM PYTHON SOURCE LINES 267-271
 
 .. code-block:: Python
 
@@ -1341,7 +1340,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 273-280
+.. GENERATED FROM PYTHON SOURCE LINES 272-279
 
 .. code-block:: Python
 
@@ -1364,7 +1363,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 281-288
+.. GENERATED FROM PYTHON SOURCE LINES 280-287
 
 .. code-block:: Python
 
@@ -1394,7 +1393,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 289-296
+.. GENERATED FROM PYTHON SOURCE LINES 288-295
 
 .. code-block:: Python
 
@@ -1417,7 +1416,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 297-304
+.. GENERATED FROM PYTHON SOURCE LINES 296-303
 
 .. code-block:: Python
 
@@ -1447,7 +1446,7 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 305-312
+.. GENERATED FROM PYTHON SOURCE LINES 304-311
 
 .. code-block:: Python
 
@@ -1473,7 +1472,7 @@ References
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.511 seconds)
+   **Total running time of the script:** (0 minutes 1.451 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright.py:

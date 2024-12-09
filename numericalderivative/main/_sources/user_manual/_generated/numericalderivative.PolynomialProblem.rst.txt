@@ -1,0 +1,31 @@
+﻿numericalderivative.PolynomialProblem
+=====================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: PolynomialProblem
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PolynomialProblem.__init__
+      ~PolynomialProblem.get_fifth_derivative
+      ~PolynomialProblem.get_first_derivative
+      ~PolynomialProblem.get_fourth_derivative
+      ~PolynomialProblem.get_function
+      ~PolynomialProblem.get_interval
+      ~PolynomialProblem.get_name
+      ~PolynomialProblem.get_second_derivative
+      ~PolynomialProblem.get_third_derivative
+      ~PolynomialProblem.get_x
+   
+   
+
+   
+   
+   

@@ -49,7 +49,7 @@ References
 
 Consider this problem.
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-40
+.. GENERATED FROM PYTHON SOURCE LINES 26-39
 
 .. code-block:: Python
 
@@ -58,9 +58,8 @@ Consider this problem.
     x = benchmark.get_x()
     third_derivative = benchmark.get_third_derivative()
     third_derivative_value = third_derivative(x)
-    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
-    optimum_step, absolute_error = (
-        optimal_step_formula.compute_step_first_derivative_central(third_derivative_value)
+    optimum_step, absolute_error = nd.FirstDerivativeCentral.compute_step(
+        third_derivative_value
     )
     print(f"Name = {name}, x = {x}")
     print(f"Optimal step for central finite difference formula = {optimum_step}")
@@ -82,22 +81,22 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-42
+.. GENERATED FROM PYTHON SOURCE LINES 40-41
 
 1. Plot the error vs h
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-52
+.. GENERATED FROM PYTHON SOURCE LINES 41-51
 
 .. code-block:: Python
 
     x = 1.0
-    finite_difference = nd.FiniteDifferenceFormula(benchmark.function, x)
+    finite_difference = nd.FirstDerivativeCentral(benchmark.function, x)
     number_of_points = 1000
     h_array = np.logspace(-7.0, 5.0, number_of_points)
     error_array = np.zeros((number_of_points))
     for i in range(number_of_points):
         h = h_array[i]
-        f_prime_approx = finite_difference.compute_first_derivative_central(h)
+        f_prime_approx = finite_difference.compute(h)
         error_array[i] = abs(f_prime_approx - benchmark.first_derivative(x))
 
 
@@ -107,11 +106,11 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-64
+.. GENERATED FROM PYTHON SOURCE LINES 52-64
 
 .. code-block:: Python
 
-    pl.figure(figsize=(3.0, 2.0))
+    pl.figure()
     pl.plot(h_array, error_array)
     pl.plot([optimum_step] * 2, [min(error_array), max(error_array)], label=r"$h^*$")
     pl.title("Central finite difference")
@@ -120,6 +119,7 @@ Consider this problem.
     pl.xscale("log")
     pl.yscale("log")
     pl.legend(bbox_to_anchor=(1, 1))
+    pl.tight_layout()
 
 
 
@@ -131,12 +131,6 @@ Consider this problem.
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    <matplotlib.legend.Legend object at 0x7f712b784550>
 
 
 
@@ -189,7 +183,7 @@ Consider this problem.
     Optimum h = 1.4901161193847656
     iterations = 13
     Function evaluations = 30
-    Error =  1.9825017888723713e-17
+    Error =  1.9825229646960527e-17
 
 
 
@@ -199,9 +193,9 @@ Consider this problem.
 .. code-block:: Python
 
     def fd_difference(h1, h2, f, x):
-        finite_difference = nd.FiniteDifferenceFormula(f, x)
-        f_prime_approx_1 = finite_difference.compute_first_derivative_central(h1)
-        f_prime_approx_2 = finite_difference.compute_first_derivative_central(h2)
+        finite_difference = nd.FirstDerivativeCentral(f, x)
+        f_prime_approx_1 = finite_difference.compute(h1)
+        f_prime_approx_2 = finite_difference.compute(h2)
         diff_current = abs(f_prime_approx_1 - f_prime_approx_2)
         return diff_current
 
@@ -235,17 +229,18 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-107
+.. GENERATED FROM PYTHON SOURCE LINES 98-108
 
 .. code-block:: Python
 
-    pl.figure(figsize=(3.0, 2.0))
+    pl.figure()
     pl.plot(h_array, diff_array)
     pl.title("F.D. difference")
     pl.xlabel("h")
     pl.ylabel(r"$|\operatorname{FD}(h) - \operatorname{FD}(h / 2) |$")
     pl.xscale("log")
     pl.yscale("log")
+    pl.tight_layout()
 
 
 
@@ -260,11 +255,11 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-109
+.. GENERATED FROM PYTHON SOURCE LINES 109-110
 
-3. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
+4. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-122
+.. GENERATED FROM PYTHON SOURCE LINES 110-123
 
 .. code-block:: Python
 
@@ -288,17 +283,18 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-131
+.. GENERATED FROM PYTHON SOURCE LINES 124-133
 
 .. code-block:: Python
 
-    pl.figure(figsize=(3.0, 2.0))
+    pl.figure()
     pl.plot(h_array, diff_array, "o")
     pl.title("F.D. difference")
     pl.xlabel("h")
     pl.ylabel(r"$|\operatorname{FD}(h) - \operatorname{FD}(h / 2) |$")
     pl.xscale("log")
     pl.yscale("log")
+    pl.tight_layout()
 
 
 
@@ -312,11 +308,11 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-133
+.. GENERATED FROM PYTHON SOURCE LINES 134-135
 
-4. Compute suggested step
+5. Compute suggested step
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-138
+.. GENERATED FROM PYTHON SOURCE LINES 135-140
 
 .. code-block:: Python
 
@@ -338,11 +334,11 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-140
+.. GENERATED FROM PYTHON SOURCE LINES 141-142
 
-5. Plot number of lost digits vs h
+6. Plot number of lost digits vs h
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-158
+.. GENERATED FROM PYTHON SOURCE LINES 142-160
 
 .. code-block:: Python
 
@@ -396,7 +392,7 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-166
+.. GENERATED FROM PYTHON SOURCE LINES 161-168
 
 .. code-block:: Python
 
@@ -414,12 +410,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-186
+.. GENERATED FROM PYTHON SOURCE LINES 169-189
 
 .. code-block:: Python
 
     y_max = algorithm.number_of_lost_digits(h_reference)
-    pl.figure(figsize=(3.0, 2.0))
+    pl.figure()
     pl.plot(h_array, n_digits_array, label="$N(h)$")
     pl.plot([h_reference] * 2, [0.0, y_max], "--", label=r"$h_{ref}$")
     pl.plot([step_zero] * 2, [0.0, y_max], "--", label=r"$h^{(0)}$")
@@ -434,7 +430,8 @@ Consider this problem.
     pl.xlabel("h")
     pl.ylabel("$N(h)$")
     pl.xscale("log")
-    _ = pl.legend(bbox_to_anchor=(1.1, 1.0))
+    _ = pl.legend(bbox_to_anchor=(1.0, 1.0))
+    pl.tight_layout()
 
 
 
@@ -449,11 +446,11 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-198
+.. GENERATED FROM PYTHON SOURCE LINES 190-202
 
 .. code-block:: Python
 
-    pl.figure(figsize=(3.0, 2.0))
+    pl.figure()
     pl.plot(h_array, error_array)
     pl.plot([step_zero] * 2, [0.0, 1.0e-9], "--", label=r"$h^{(0)}$")
     pl.plot([estim_step] * 2, [0.0, 1.0e-9], "--", label=r"$h^\star$")
@@ -461,8 +458,9 @@ Consider this problem.
     pl.xlabel("h")
     pl.ylabel("Error")
     pl.xscale("log")
-    pl.legend(bbox_to_anchor=(1.1, 1.0))
+    pl.legend(bbox_to_anchor=(1.0, 1.0))
     pl.yscale("log")
+    pl.tight_layout()
 
 
 
@@ -476,12 +474,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-201
+.. GENERATED FROM PYTHON SOURCE LINES 203-205
 
-6. Benchmark
+7. Benchmark
 Test with single point
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-211
+.. GENERATED FROM PYTHON SOURCE LINES 205-215
 
 .. code-block:: Python
 
@@ -520,11 +518,11 @@ Test with single point
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 212-213
+.. GENERATED FROM PYTHON SOURCE LINES 216-217
 
 Algorithme de dichotomie pour le pas initial
 
-.. GENERATED FROM PYTHON SOURCE LINES 213-231
+.. GENERATED FROM PYTHON SOURCE LINES 217-235
 
 .. code-block:: Python
 
@@ -568,11 +566,11 @@ Algorithme de dichotomie pour le pas initial
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 232-233
+.. GENERATED FROM PYTHON SOURCE LINES 236-237
 
 Test
 
-.. GENERATED FROM PYTHON SOURCE LINES 233-250
+.. GENERATED FROM PYTHON SOURCE LINES 237-254
 
 .. code-block:: Python
 
@@ -616,7 +614,7 @@ Test
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.347 seconds)
+   **Total running time of the script:** (0 minutes 0.842 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_stepleman_winarsky.py:

@@ -48,10 +48,10 @@
 <p>The function is:</p>
 <div class="math notranslate nohighlight">
 \[f(x) = \exp(-x / \alpha)\]</div>
-<p>for any x where <span class="math notranslate nohighlight">\(\alpha\)</span> is a parameter.
+<p>for any <span class="math notranslate nohighlight">\(x\)</span> where <span class="math notranslate nohighlight">\(\alpha\)</span> is a parameter.
 The test point is <span class="math notranslate nohighlight">\(x = 1\)</span>.</p>
-<p>This problem is interesting because the optimal step for the central 
-finite difference formula of the first derivative is 6.694, which 
+<p>This problem is interesting because the optimal step for the central
+finite difference formula of the first derivative is 6.694, which
 is much larger than we may expect.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -64,42 +64,8 @@ is much larger than we may expect.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_first_derivative" title="numericalderivative.ScaledExponentialProblem.get_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_first_derivative</span></code></a>()</p></td>
-<td><p>Return the first derivative of the function of the problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_fourth_derivative" title="numericalderivative.ScaledExponentialProblem.get_fourth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fourth_derivative</span></code></a>()</p></td>
-<td><p>Return the fourth derivative of the function of the problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_function" title="numericalderivative.ScaledExponentialProblem.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
-<td><p>Return the function of the problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_interval" title="numericalderivative.ScaledExponentialProblem.get_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interval</span></code></a>()</p></td>
-<td><p>Return the interval of the problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_name" title="numericalderivative.ScaledExponentialProblem.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</p></td>
-<td><p>Return the name of the problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_second_derivative" title="numericalderivative.ScaledExponentialProblem.get_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_second_derivative</span></code></a>()</p></td>
-<td><p>Return the second derivative of the function of the problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_third_derivative" title="numericalderivative.ScaledExponentialProblem.get_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_third_derivative</span></code></a>()</p></td>
-<td><p>Return the third derivative of the function of the problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_x" title="numericalderivative.ScaledExponentialProblem.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
-<td><p>Return the input point of the problem</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py method">
-<dt class="sig sig-object py" id="numericalderivative.ScaledExponentialProblem.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ScaledExponentialProblem.__init__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.__init__" title="numericalderivative.ScaledExponentialProblem.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([alpha])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_fifth_derivative" title="numericalderivative.ScaledExponentialProblem.get_fifth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fifth_derivative</span></code></a>()</p></td>
+<td><p>Return the fifth derivative of the function of the problem</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_first_derivative" title="numericalderivative.ScaledExponentialProblem.get_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_first_derivative</span></code></a>()</p></td>
 <td><p>Return the first derivative of the function of the problem</p></td>
@@ -127,6 +93,115 @@ is much larger than we may expect.</p>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ScaledExponentialProblem.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ScaledExponentialProblem.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Create a benchmark problem for numerical derivatives of a function</p>
+<p>This provides the function and the exact first derivative.
+This makes it possible to check the approximation of the first
+derivative using a finite difference formula.
+This class also provides the second, third, fourth and fifth derivative.
+This makes it possible to compute the optimal step for
+various finite difference formula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>function</strong><span class="classifier">function</span></dt><dd><p>The function</p>
+</dd>
+<dt><strong>first_derivative</strong><span class="classifier">function</span></dt><dd><p>The first derivative of the function</p>
+</dd>
+<dt><strong>second_derivative</strong><span class="classifier">function</span></dt><dd><p>The second derivative of the function</p>
+</dd>
+<dt><strong>third_derivative</strong><span class="classifier">function</span></dt><dd><p>The third derivative of the function</p>
+</dd>
+<dt><strong>fourth_derivative</strong><span class="classifier">function</span></dt><dd><p>The fourth derivative of the function</p>
+</dd>
+<dt><strong>fifth_derivative</strong><span class="classifier">function</span></dt><dd><p>The fifth derivative of the function</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The point where the derivative should be computed for a single test.</p>
+</dd>
+<dt><strong>interval</strong><span class="classifier">list of 2 floats</span></dt><dd><p>The lower and upper bounds of the benchmark problem.
+This can be useful for benchmarking on several points.
+We must have interval[0] &lt;= interval[1].</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.</p></li>
+<li><p>Adaptive numerical differentiation. R. S. Stepleman and N. D. Winarsky. Journal: Math. Comp. 33 (1979), 1257-1264</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<p>The next example creates a benchmark problem.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The next example creates a benchmark experiment.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BuildBenchmark</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">number_of_problems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">benchmark</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_problems</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">problem</span> <span class="o">=</span> <span class="n">benchmark</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.__init__" title="numericalderivative.ScaledExponentialProblem.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([alpha])</p></td>
+<td><p>Create a benchmark problem for numerical derivatives of a function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_fifth_derivative" title="numericalderivative.ScaledExponentialProblem.get_fifth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fifth_derivative</span></code></a>()</p></td>
+<td><p>Return the fifth derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_first_derivative" title="numericalderivative.ScaledExponentialProblem.get_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_first_derivative</span></code></a>()</p></td>
+<td><p>Return the first derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_fourth_derivative" title="numericalderivative.ScaledExponentialProblem.get_fourth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fourth_derivative</span></code></a>()</p></td>
+<td><p>Return the fourth derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_function" title="numericalderivative.ScaledExponentialProblem.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Return the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_interval" title="numericalderivative.ScaledExponentialProblem.get_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interval</span></code></a>()</p></td>
+<td><p>Return the interval of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_name" title="numericalderivative.ScaledExponentialProblem.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</p></td>
+<td><p>Return the name of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_second_derivative" title="numericalderivative.ScaledExponentialProblem.get_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_second_derivative</span></code></a>()</p></td>
+<td><p>Return the second derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_third_derivative" title="numericalderivative.ScaledExponentialProblem.get_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_third_derivative</span></code></a>()</p></td>
+<td><p>Return the third derivative of the function of the problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.ScaledExponentialProblem.get_x" title="numericalderivative.ScaledExponentialProblem.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
+<td><p>Return the input point of the problem</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.ScaledExponentialProblem.get_fifth_derivative">
+<span class="sig-name descname"><span class="pre">get_fifth_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ScaledExponentialProblem.get_fifth_derivative" title="Link to this definition">¶</a></dt>
+<dd><p>Return the fifth derivative of the function of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fifth_derivative</strong><span class="classifier">function</span></dt><dd><p>The fifth derivative of the function</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.ScaledExponentialProblem.get_first_derivative">
 <span class="sig-name descname"><span class="pre">get_first_derivative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.ScaledExponentialProblem.get_first_derivative" title="Link to this definition">¶</a></dt>
@@ -271,10 +346,11 @@ is much larger than we may expect.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../user_manual.html">User manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms-for-optimal-step">Algorithms for optimal step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.DerivativeBenchmarkProblem.html">numericalderivative.DerivativeBenchmarkProblem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.PolynomialProblem.html">numericalderivative.PolynomialProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.InverseProblem.html">numericalderivative.InverseProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.ExponentialProblem.html">numericalderivative.ExponentialProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.LogarithmicProblem.html">numericalderivative.LogarithmicProblem</a></li>

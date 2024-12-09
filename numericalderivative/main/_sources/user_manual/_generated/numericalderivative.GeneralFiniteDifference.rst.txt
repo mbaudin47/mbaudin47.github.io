@@ -1,0 +1,27 @@
+﻿numericalderivative.GeneralFiniteDifference
+===========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: GeneralFiniteDifference
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GeneralFiniteDifference.__init__
+      ~GeneralFiniteDifference.compute
+      ~GeneralFiniteDifference.compute_error
+      ~GeneralFiniteDifference.compute_step
+      ~GeneralFiniteDifference.get_coefficients
+      ~GeneralFiniteDifference.get_indices_min_max
+   
+   
+
+   
+   
+   

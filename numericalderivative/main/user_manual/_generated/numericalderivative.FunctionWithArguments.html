@@ -64,6 +64,18 @@ arg1, arg2, ..., are the items in the args list.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(x)</p></td>
+<td><p>Evaluates the function at point x</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_args" title="numericalderivative.FunctionWithArguments.get_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_args</span></code></a>()</p></td>
+<td><p>Return the extra arguments</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_function" title="numericalderivative.FunctionWithArguments.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Return the function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_number_of_evaluations" title="numericalderivative.FunctionWithArguments.get_number_of_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_evaluations</span></code></a>()</p></td>
+<td><p>Returns the number of function evaluations.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="field-list simple">
@@ -106,16 +118,16 @@ arg1, arg2, ..., are the items in the args list.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(function[, args])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.__init__" title="numericalderivative.FunctionWithArguments.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(function[, args])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_args</span></code>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_args" title="numericalderivative.FunctionWithArguments.get_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_args</span></code></a>()</p></td>
 <td><p>Return the extra arguments</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_function" title="numericalderivative.FunctionWithArguments.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
 <td><p>Return the function</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_evaluations</span></code>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.FunctionWithArguments.get_number_of_evaluations" title="numericalderivative.FunctionWithArguments.get_number_of_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_evaluations</span></code></a>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
 </tr>
 </tbody>
@@ -194,11 +206,15 @@ arg1, arg2, ..., are the items in the args list.</p>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../user_manual.html">User manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms-for-optimal-step">Algorithms for optimal step</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.FunctionWithArguments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.FiniteDifferenceFormula.html">numericalderivative.FiniteDifferenceFormula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FiniteDifferenceOptimalStep.html">numericalderivative.FiniteDifferenceOptimalStep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FirstDerivativeForward.html">numericalderivative.FirstDerivativeForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FirstDerivativeCentral.html">numericalderivative.FirstDerivativeCentral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SecondDerivativeCentral.html">numericalderivative.SecondDerivativeCentral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.ThirdDerivativeCentral.html">numericalderivative.ThirdDerivativeCentral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.GeneralFiniteDifference.html">numericalderivative.GeneralFiniteDifference</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>

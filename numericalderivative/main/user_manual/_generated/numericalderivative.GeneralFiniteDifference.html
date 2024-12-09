@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>numericalderivative.GeneralFiniteDifference &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="numericalderivative.DerivativeBenchmarkProblem" href="numericalderivative.DerivativeBenchmarkProblem.html" />
+    <link rel="prev" title="numericalderivative.ThirdDerivativeCentral" href="numericalderivative.ThirdDerivativeCentral.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="numericalderivative-generalfinitedifference">
+<h1>numericalderivative.GeneralFiniteDifference<a class="headerlink" href="#numericalderivative-generalfinitedifference" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">GeneralFiniteDifference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiation_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula_accuracy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'central'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference" title="Link to this definition">¶</a></dt>
+<dd><p>Create a general finite difference formula</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute" title="numericalderivative.GeneralFiniteDifference.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(step)</p></td>
+<td><p>Computes the degree d approximate derivative of f at point x.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
+<td><p>Computes the total error</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
+<td><p>Computes the optimal step</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
+<td><p>Return the coefficients of the finite difference formula</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="numericalderivative.GeneralFiniteDifference.get_indices_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indices_min_max</span></code></a>()</p></td>
+<td><p>Return the indices of the finite difference formula</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiation_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula_accuracy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'central'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Create a general finite difference formula</p>
+<p>Let <span class="math notranslate nohighlight">\(d \in \mathbb{N}\)</span> be the order of differentation with <span class="math notranslate nohighlight">\(d \geq 1\)</span> and
+<span class="math notranslate nohighlight">\(p \in \mathbb{N}\)</span> be the order of precision with <span class="math notranslate nohighlight">\(p \geq 1\)</span>. 
+The indices are:</p>
+<ul class="simple">
+<li><p>if the formula is &quot;forward&quot;, then <span class="math notranslate nohighlight">\(i_\min = 0\)</span> and <span class="math notranslate nohighlight">\(i_\max = d + p - 1\)</span>,</p></li>
+<li><p>if the formula is &quot;backward&quot;, then <span class="math notranslate nohighlight">\(i_\min = -(d + p - 1)\)</span> and <span class="math notranslate nohighlight">\(i_\max = 0\)</span>,</p></li>
+<li><p>if the formula is &quot;central&quot;, then <span class="math notranslate nohighlight">\(d + p\)</span> must be odd.
+Then <span class="math notranslate nohighlight">\(i_\max = \left\lfloor \frac{d + p - 1}{2} \right\rfloor\)</span> 
+and <span class="math notranslate nohighlight">\(i_\min = -i_\max\)</span>.</p></li>
+</ul>
+<p>Uses the finite difference formula (see (Shi, Xie, Xuan &amp; Nocedal, 2022) eq. 3.2 page 7):</p>
+<div class="math notranslate nohighlight">
+\[f^{(d)}(x) = \frac{d!}{h^d} \sum_{i = i_{\min}}^{i_\max} c_i f(x + h i)
+             - \frac{d!}{(d + p)!} b_{d + p} f^{(d + p)}(\xi) h^p\]</div>
+<p>where <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step, <span class="math notranslate nohighlight">\(\boldsymbol{c} \in \mathbb{R}^{d + p}\)</span>
+is the vector of coefficients, <span class="math notranslate nohighlight">\(i_\min \in \mathbb{N}\)</span> is the minimum index,
+<span class="math notranslate nohighlight">\(i_\max \in \mathbb{N}\)</span> is the maximum index,
+<span class="math notranslate nohighlight">\(\xi \in (x, x + h)\)</span>
+and <span class="math notranslate nohighlight">\(\epsilon_f &gt; 0\)</span> is the absolute precision of the
+function evaluation.
+We have <span class="math notranslate nohighlight">\(i_\max \geq i_\min\)</span>.
+The particular values of <span class="math notranslate nohighlight">\(i_\min\)</span> and <span class="math notranslate nohighlight">\(i_\max\)</span> depend on
+the direction of the F.D. formula, the order of differentiation and the
+order of precision see <cite>_compute_indices()</cite>.
+The coefficient <span class="math notranslate nohighlight">\(b_{d + p}\)</span> is (see (Shi, Xie, Xuan &amp; Nocedal, 2022) eq. page 7):</p>
+<div class="math notranslate nohighlight">
+\[b_{d + p} = \sum_{i = i_{\min}}^{i_\max} i^{d + p} c_i.\]</div>
+<p>The F.D. approximation has order <span class="math notranslate nohighlight">\(p\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[f^{(d)}(x) = \frac{d!}{h^d} \sum_{i = i_{\min}}^{i_\max} c_i f(x + h i)
+             + O(h^p)\]</div>
+<p>when <span class="math notranslate nohighlight">\(h \rightarrow 0\)</span>.</p>
+<p>If direction is &quot;central&quot;, if <span class="math notranslate nohighlight">\(p\)</span> is odd,
+then the order of precision is actually <span class="math notranslate nohighlight">\(p + 1\)</span>.
+This implies that any central F.D. formula has an even order of precision.</p>
+<p>The number of coefficients in the system of equations is:</p>
+<div class="math notranslate nohighlight">
+\[n_c = i_{max} - i_{min} + 1.\]</div>
+<p>For a &quot;forward&quot; or &quot;backward&quot; finite difference formula,
+the number of unknown is equal to:</p>
+<div class="math notranslate nohighlight">
+\[n_c = d + p.\]</div>
+<p>For a &quot;central&quot; finite difference formula,
+the number of unknown is equal to:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}n_c =
+\begin{cases}
+d + p - 1 &amp; \textrm{ if } d + p \textrm{ is even}, \\
+d + p &amp; \textrm{ if } d + p \textrm{ is odd}.
+\end{cases}\end{split}\]</div>
+<p>Let <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{n_c \times n_c}\)</span>
+be the matrix defined by the equation:</p>
+<div class="math notranslate nohighlight">
+\[a_{ji} = i^j\]</div>
+<p>for <span class="math notranslate nohighlight">\(i = i_\min, ..., i_\max\)</span> and <span class="math notranslate nohighlight">\(j = 0, ..., n_c - 1\)</span>.
+The matrix <span class="math notranslate nohighlight">\(A\)</span> is the transpose of a Vandermonde matrix.
+Let <span class="math notranslate nohighlight">\(\boldsymbol{b} \in \mathbb{R}^{n_c}\)</span> be the vector of
+coefficients defined by the equation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}b_{j} = 
+\begin{cases}
+0 &amp; \textrm{ if } j \in \{0, ..., d - 1\}, \\
+1 &amp; \textrm{ if } j = d,\\
+0 &amp; \textrm{ if } j \in \{d + 1, ..., n_c - 1\},
+\end{cases}\end{split}\]</div>
+<p>for <span class="math notranslate nohighlight">\(j = 0, ..., n_c - 1\)</span>.
+Then the vector of coefficients <span class="math notranslate nohighlight">\(\boldsymbol{c} \in \mathbb{R}^{n_c}\)</span>
+is the solution of the linear system of equations:</p>
+<div class="math notranslate nohighlight">
+\[A \boldsymbol{c} = \boldsymbol{b}.\]</div>
+<p>These coefficiens have some specific properties.
+The sum is zero:</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=i_{min}}^{i_{max}} c_i = 0.\]</div>
+<p>For a central formula:</p>
+<ul class="simple">
+<li><p>if <span class="math notranslate nohighlight">\(d\)</span> is odd, then:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[c_i = -c_{-i}\]</div>
+<p>for <span class="math notranslate nohighlight">\(i=i_{min}, ..., j_{max}\)</span> and <span class="math notranslate nohighlight">\(c_0 = 0\)</span> ;</p>
+<ul class="simple">
+<li><p>if <span class="math notranslate nohighlight">\(d\)</span> is even, then:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[c_i = c_{-i}\]</div>
+<p>for <span class="math notranslate nohighlight">\(i=i_{min}, ..., i_{max}\)</span>.</p>
+<p>For a central formula, if <span class="math notranslate nohighlight">\(p\)</span> is odd therefore:</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=i_{min}}^{i_{max}} i^{d+p} c_i = 0.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>function</strong><span class="classifier">function</span></dt><dd><p>The function to differentiate.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The point where the derivative is to be evaluated.</p>
+</dd>
+<dt><strong>differentiation_order</strong><span class="classifier">int</span></dt><dd><p>The order of the derivative.
+For example differentiation_order = 1 is the first derivative.</p>
+</dd>
+<dt><strong>formula_accuracy</strong><span class="classifier">int</span></dt><dd><p>The order of precision of the formula.
+For the central F.D. formula, 
+then the formula accuracy is necessarily even.
+If required, increase the formula accuracy by 1 unit.</p>
+</dd>
+<dt><strong>direction</strong><span class="classifier">str, optional</span></dt><dd><p>The direction of the formula.
+The direction can be &quot;forward&quot;, &quot;backward&quot; or &quot;central&quot;.
+The default is &quot;central&quot;.</p>
+</dd>
+<dt><strong>args</strong><span class="classifier">list</span></dt><dd><p>A list of optional arguments that the function takes as inputs.
+By default, there is no extra argument and calling sequence of
+the function must be y = function(x).
+If there are extra arguments, then the calling sequence of
+the function must be y = function(x, arg1, arg2, ...) where
+arg1, arg2, ..., are the items in the args list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>David Eberly. « Derivative approximation by finite differences ». 2008.</p></li>
+<li><p>Nicholas Maxwell. « Notes on the derivation of Finite Difference kernels on regularly spaced grids, using arbitrary sample points ». 2010.</p></li>
+<li><p>Bengt Fornberg. « Classroom Note :Calculation of Weights in Finite Difference Formulas ». In : SIAM Review 40.3 (1998), p. 685-691.</p></li>
+<li><ol class="upperalpha simple" start="2">
+<li><p>Fornberg. « Finite difference method ». In : Scholarpedia 6.10 (2011), p. 9685</p></li>
+</ol>
+</li>
+<li><p>H.Z. Hassan, A.A. Mohamad et G.E. Atteia. « An algorithm for the finite difference approximation of derivatives with arbitrary degree and order of accuracy ». In : Journal of Computational and Applied Mathematics 236.10 (2012), p. 2622-2631. issn : 0377-0427.</p></li>
+</ul>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.__init__" title="numericalderivative.GeneralFiniteDifference.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(function, x, differentiation_order, ...)</p></td>
+<td><p>Create a general finite difference formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute" title="numericalderivative.GeneralFiniteDifference.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(step)</p></td>
+<td><p>Computes the degree d approximate derivative of f at point x.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
+<td><p>Computes the total error</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
+<td><p>Computes the optimal step</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
+<td><p>Return the coefficients of the finite difference formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="numericalderivative.GeneralFiniteDifference.get_indices_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indices_min_max</span></code></a>()</p></td>
+<td><p>Return the indices of the finite difference formula</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.compute" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the degree d approximate derivative of f at point x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>step</strong><span class="classifier">float</span></dt><dd><p>The finite difference step.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>z</strong><span class="classifier">float</span></dt><dd><p>A approximation of the d-th derivative of f at point x.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If direction is &quot;central&quot;, d + formula_accuracy must be odd.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>The next example computes an approximate third derivative of the sin function.
+To do so, we use a central F.D. formula of order 2.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differentiation_order</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Compute f&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula_accuracy</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Use order 2 precision</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># A first guess</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">third_derivative</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can use either forward, backward or central finite differences.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">x</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">differentiation_order</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">formula_accuracy</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;forward&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can compute the step provided the derivative of order 5 is known.
+A first guess of this value can be set, or the default value (equal to 1).
+Then the step can be used to compute the derivative.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">x</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">differentiation_order</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">formula_accuracy</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;central&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_step</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">third_derivative</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the fifth derivative, if known</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fifth_derivative_value</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># This may work</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">fifth_derivative_value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the absolute error of the function evaluation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">absolute_precision</span> <span class="o">=</span> <span class="mf">1.0e-14</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">fifth_derivative_value</span><span class="p">,</span> <span class="n">absolute_precision</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Given the step, we can compute the absolute error.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">absolute_error</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.compute_error">
+<span class="sig-name descname"><span class="pre">compute_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">higher_order_derivative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.220446049250313e-16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the total error</p>
+<p>The total error is the sum of the
+rounding error in the finite difference formula and the truncation
+error in the Taylor expansion (see Baudin, 2023) eq. (9.16) page 224 and
+(Shi, Xie, Xuan &amp; Nocedal, 2022) page 7):</p>
+<div class="math notranslate nohighlight">
+\[e(h) = \frac{d! \|\boldsymbol{c}\|_1 \epsilon_f}{h^d}
+       + \frac{d!}{(d + p)!} \left|b_{d + p} f^{(d + p)}(x) \right| h^p\]</div>
+<p>where <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step, <span class="math notranslate nohighlight">\(d \in \mathbb{N}\)</span> is the
+order of differentation, <span class="math notranslate nohighlight">\(p \in \mathbb{N}\)</span> is the order
+of precision, <span class="math notranslate nohighlight">\(\boldsymbol{c} \in \mathbb{R}^{d + p}\)</span> is the vector of weights and
+<span class="math notranslate nohighlight">\(\epsilon_f &gt; 0\)</span> is the absolute precision of the
+function evaluation and <span class="math notranslate nohighlight">\(b_{d + p}\)</span> is equal to:</p>
+<div class="math notranslate nohighlight">
+\[b_{d + p} = \sum_{i = i_\min}^{i_\max} i^{d + p} c_i.\]</div>
+<p>In the previous equation, the one-norm of the vector of coefficients is:</p>
+<div class="math notranslate nohighlight">
+\[\|\boldsymbol{c}\|_1 = \sum_{i = i_\min}^{i_\max} |c_i|.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>step</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The finite difference step.</p>
+</dd>
+<dt><strong>higher_order_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the derivative of order differentiation_order + formula_accuracy.
+For example, if differentiation_order = 2 and the formula_accuracy = 3, then
+this must be the derivative of order 3 + 2 = 5.</p>
+</dd>
+<dt><strong>absolute_precision</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The absolute precision of the function evaluation</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>absolute_error</strong><span class="classifier">float</span></dt><dd><p>The absolute error.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><ol class="upperalpha simple" start="13">
+<li><p>Baudin (2023). Méthodes numériques. Dunod.</p></li>
+</ol>
+</li>
+<li><p>Shi, H. J. M., Xie, Y., Xuan, M. Q., &amp; Nocedal, J. (2022). Adaptive finite-difference interval estimation for noisy derivative-free optimization. SIAM Journal on Scientific Computing, 44 (4), A2302-A2321.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.compute_step">
+<span class="sig-name descname"><span class="pre">compute_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">higher_order_derivative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.220446049250313e-16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the optimal step</p>
+<p>This step minimizes the total error of the derivative
+central finite difference (see <cite>compute()</cite> and <cite>compute_error()</cite>).
+This step minimizes the total error, taking into account for the
+rounding error in the finite difference formula and the truncation
+error in the Taylor expansion (see Baudin, 2023) eq. (9.16) page 224 and
+(Shi, Xie, Xuan &amp; Nocedal, 2022) page 7).</p>
+<p>The optimal step is:</p>
+<div class="math notranslate nohighlight">
+\[h^\star = \left(\frac{d}{p} (d + p)! \frac{\|\boldsymbol{c}\|_1}{|b_{d + p}|}
+          \frac{\epsilon_f}{\left|f^{(d + p)}(x)\right|}\right)^{\frac{1}{d + p}}.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>higher_order_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the derivative of order differentiation_order + formula_accuracy.
+For example, if differentiation_order = 2 and the formula_accuracy = 3, then
+this must be the derivative of order 3 + 2 = 5.</p>
+</dd>
+<dt><strong>absolute_precision</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The absolute precision of the function evaluation</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>step</strong><span class="classifier">float</span></dt><dd><p>The finite difference step.</p>
+</dd>
+<dt><strong>absolute_error</strong><span class="classifier">float</span></dt><dd><p>The absolute error.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><ol class="upperalpha simple" start="13">
+<li><p>Baudin (2023). Méthodes numériques. Dunod.</p></li>
+</ol>
+</li>
+<li><p>Shi, H. J. M., Xie, Y., Xuan, M. Q., &amp; Nocedal, J. (2022). Adaptive finite-difference interval estimation for noisy derivative-free optimization. SIAM Journal on Scientific Computing, 44 (4), A2302-A2321.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_coefficients">
+<span class="sig-name descname"><span class="pre">get_coefficients</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="Link to this definition">¶</a></dt>
+<dd><p>Return the coefficients of the finite difference formula</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>coefficients</strong><span class="classifier">np.array(number_of_coefficients)</span></dt><dd><p>The coefficients of the F.D. formula</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.e6</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differentiation_order</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Compute f&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula_accuracy</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Use differentiation_order 6 formula</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">)</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;forward&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;backward&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;central&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_indices_min_max">
+<span class="sig-name descname"><span class="pre">get_indices_min_max</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="Link to this definition">¶</a></dt>
+<dd><p>Return the indices of the finite difference formula</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>imin</strong><span class="classifier">int</span></dt><dd><p>The minimum index of the F.D. formula</p>
+</dd>
+<dt><strong>imax</strong><span class="classifier">int</span></dt><dd><p>The maximum index of the F.D. formula</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.e6</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differentiation_order</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Compute f&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula_accuracy</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Use differentiation_order 6 formula</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">)</span><span class="o">.</span><span class="n">get_indices_min_max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;forward&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_indices_min_max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;backward&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_indices_min_max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;central&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_indices_min_max</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../user_manual.html">User manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#algorithms-for-optimal-step">Algorithms for optimal step</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FunctionWithArguments.html">numericalderivative.FunctionWithArguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FiniteDifferenceFormula.html">numericalderivative.FiniteDifferenceFormula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FirstDerivativeForward.html">numericalderivative.FirstDerivativeForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.FirstDerivativeCentral.html">numericalderivative.FirstDerivativeCentral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SecondDerivativeCentral.html">numericalderivative.SecondDerivativeCentral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.ThirdDerivativeCentral.html">numericalderivative.ThirdDerivativeCentral</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.GeneralFiniteDifference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../user_manual.html">User manual</a><ul>
+      <li>Previous: <a href="numericalderivative.ThirdDerivativeCentral.html" title="previous chapter">numericalderivative.ThirdDerivativeCentral</a></li>
+      <li>Next: <a href="numericalderivative.DerivativeBenchmarkProblem.html" title="next chapter">numericalderivative.DerivativeBenchmarkProblem</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/user_manual/_generated/numericalderivative.GeneralFiniteDifference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

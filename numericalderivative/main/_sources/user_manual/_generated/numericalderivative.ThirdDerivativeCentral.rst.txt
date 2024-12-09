@@ -1,0 +1,27 @@
+﻿numericalderivative.ThirdDerivativeCentral
+==========================================
+
+.. currentmodule:: numericalderivative
+
+.. autoclass:: ThirdDerivativeCentral
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ThirdDerivativeCentral.__init__
+      ~ThirdDerivativeCentral.compute
+      ~ThirdDerivativeCentral.compute_error
+      ~ThirdDerivativeCentral.compute_step
+      ~ThirdDerivativeCentral.get_function
+      ~ThirdDerivativeCentral.get_x
+   
+   
+
+   
+   
+   

@@ -72,9 +72,9 @@ exact derivative.
 
 .. code-block:: Python
 
-    formula = nd.FiniteDifferenceFormula(function, x)
+    formula = nd.FirstDerivativeForward(function, x)
     step = 1.0e-5  # This is a first guess
-    approx_first_derivative = formula.compute_first_derivative_forward(step)
+    approx_first_derivative = formula.compute(step)
     exact_first_derivative = first_derivative(x)
     absolute_error = abs(approx_first_derivative - exact_first_derivative)
     print(f"Approximate first derivative = {approx_first_derivative}")
@@ -102,15 +102,14 @@ The problem is that the optimal step might not be the exact one.
 The optimal step can be computed using the second derivative, which is
 known in this problem.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-60
+.. GENERATED FROM PYTHON SOURCE LINES 51-59
 
 .. code-block:: Python
 
     second_derivative = problem.get_second_derivative()
     second_derivative_value = second_derivative(x)
-    optimal_step_formula = nd.FiniteDifferenceOptimalStep()
-    optimal_step_forward_formula, absolute_error = (
-        optimal_step_formula.compute_step_first_derivative_forward(second_derivative_value)
+    optimal_step_forward_formula, absolute_error = nd.FirstDerivativeForward.compute_step(
+        second_derivative_value
     )
     print(f"Optimal step for forward derivative = {optimal_step_forward_formula}")
     print(f"Minimum absolute error = {absolute_error}")
@@ -129,17 +128,15 @@ known in this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-62
+.. GENERATED FROM PYTHON SOURCE LINES 60-61
 
 Now use this step
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-73
+.. GENERATED FROM PYTHON SOURCE LINES 63-70
 
 .. code-block:: Python
 
-    approx_first_derivative = formula.compute_first_derivative_forward(
-        optimal_step_forward_formula
-    )
+    approx_first_derivative = formula.compute(optimal_step_forward_formula)
     exact_first_derivative = first_derivative(x)
     absolute_error = abs(approx_first_derivative - exact_first_derivative)
     print(f"Approximate first derivative = {approx_first_derivative}")
@@ -161,11 +158,11 @@ Now use this step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-75
+.. GENERATED FROM PYTHON SOURCE LINES 71-72
 
 We can use a collection of benchmark problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-92
+.. GENERATED FROM PYTHON SOURCE LINES 74-97
 
 .. code-block:: Python
 
@@ -177,7 +174,15 @@ We can use a collection of benchmark problems.
         name = problem.get_name()
         x = problem.get_x()
         interval = problem.get_interval()
-        data.append([f"#{i} / {number_of_problems}", f"{name}", f"{x}", f"{interval[0]}", f"{interval[1]}"])
+        data.append(
+            [
+                f"#{i} / {number_of_problems}",
+                f"{name}",
+                f"{x}",
+                f"{interval[0]}",
+                f"{interval[1]}",
+            ]
+        )
 
     tabulate.tabulate(
         data,
@@ -197,39 +202,40 @@ We can use a collection of benchmark problems.
     <tr><th>Index   </th><th>Name      </th><th style="text-align: right;">       x</th><th style="text-align: right;">     xmin</th><th style="text-align: right;">    xmax</th></tr>
     </thead>
     <tbody>
-    <tr><td>#0 / 15 </td><td>inverse   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#1 / 15 </td><td>exp       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#2 / 15 </td><td>log       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#3 / 15 </td><td>sqrt      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#4 / 15 </td><td>atan      </td><td style="text-align: right;"> 0.5    </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#5 / 15 </td><td>sin       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;"> -3.14159</td><td style="text-align: right;"> 3.14159</td></tr>
-    <tr><td>#6 / 15 </td><td>scaled exp</td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#7 / 15 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#8 / 15 </td><td>SXXN1     </td><td style="text-align: right;">-8      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#9 / 15 </td><td>SXXN2     </td><td style="text-align: right;"> 0.01   </td><td style="text-align: right;"> -1      </td><td style="text-align: right;"> 1      </td></tr>
-    <tr><td>#10 / 15</td><td>SXXN3     </td><td style="text-align: right;"> 0.99999</td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#11 / 15</td><td>SXXN4     </td><td style="text-align: right;"> 1e-09  </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#12 / 15</td><td>Oliver1   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#13 / 15</td><td>Oliver2   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#14 / 15</td><td>Oliver3   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#0 / 16 </td><td>polynomial</td><td style="text-align: right;"> 1      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#1 / 16 </td><td>inverse   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#2 / 16 </td><td>exp       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#3 / 16 </td><td>log       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#4 / 16 </td><td>sqrt      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#5 / 16 </td><td>atan      </td><td style="text-align: right;"> 0.5    </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#6 / 16 </td><td>sin       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;"> -3.14159</td><td style="text-align: right;"> 3.14159</td></tr>
+    <tr><td>#7 / 16 </td><td>scaled exp</td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#8 / 16 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#9 / 16 </td><td>SXXN1     </td><td style="text-align: right;">-8      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#10 / 16</td><td>SXXN2     </td><td style="text-align: right;"> 0.01   </td><td style="text-align: right;"> -1      </td><td style="text-align: right;"> 1      </td></tr>
+    <tr><td>#11 / 16</td><td>SXXN3     </td><td style="text-align: right;"> 0.99999</td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#12 / 16</td><td>SXXN4     </td><td style="text-align: right;"> 1e-09  </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#13 / 16</td><td>Oliver1   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#14 / 16</td><td>Oliver2   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#15 / 16</td><td>Oliver3   </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.01   </td><td style="text-align: right;">12      </td></tr>
     </tbody>
     </table>
     </div>
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-94
+.. GENERATED FROM PYTHON SOURCE LINES 98-99
 
 Plot the benchmark problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-121
+.. GENERATED FROM PYTHON SOURCE LINES 101-126
 
 .. code-block:: Python
 
     benchmark = nd.BuildBenchmark()
     number_of_problems = len(benchmark)
     number_of_columns = 3
-    number_of_rows = math.ceil(number_of_problems/number_of_columns)
+    number_of_rows = math.ceil(number_of_problems / number_of_columns)
     number_of_points = 100
     pl.figure(figsize=(8.0, 7.0))
     data = []
@@ -248,14 +254,14 @@ Plot the benchmark problems.
         pl.plot(x_grid, y_values)
         # Update index
         index += 1
-    
+
     pl.subplots_adjust(wspace=0.5, hspace=1.2)
 
 
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_use_benchmark_001.png
-   :alt: inverse, exp, log, sqrt, atan, sin, scaled exp, GMSW, SXXN1, SXXN2, SXXN3, SXXN4, Oliver1, Oliver2, Oliver3
+   :alt: polynomial, inverse, exp, log, sqrt, atan, sin, scaled exp, GMSW, SXXN1, SXXN2, SXXN3, SXXN4, Oliver1, Oliver2, Oliver3
    :srcset: /auto_example/images/sphx_glr_plot_use_benchmark_001.png
    :class: sphx-glr-single-img
 
@@ -264,21 +270,22 @@ Plot the benchmark problems.
 
  .. code-block:: none
 
-    Plot #0: inverse
-    Plot #1: exp
-    Plot #2: log
-    Plot #3: sqrt
-    Plot #4: atan
-    Plot #5: sin
-    Plot #6: scaled exp
-    Plot #7: GMSW
-    Plot #8: SXXN1
-    Plot #9: SXXN2
-    Plot #10: SXXN3
-    Plot #11: SXXN4
-    Plot #12: Oliver1
-    Plot #13: Oliver2
-    Plot #14: Oliver3
+    Plot #0: polynomial
+    Plot #1: inverse
+    Plot #2: exp
+    Plot #3: log
+    Plot #4: sqrt
+    Plot #5: atan
+    Plot #6: sin
+    Plot #7: scaled exp
+    Plot #8: GMSW
+    Plot #9: SXXN1
+    Plot #10: SXXN2
+    Plot #11: SXXN3
+    Plot #12: SXXN4
+    Plot #13: Oliver1
+    Plot #14: Oliver2
+    Plot #15: Oliver3
 
 
 
@@ -286,7 +293,7 @@ Plot the benchmark problems.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.381 seconds)
+   **Total running time of the script:** (0 minutes 0.402 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_use_benchmark.py:

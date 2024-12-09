@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Use the finite differences formulas &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Use the generalized finite differences formulas" href="plot_general_fd.html" />
+    <link rel="prev" title="Use the benchmark problems" href="plot_use_benchmark.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-example-plot-finite-differences-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="use-the-finite-differences-formulas">
+<span id="sphx-glr-auto-example-plot-finite-differences-py"></span><h1>Use the finite differences formulas<a class="headerlink" href="#use-the-finite-differences-formulas" title="Link to this heading">¶</a></h1>
+<p>This example shows how to use finite difference (F.D.) formulas.</p>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><ol class="upperalpha simple" start="13">
+<li><p>Baudin (2023). Méthodes numériques. Dunod.</p></li>
+</ol>
+</li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+</pre></div>
+</div>
+</section>
+<section id="compute-the-first-derivative-using-forward-f-d-formula">
+<h2>Compute the first derivative using forward F.D. formula<a class="headerlink" href="#compute-the-first-derivative-using-forward-f-d-formula" title="Link to this heading">¶</a></h2>
+<p>This is the function we want to compute the derivative of.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use the F.D. formula</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">step</span> <span class="o">=</span> <span class="mf">1.0e-3</span>  <span class="c1"># A first guess</span>
+<span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximate f&#39;(x) = </span><span class="si">{</span><span class="n">f_prime_approx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Approximate f&#39;(x) = -9.999989725174565e-07
+</pre></div>
+</div>
+<p>To check our result, we define the exact first derivative.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span>
+</pre></div>
+</div>
+<p>Compute the exact derivative and the absolute error.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">f_prime_exact</span> <span class="o">=</span> <span class="n">scaled_exp_prime</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exact f&#39;(x) = </span><span class="si">{</span><span class="n">f_prime_exact</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime_exact</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Absolute error = </span><span class="si">{</span><span class="n">absolute_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Exact f&#39;(x) = -9.999990000005e-07
+Absolute error = 2.748304361188279e-14
+</pre></div>
+</div>
+<p>Define the error function: this will be useful later.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_absolute_error</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="n">f_prime_exact</span> <span class="o">=</span> <span class="n">scaled_exp_prime</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime_exact</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximate f&#39;(x) = </span><span class="si">{</span><span class="n">f_prime_approx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exact f&#39;(x) = </span><span class="si">{</span><span class="n">f_prime_exact</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Absolute error = </span><span class="si">{</span><span class="n">absolute_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">absolute_error</span>
+</pre></div>
+</div>
+</section>
+<section id="compute-the-exact-step-for-the-forward-f-d-formula">
+<h2>Compute the exact step for the forward F.D. formula<a class="headerlink" href="#compute-the-exact-step-for-the-forward-f-d-formula" title="Link to this heading">¶</a></h2>
+<p>This step depends on the second derivative.
+Firstly, we assume that this is unknown and use a first
+guess of it, equal to 1.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">second_derivative_value</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">second_derivative_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximately optimal step (using f&#39;&#39;(x) = 1) = </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximately absolute error = </span><span class="si">{</span><span class="n">absolute_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">compute_absolute_error</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Approximately optimal step (using f&#39;&#39;(x) = 1) = 2e-08
+Approximately absolute error = 2e-08
+Approximate f&#39;(x) = -9.992007171418978e-07
+Exact f&#39;(x) = -9.999990000005e-07
+Absolute error = 7.982828586023276e-10
+</pre></div>
+</div>
+<p>We see that the new step is much better than the our initial guess:
+the approximately optimal step is much smaller, which leads to a smaller
+absolute error.</p>
+<p>In our particular example, the second derivative is known: let's use
+this information and compute the exactly optimal step.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_2nd_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">second_derivative_value</span> <span class="o">=</span> <span class="n">scaled_exp_2nd_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exact second derivative f&#39;&#39;(x) = </span><span class="si">{</span><span class="n">second_derivative_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">second_derivative_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximately optimal step (using f&#39;&#39;(x) = 1) = </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Approximately absolute error = </span><span class="si">{</span><span class="n">absolute_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">compute_absolute_error</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Exact second derivative f&#39;&#39;(x) = 9.999990000005e-13
+Approximately optimal step (using f&#39;&#39;(x) = 1) = 0.0200000100000025
+Approximately absolute error = 1.99999900000025e-14
+Approximate f&#39;(x) = -9.999989887714385e-07
+Exact f&#39;(x) = -9.999990000005e-07
+Absolute error = 1.1229061571641635e-14
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_step_sensitivity</span><span class="p">(</span>
+    <span class="n">finite_difference</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">function_derivative</span><span class="p">,</span>
+    <span class="n">step_array</span><span class="p">,</span>
+    <span class="n">higher_derivative_value</span><span class="p">,</span>
+    <span class="n">relative_error</span><span class="o">=</span><span class="mf">1.0e-16</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the approximate derivative using central F.D. formula.</span>
+<span class="sd">    Create a plot representing the absolute error depending on step.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    finite_difference : FiniteDifferenceFormula</span>
+<span class="sd">        The F.D. formula</span>
+<span class="sd">    x : float</span>
+<span class="sd">        The input point</span>
+<span class="sd">    function_derivative : function</span>
+<span class="sd">        The exact derivative of the function.</span>
+<span class="sd">    step_array : array(n_points)</span>
+<span class="sd">        The array of steps to consider</span>
+<span class="sd">    higher_derivative_value : float</span>
+<span class="sd">        The value of the higher derivative required for the optimal step for the derivative</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_of_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_array</span><span class="p">)</span>
+    <span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">function_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Computed&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">finite_difference</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Compute the error using the model</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+    <span class="n">absolute_precision_function_eval</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">relative_error</span>
+    <span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
+        <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span>
+            <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">higher_derivative_value</span><span class="p">,</span> <span class="n">absolute_precision_function_eval</span>
+        <span class="p">)</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">)</span>
+    <span class="c1"># Compute the optimal step size and optimal error</span>
+    <span class="n">optimal_step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+        <span class="n">higher_derivative_value</span><span class="p">,</span> <span class="n">absolute_precision_function_eval</span>
+    <span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">optimal_step</span><span class="p">],</span> <span class="p">[</span><span class="n">absolute_error</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$(h^*, e(h^*))$&quot;</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<p>For the forward F.D. formula, the absolute error is known if the
+second derivative value can be computed.
+The next script uses this feature from the <cite>compute_error()</cite> method
+to plot the upper bound of the error.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">plot_step_sensitivity</span><span class="p">(</span>
+    <span class="n">finite_difference</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">scaled_exp_prime</span><span class="p">,</span> <span class="n">step_array</span><span class="p">,</span> <span class="n">second_derivative_value</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_finite_differences_001.png" srcset="../_images/sphx_glr_plot_finite_differences_001.png" alt="FirstDerivativeForward" class = "sphx-glr-single-img"/><p>These features are available with most F.D. formulas:
+the next sections show how the module provides the exact
+optimal step and the exact error for other formulas.</p>
+</section>
+<section id="central-f-d-formula-for-first-derivative">
+<h2>Central F.D. formula for first derivative<a class="headerlink" href="#central-f-d-formula-for-first-derivative" title="Link to this heading">¶</a></h2>
+<p>Let us see how this behaves with central F.D.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For the central F.D. formula, the exact step depends on the</span>
+<span class="c1"># third derivative</span>
+<span class="k">def</span> <span class="nf">scaled_exp_3d_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">third_derivative_value</span> <span class="o">=</span> <span class="n">scaled_exp_3d_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot_step_sensitivity</span><span class="p">(</span>
+    <span class="n">finite_difference</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">scaled_exp_prime</span><span class="p">,</span> <span class="n">step_array</span><span class="p">,</span> <span class="n">third_derivative_value</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_finite_differences_002.png" srcset="../_images/sphx_glr_plot_finite_differences_002.png" alt="FirstDerivativeCentral" class = "sphx-glr-single-img"/></section>
+<section id="central-f-d-formula-for-second-derivative">
+<h2>Central F.D. formula for second derivative<a class="headerlink" href="#central-f-d-formula-for-second-derivative" title="Link to this heading">¶</a></h2>
+<p>Let us see how this behaves with central F.D. for the second derivative.</p>
+<p>For the central F.D. formula of the second derivative, the exact step depends on the
+fourth derivative</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_4th_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SecondDerivativeCentral</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">fourth_derivative_value</span> <span class="o">=</span> <span class="n">scaled_exp_4th_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot_step_sensitivity</span><span class="p">(</span>
+    <span class="n">finite_difference</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">scaled_exp_2nd_derivative</span><span class="p">,</span> <span class="n">step_array</span><span class="p">,</span> <span class="n">fourth_derivative_value</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_finite_differences_003.png" srcset="../_images/sphx_glr_plot_finite_differences_003.png" alt="SecondDerivativeCentral" class = "sphx-glr-single-img"/></section>
+<section id="central-f-d-formula-for-third-derivative">
+<h2>Central F.D. formula for third derivative<a class="headerlink" href="#central-f-d-formula-for-third-derivative" title="Link to this heading">¶</a></h2>
+<p>Let us see how this behaves with central F.D. for the third derivative.</p>
+<p>For the central F.D. formula of the third derivative, the exact step depends on the
+fifth derivative</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_5th_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ThirdDerivativeCentral</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">fifth_derivative_value</span> <span class="o">=</span> <span class="n">scaled_exp_5th_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot_step_sensitivity</span><span class="p">(</span>
+    <span class="n">finite_difference</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">scaled_exp_3d_derivative</span><span class="p">,</span> <span class="n">step_array</span><span class="p">,</span> <span class="n">fifth_derivative_value</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_finite_differences_004.png" srcset="../_images/sphx_glr_plot_finite_differences_004.png" alt="ThirdDerivativeCentral" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.593 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-finite-differences-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8f82ca8cc974c080d532c330a8caabf3/plot_finite_differences.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_finite_differences.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/4caf34e27eef61eed2a95445c2a41831/plot_finite_differences.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_finite_differences.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9e41f29a1674ae6f9c02a541043057bf/plot_finite_differences.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_finite_differences.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples/examples.html">Examples</a><ul>
+      <li>Previous: <a href="plot_use_benchmark.html" title="previous chapter">Use the benchmark problems</a></li>
+      <li>Next: <a href="plot_general_fd.html" title="next chapter">Use the generalized finite differences formulas</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/auto_example/plot_finite_differences.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
