@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:07.404** total execution time for 12 files **from all galleries**:
+**00:07.252** total execution time for 12 files **from all galleries**:
 
 .. container::
 
@@ -33,37 +33,37 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py` (``examples/plot_dumontet_vignes.py``)
-     - 00:02.176
+     - 00:02.134
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py` (``examples/plot_gill_murray_saunders_wright.py``)
-     - 00:01.451
+     - 00:01.423
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``examples/plot_stepleman_winarsky_plots.py``)
-     - 00:00.914
+     - 00:00.889
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py` (``examples/plot_stepleman_winarsky.py``)
-     - 00:00.842
+     - 00:00.823
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_finite_differences.py` (``examples/plot_finite_differences.py``)
-     - 00:00.593
+     - 00:00.584
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_use_benchmark.py` (``examples/plot_use_benchmark.py``)
-     - 00:00.402
+     - 00:00.392
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_general_fd.py` (``examples/plot_general_fd.py``)
-     - 00:00.382
+     - 00:00.372
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py` (``examples/plot_dumontet_vignes_benchmark.py``)
-     - 00:00.266
+     - 00:00.261
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``examples/plot_openturns.py``)
-     - 00:00.241
+     - 00:00.240
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py` (``examples/plot_gill_murray_saunders_wright_benchmark.py``)
-     - 00:00.076
+     - 00:00.074
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py` (``examples/plot_stepleman_winarsky_benchmark.py``)
-     - 00:00.058
+     - 00:00.057
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_numericalderivative.py` (``examples/plot_numericalderivative.py``)
      - 00:00.003
