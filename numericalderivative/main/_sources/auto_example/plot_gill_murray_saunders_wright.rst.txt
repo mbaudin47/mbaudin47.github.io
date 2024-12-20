@@ -21,7 +21,7 @@
 Experiment with Gill, Murray, Saunders and Wright method
 ========================================================
 
-Find a step which is near to optimal for a centered finite difference 
+Find a step which is near to optimal for a central finite difference 
 formula.
 
 References
@@ -35,6 +35,132 @@ References
     import numpy as np
     import pylab as pl
     import numericalderivative as nd
+    from matplotlib.ticker import MaxNLocator
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 23-25
+
+Use the method on a simple problem
+----------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 27-35
+
+In the next example, we use the algorithm on the exponential function.
+We create the :class:`~numericalderivative.GillMurraySaundersWright` algorithm using the function and the point x.
+Then we use the :meth:`~numericalderivative.GillMurraySaundersWright.compute_step()` method to compute the step,
+using an upper bound of the step as an initial point of the algorithm.
+Finally, use the :meth:`~numericalderivative.GillMurraySaundersWright.compute_first_derivative()` method to compute
+an approximate value of the first derivative using finite differences.
+The :meth:`~numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations()` method
+can be used to get the number of function evaluations.
+
+.. GENERATED FROM PYTHON SOURCE LINES 37-52
+
+.. code-block:: Python
+
+    x = 1.0
+    algorithm = nd.GillMurraySaundersWright(np.exp, x, verbose=True)
+    kmin = 1.0e-10
+    kmax = 1.0e0
+    step, number_of_iterations = algorithm.compute_step(kmin, kmax)
+    f_prime_approx = algorithm.compute_first_derivative(step)
+    feval = algorithm.get_number_of_function_evaluations()
+    f_prime_exact = np.exp(x)  # Since the derivative of exp is exp.
+    print(f"Computed step = {step:.3e}")
+    print(f"Number of iterations = {number_of_iterations}")
+    print(f"f_prime_approx = {f_prime_approx}")
+    print(f"f_prime_exact = {f_prime_exact}")
+    absolute_error = abs(f_prime_approx - f_prime_exact)
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    kmin = 1.000e-10, c(kmin) = 2.448e+00
+    kmax = 1.000e+00, c(kmax) = 3.683e-16
+    Iter #0, kmin = 1.000e-10, kmax = 1.000e+00, k = 1.000e-05, c(k) = 4.000e-06
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #1, kmin = 1.000e-10, kmax = 1.000e-05, k = 3.162e-08, c(k) = 3.498e-01
+      c(k) >= c_threshold_min: increase kmin.
+    Iter #2, kmin = 3.162e-08, kmax = 1.000e-05, k = 5.623e-07, c(k) = 1.264e-03
+      c in [0.001, 0.1]: stop!
+    Computed step = 1.999e-08
+    Number of iterations = 2
+    f_prime_approx = 2.718281861529766
+    f_prime_exact = 2.718281828459045
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 53-55
+
+Test the method on the exponential problem
+------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 55-106
+
+.. code-block:: Python
+
+
+
+    class GillMurraySaundersWrightMethod:
+        def __init__(self, relative_precision, kmin, kmax):
+            """
+            Create a GillMurraySaundersWright method to compute the approximate first derivative
+
+            Parameters
+            ----------
+            relative_precision : float, > 0, optional
+                The relative precision of evaluation of f.
+            kmin : float, kmin > 0
+                A minimum bound for the finite difference step of the third derivative.
+                If no value is provided, the default is to compute the smallest
+                possible kmin using number_of_digits and x.
+            kmax : float, kmax > kmin > 0
+                A maximum bound for the finite difference step of the third derivative.
+                If no value is provided, the default is to compute the largest
+                possible kmax using number_of_digits and x.
+            """
+            self.relative_precision = relative_precision
+            self.kmin = kmin
+            self.kmax = kmax
+
+        def compute_first_derivative(self, function, x):
+            """
+            Compute the first derivative using GillMurraySaundersWright
+
+            Parameters
+            ----------
+            function : function
+                The function
+            x : float
+                The test point
+
+            Returns
+            -------
+            f_prime_approx : float
+                The approximate value of the first derivative of the function at point x
+            number_of_function_evaluations : int
+                The number of function evaluations.
+            """
+            algorithm = nd.GillMurraySaundersWright(
+                function, x, relative_precision=self.relative_precision
+            )
+            step, _ = algorithm.compute_step(kmin, kmax)
+            f_prime_approx = algorithm.compute_first_derivative(step)
+            number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+            return f_prime_approx, number_of_function_evaluations
 
 
 
@@ -44,16 +170,17 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-72
+.. GENERATED FROM PYTHON SOURCE LINES 107-158
 
 .. code-block:: Python
 
     def compute_first_derivative_GMSW(
-        f,
+        function,
         x,
-        f_prime,
+        first_derivative,
         kmin,
         kmax,
+        relative_precision=1.0e-15,
         verbose=False,
     ):
         """
@@ -61,11 +188,11 @@ References
 
         Parameters
         ----------
-        f : function
+        function : function
             The function.
         x : float
             The point where the derivative is to be evaluated
-        f_prime : function
+        first_derivative : function
             The exact first derivative of the function.
         kmin : float, > 0
             The minimum step k for the second derivative.
@@ -83,18 +210,19 @@ References
         feval : int
             The number of function evaluations.
         """
-        algorithm = nd.GillMurraySaundersWright(f, x, verbose=verbose)
-        step, number_of_iterations = algorithm.compute_step(kmin, kmax)
-        f_prime_approx = algorithm.compute_first_derivative(step)
-        feval = algorithm.get_number_of_function_evaluations()
-        f_prime_exact = f_prime(x)
+
+        method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+        f_prime_approx, number_of_function_evaluations = method.compute_first_derivative(
+            function, x
+        )
+        f_prime_exact = first_derivative(x)
         if verbose:
             print(f"Computed step = {step:.3e}")
             print(f"Number of iterations = {number_of_iterations}")
             print(f"f_prime_approx = {f_prime_approx}")
             print(f"f_prime_exact = {f_prime_exact}")
         absolute_error = abs(f_prime_approx - f_prime_exact)
-        return absolute_error, feval
+        return absolute_error, number_of_function_evaluations
 
 
 
@@ -104,16 +232,52 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-99
+.. GENERATED FROM PYTHON SOURCE LINES 159-166
 
 .. code-block:: Python
 
-    print("+ Test on ExponentialDerivativeBenchmark")
+    print("+ Test on ExponentialProblem")
     kmin = 1.0e-15
     kmax = 1.0e1
     x = 1.0
-    benchmark = nd.ExponentialProblem()
-    second_derivative_value = benchmark.second_derivative(x)
+    problem = nd.ExponentialProblem()
+    problem
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    + Test on ExponentialProblem
+
+
+.. raw:: html
+
+    <div class="output_subarea output_html rendered_html output_result">
+    <b>DerivativeBenchmarkProblem</b>
+    <ul>
+    <li>name = exp</li>
+    <li>x = 1.0</li>
+    <li>f(x) = 2.718281828459045</li>
+    <li>f'(x) = 2.718281828459045</li>
+    <li>f''(x) = 2.718281828459045</li>
+    <li>f^(3)(x) = 2.718281828459045</li>
+    <li>f^(4)(x) = 2.718281828459045</li>
+    <li>f^(5)(x) = 2.718281828459045</li>
+    </ul>
+
+    </div>
+    <br />
+    <br />
+
+.. GENERATED FROM PYTHON SOURCE LINES 167-188
+
+.. code-block:: Python
+
+    second_derivative_value = problem.second_derivative(x)
     optimal_step, absolute_error = nd.FirstDerivativeForward.compute_step(
         second_derivative_value
     )
@@ -122,9 +286,9 @@ References
         absolute_error,
         number_of_function_evaluations,
     ) = compute_first_derivative_GMSW(
-        benchmark.function,
+        problem.function,
         x,
-        benchmark.first_derivative,
+        problem.first_derivative,
         kmin,
         kmax,
         verbose=True,
@@ -142,22 +306,17 @@ References
 
  .. code-block:: none
 
-    + Test on ExponentialDerivativeBenchmark
     Exact h* = 1.213e-08
-    kmin = 1.000e-15, c(kmin) = 2.448e+00
-    kmax = 1.000e+01, c(kmax) = 1.816e-20
-    Iter #0, kmin = 1.000e-15, kmax = 1.000e+01, k = 1.000e-07, c(k) = 3.886e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.987e-08
-    Number of iterations = 0
-    f_prime_approx = 2.718281868919099
+    Computed step = 1.999e-08
+    Number of iterations = 2
+    f_prime_approx = 2.7182819133272096
     f_prime_exact = 2.718281828459045
-    x = 1.000, error = 4.046e-08, Func. eval. = 12
+    x = 1.000, error = 8.487e-08, Func. eval. = 18
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 100-127
+.. GENERATED FROM PYTHON SOURCE LINES 189-216
 
 .. code-block:: Python
 
@@ -165,8 +324,9 @@ References
     kmin = 1.0e-9
     kmax = 1.0e8
     x = 1.0
-    benchmark = nd.ScaledExponentialProblem()
-    second_derivative_value = benchmark.second_derivative(x)
+    problem = nd.ScaledExponentialProblem()
+    second_derivative = problem.get_second_derivative()
+    second_derivative_value = second_derivative(x)
     optimal_step, absolute_error = nd.FirstDerivativeForward.compute_step(
         second_derivative_value
     )
@@ -175,9 +335,9 @@ References
         absolute_error,
         number_of_function_evaluations,
     ) = compute_first_derivative_GMSW(
-        benchmark.function,
+        problem.get_function(),
         x,
-        benchmark.first_derivative,
+        problem.get_first_derivative(),
         kmin,
         kmax,
         verbose=True,
@@ -186,7 +346,6 @@ References
         "x = %.3f, error = %.3e, Func. eval. = %d"
         % (x, absolute_error, number_of_function_evaluations)
     )
-
 
 
 
@@ -198,107 +357,168 @@ References
 
     + Test on ScaledExponentialDerivativeBenchmark
     Exact h* = 2.000e-02
-    kmin = 1.000e-09, c(kmin) = inf
-    kmax = 1.000e+08, c(kmax) = 1.488e-59
-    Iter #0, kmin = 1.000e-09, kmax = 1.000e+08, k = 3.162e-01, c(k) = 4.003e-03
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.001e-02
-    Number of iterations = 0
-    f_prime_approx = -9.999989916566017e-07
+    Computed step = 1.999e-08
+    Number of iterations = 2
+    f_prime_approx = -9.999989687168326e-07
     f_prime_exact = -9.999990000004999e-07
-    x = 1.000, error = 8.344e-15, Func. eval. = 12
+    x = 1.000, error = 3.128e-14, Func. eval. = 12
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-188
+.. GENERATED FROM PYTHON SOURCE LINES 217-219
 
-.. code-block:: Python
+Benchmark the method on a collection of test points
+---------------------------------------------------
 
-    def benchmark_method(
-        function, derivative_function, test_points, kmin, kmax, verbose=False
-    ):
-        """
-        Apply Gill, Murray, Saunders & Wright method to compute the approximate first
-        derivative using finite difference formula.
-
-        Parameters
-        ----------
-        f : function
-            The function.
-        derivative_function : function
-            The exact first derivative of the function
-        test_points : list(float)
-            The list of x points where the benchmark must be performed.
-        kmin : float, > 0
-            The minimum step k for the second derivative.
-        kmax : float, > kmin
-            The maximum step k for the second derivative.
-        verbose : bool, optional
-            Set to True to print intermediate messages. The default is False.
-
-        Returns
-        -------
-        absolute_error : float, > 0
-            The absolute error between the approximate first derivative
-            and the true first derivative.
-
-        feval : int
-            The number of function evaluations.
-
-        """
-        number_of_test_points = len(test_points)
-        relative_error_array = np.zeros(number_of_test_points)
-        feval_array = np.zeros(number_of_test_points)
-        for i in range(number_of_test_points):
-            x = test_points[i]
-            (
-                absolute_error,
-                number_of_function_evaluations,
-            ) = compute_first_derivative_GMSW(
-                function, x, derivative_function, kmin, kmax, verbose
-            )
-            relative_error = absolute_error / abs(derivative_function(x))
-            if verbose:
-                print(
-                    "x = %.3f, abs. error = %.3e, rel. error = %.3e, Func. eval. = %d"
-                    % (x, absolute_error, relative_error, number_of_function_evaluations)
-                )
-            relative_error_array[i] = relative_error
-            feval_array[i] = number_of_function_evaluations
-
-        average_error = np.mean(relative_error_array)
-        average_feval = np.mean(feval_array)
-        if verbose:
-            print("Average error =", average_error)
-            print("Average number of function evaluations =", average_feval)
-        return average_error, average_feval
-
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 189-204
+.. GENERATED FROM PYTHON SOURCE LINES 222-241
 
 .. code-block:: Python
 
-    print("+ Benchmark on several points")
+    print("+ Benchmark on several points on ScaledExponentialProblem")
     number_of_test_points = 100
-    test_points = np.linspace(0.01, 12.2, number_of_test_points)
-    kmin = 1.0e-13
-    kmax = 1.0e-1
-    benchmark = nd.ExponentialProblem()
-    average_error, average_feval = benchmark_method(
-        benchmark.function, benchmark.first_derivative, test_points, kmin, kmax, True
+    problem = nd.ScaledExponentialProblem()
+    interval = problem.get_interval()
+    test_points = np.linspace(interval[0], interval[1], number_of_test_points)
+    kmin = 1.0e-12
+    kmax = 1.0e1
+    relative_precision = 1.0e-15
+    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    average_error, average_feval, _ = nd.benchmark_method(
+        problem.get_function(),
+        problem.get_fifth_derivative(),
+        test_points,
+        method.compute_first_derivative,
+        False,
     )
+    print("Average error =", average_error)
+    print("Average number of function evaluations =", average_feval)
 
 
-    # For each function, at point x = 1, plot the error vs the step computed
-    # by the method
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    + Benchmark on several points on ScaledExponentialProblem
+    Average error = 9.999999683394813e+23
+    Average number of function evaluations = 16.0
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 242-244
+
+Plot the condition error depending on the step
+----------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 247-271
+
+.. code-block:: Python
+
+    def plot_condition_error(name, function, x, kmin, kmax, number_of_points=1000):
+        # Plot the condition error depending on k.
+        k_array = np.logspace(np.log10(kmin), np.log10(kmax), number_of_points)
+        algorithm = nd.GillMurraySaundersWright(function, x)
+        c_min, c_max = algorithm.get_threshold_min_max()
+        condition_array = np.zeros((number_of_points))
+        for i in range(number_of_points):
+            condition_array[i] = algorithm.compute_condition(k_array[i])
+
+        #
+        pl.figure()
+        pl.title(f"Condition error of {name} at x = {x}")
+        pl.plot(k_array, condition_array)
+        pl.plot([kmin, kmax], [c_min] * 2, label=r"$c_{min}$")
+        pl.plot([kmin, kmax], [c_max] * 2, label=r"$c_{max}$")
+        pl.xlabel(r"$h_\Phi$")
+        pl.ylabel(r"$c(h_\Phi$)")
+        pl.xscale("log")
+        pl.yscale("log")
+        pl.legend(bbox_to_anchor=(1.0, 1.0))
+        pl.tight_layout()
+        return
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 272-278
+
+The next plot presents the condition error :math:`c(h_\Phi)` depending
+on :math:`h_\Phi`.
+The two horizontal lines represent the minimum and maximum threshold
+values.
+We search for the value of :math:`h_\Phi` such that the condition
+error is between these two limits.
+
+.. GENERATED FROM PYTHON SOURCE LINES 280-289
+
+.. code-block:: Python
+
+    number_of_points = 200
+    problem = nd.ScaledExponentialProblem()
+    x = problem.get_x()
+    name = problem.get_name()
+    function = problem.get_function()
+    kmin = 1.0e-10
+    kmax = 1.0e5
+    plot_condition_error(name, function, x, kmin, kmax)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_001.png
+   :alt: Condition error of scaled exp at x = 1.0
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_001.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 290-292
+
+The previous plot shows that the condition error is a decreasing function
+of :math:`h_\Phi`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 294-297
+
+Remove the end points :math:`x = \pm \pi`, because sin has a zero
+second derivative at these points.
+This makes the algorithm fail.
+
+.. GENERATED FROM PYTHON SOURCE LINES 299-322
+
+.. code-block:: Python
+
+    print("+ Benchmark on several points on SinProblem")
+    number_of_test_points = 100
+    problem = nd.SinProblem()
+    interval = problem.get_interval()
+    epsilon = 1.0e-3
+    test_points = np.linspace(
+        interval[0] + epsilon, interval[1] - epsilon, number_of_test_points
+    )
+    kmin = 1.0e-12
+    kmax = 1.0e1
+    relative_precision = 1.0e-15
+    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    average_error, average_feval, _ = nd.benchmark_method(
+        problem.get_function(),
+        problem.get_fifth_derivative(),
+        test_points,
+        method.compute_first_derivative,
+        False,
+    )
+    print("Average error =", average_error)
+    print("Average number of function evaluations =", average_feval)
 
 
 
@@ -309,927 +529,93 @@ References
 
  .. code-block:: none
 
-    + Benchmark on several points
-    kmin = 1.000e-13, c(kmin) = 1.820e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.871e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.968e-08
-    Number of iterations = 0
-    f_prime_approx = 1.0100501810828826
-    f_prime_exact = 1.010050167084168
-    x = 0.010, abs. error = 1.400e-08, rel. error = 1.386e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.058e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.958e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.989e-08
-    Number of iterations = 0
-    f_prime_approx = 1.1424000200639288
-    f_prime_exact = 1.142400000603336
-    x = 0.133, abs. error = 1.946e-08, rel. error = 1.703e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.013e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.003e-08
-    Number of iterations = 0
-    f_prime_approx = 1.2920920295211449
-    f_prime_exact = 1.2920920206825224
-    x = 0.256, abs. error = 8.839e-09, rel. error = 6.841e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.989e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 1.4613986373179624
-    f_prime_exact = 1.4613986248509536
-    x = 0.379, abs. error = 1.247e-08, rel. error = 8.531e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.978e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.024e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 1.6528899855568633
-    f_prime_exact = 1.6528899695457635
-    x = 0.503, abs. error = 1.601e-08, rel. error = 9.687e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.368e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.009e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.002e-08
-    Number of iterations = 0
-    f_prime_approx = 1.8694730111853781
-    f_prime_exact = 1.8694729863343296
-    x = 0.626, abs. error = 2.485e-08, rel. error = 1.329e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 1.905e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.887e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.971e-08
-    Number of iterations = 0
-    f_prime_approx = 2.1144355445279284
-    f_prime_exact = 2.114435510546567
-    x = 0.749, abs. error = 3.398e-08, rel. error = 1.607e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.989e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 2.3914962151951604
-    f_prime_exact = 2.391496192211239
-    x = 0.872, abs. error = 2.298e-08, rel. error = 9.611e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.436e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.061e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.015e-08
-    Number of iterations = 0
-    f_prime_approx = 2.7048609636533225
-    f_prime_exact = 2.7048609469685205
-    x = 0.995, abs. error = 1.668e-08, rel. error = 6.168e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.756e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.937e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.984e-08
-    Number of iterations = 0
-    f_prime_approx = 3.0592868453041766
-    f_prime_exact = 3.0592868039110805
-    x = 1.118, abs. error = 4.139e-08, rel. error = 1.353e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.117e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.996e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.999e-08
-    Number of iterations = 0
-    f_prime_approx = 3.460154146040208
-    f_prime_exact = 3.4601541195948955
-    x = 1.241, abs. error = 2.645e-08, rel. error = 7.643e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.525e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.961e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.990e-08
-    Number of iterations = 0
-    f_prime_approx = 3.9135483015246932
-    f_prime_exact = 3.9135482544635316
-    x = 1.364, abs. error = 4.706e-08, rel. error = 1.203e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.987e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 4.426352010711396
-    f_prime_exact = 4.426351951573674
-    x = 1.488, abs. error = 5.914e-08, rel. error = 1.336e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.026e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.007e-08
-    Number of iterations = 0
-    f_prime_approx = 5.006349859809935
-    f_prime_exact = 5.006349819975791
-    x = 1.611, abs. error = 3.983e-08, rel. error = 7.957e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.985e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.996e-08
-    Number of iterations = 0
-    f_prime_approx = 5.662346601228033
-    f_prime_exact = 5.662346508858373
-    x = 1.734, abs. error = 9.237e-08, rel. error = 1.631e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.884e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.006e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.001e-08
-    Number of iterations = 0
-    f_prime_approx = 6.404300441547147
-    f_prime_exact = 6.404300366396617
-    x = 1.857, abs. error = 7.515e-08, rel. error = 1.173e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.027e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.007e-08
-    Number of iterations = 0
-    f_prime_approx = 7.243474683784711
-    f_prime_exact = 7.243474612311778
-    x = 1.980, abs. error = 7.147e-08, rel. error = 9.867e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.925e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.981e-08
-    Number of iterations = 0
-    f_prime_approx = 8.192608408113523
-    f_prime_exact = 8.192608319013985
-    x = 2.103, abs. error = 8.910e-08, rel. error = 1.088e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.013e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.003e-08
-    Number of iterations = 0
-    f_prime_approx = 9.266109926871508
-    f_prime_exact = 9.266109796905328
-    x = 2.226, abs. error = 1.300e-07, rel. error = 1.403e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.360e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.000e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.000e-08
-    Number of iterations = 0
-    f_prime_approx = 10.480275405834268
-    f_prime_exact = 10.480275319525907
-    x = 2.349, abs. error = 8.631e-08, rel. error = 8.235e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.669e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.044e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.011e-08
-    Number of iterations = 0
-    f_prime_approx = 11.853536632216311
-    f_prime_exact = 11.853536508896825
-    x = 2.473, abs. error = 1.233e-07, rel. error = 1.040e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.019e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.025e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 13.406740266437598
-    f_prime_exact = 13.406740136489656
-    x = 2.596, abs. error = 1.299e-07, rel. error = 9.693e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.970e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.993e-08
-    Number of iterations = 0
-    f_prime_approx = 15.163464803320773
-    f_prime_exact = 15.16346458733695
-    x = 2.719, abs. error = 2.160e-07, rel. error = 1.424e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.023e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 17.150377939563146
-    f_prime_exact = 17.15037779136259
-    x = 2.842, abs. error = 1.482e-07, rel. error = 8.641e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.184e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.044e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.011e-08
-    Number of iterations = 0
-    f_prime_approx = 19.397642162078153
-    f_prime_exact = 19.397642055503372
-    x = 2.965, abs. error = 1.066e-07, rel. error = 5.494e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.921e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.980e-08
-    Number of iterations = 0
-    f_prime_approx = 21.93937229221645
-    f_prime_exact = 21.93937194216983
-    x = 3.088, abs. error = 3.500e-07, rel. error = 1.596e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.049e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.012e-08
-    Number of iterations = 0
-    f_prime_approx = 24.814152374278944
-    f_prime_exact = 24.814152144863783
-    x = 3.211, abs. error = 2.294e-07, rel. error = 9.245e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.160e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.051e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.013e-08
-    Number of iterations = 0
-    f_prime_approx = 28.06562347408147
-    f_prime_exact = 28.06562322255567
-    x = 3.335, abs. error = 2.515e-07, rel. error = 8.962e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.574e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.971e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.993e-08
-    Number of iterations = 0
-    f_prime_approx = 31.74314448063908
-    f_prime_exact = 31.743144084554007
-    x = 3.458, abs. error = 3.961e-07, rel. error = 1.248e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.042e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.011e-08
-    Number of iterations = 0
-    f_prime_approx = 35.90254143544877
-    f_prime_exact = 35.9025412827088
-    x = 3.581, abs. error = 1.527e-07, rel. error = 4.254e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.010e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.003e-08
-    Number of iterations = 0
-    f_prime_approx = 40.60695674171964
-    f_prime_exact = 40.60695648556833
-    x = 3.704, abs. error = 2.562e-07, rel. error = 6.308e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.040e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.010e-08
-    Number of iterations = 0
-    f_prime_approx = 45.92780549799281
-    f_prime_exact = 45.927804999558255
-    x = 3.827, abs. error = 4.984e-07, rel. error = 1.085e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.924e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.952e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.988e-08
-    Number of iterations = 0
-    f_prime_approx = 51.94586047457165
-    f_prime_exact = 51.945859888000065
-    x = 3.950, abs. error = 5.866e-07, rel. error = 1.129e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.307e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.034e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 58.752478551635434
-    f_prime_exact = 58.75247814542167
-    x = 4.073, abs. error = 4.062e-07, rel. error = 6.914e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.980e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.995e-08
-    Number of iterations = 0
-    f_prime_approx = 66.45098854412032
-    f_prime_exact = 66.45098754108133
-    x = 4.196, abs. error = 1.003e-06, rel. error = 1.509e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.992e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.998e-08
-    Number of iterations = 0
-    f_prime_approx = 75.15825607481688
-    f_prime_exact = 75.15825518466322
-    x = 4.320, abs. error = 8.902e-07, rel. error = 1.184e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.393e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.988e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 85.00646260403484
-    f_prime_exact = 85.00646162573238
-    x = 4.443, abs. error = 9.783e-07, rel. error = 1.151e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.980e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.995e-08
-    Number of iterations = 0
-    f_prime_approx = 96.14510850057962
-    f_prime_exact = 96.14510741864154
-    x = 4.566, abs. error = 1.082e-06, rel. error = 1.125e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.975e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.994e-08
-    Number of iterations = 0
-    f_prime_approx = 108.7432835449887
-    f_prime_exact = 108.74328261351711
-    x = 4.689, abs. error = 9.315e-07, rel. error = 8.566e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.462e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.979e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.995e-08
-    Number of iterations = 0
-    f_prime_approx = 122.99223466801642
-    f_prime_exact = 122.99223362530132
-    x = 4.812, abs. error = 1.043e-06, rel. error = 8.478e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.079e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.020e-08
-    Number of iterations = 0
-    f_prime_approx = 139.1082680147748
-    f_prime_exact = 139.10826644716695
-    x = 4.935, abs. error = 1.568e-06, rel. error = 1.127e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.214e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.101e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.025e-08
-    Number of iterations = 0
-    f_prime_approx = 157.33603142549865
-    f_prime_exact = 157.33603028049382
-    x = 5.058, abs. error = 1.145e-06, rel. error = 7.277e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.504e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.039e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.010e-08
-    Number of iterations = 0
-    f_prime_approx = 177.9522322708943
-    f_prime_exact = 177.95223142850568
-    x = 5.182, abs. error = 8.424e-07, rel. error = 4.734e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.833e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.047e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.012e-08
-    Number of iterations = 0
-    f_prime_approx = 201.2698356071119
-    f_prime_exact = 201.26983383227272
-    x = 5.305, abs. error = 1.775e-06, rel. error = 8.818e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.005e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.001e-08
-    Number of iterations = 0
-    f_prime_approx = 227.642812420985
-    f_prime_exact = 227.64281001525893
-    x = 5.428, abs. error = 2.406e-06, rel. error = 1.057e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 1.812e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.939e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.985e-08
-    Number of iterations = 0
-    f_prime_approx = 257.47151855807874
-    f_prime_exact = 257.47151455805454
-    x = 5.551, abs. error = 4.000e-06, rel. error = 1.554e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.941e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.985e-08
-    Number of iterations = 0
-    f_prime_approx = 291.20876588219744
-    f_prime_exact = 291.20876167525324
-    x = 5.674, abs. error = 4.207e-06, rel. error = 1.445e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.318e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.928e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.982e-08
-    Number of iterations = 0
-    f_prime_approx = 329.3667035605685
-    f_prime_exact = 329.36669915503717
-    x = 5.797, abs. error = 4.406e-06, rel. error = 1.338e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.033e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 372.52458634734387
-    f_prime_exact = 372.52458301121044
-    x = 5.920, abs. error = 3.336e-06, rel. error = 8.955e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.062e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.015e-08
-    Number of iterations = 0
-    f_prime_approx = 421.3375759382951
-    f_prime_exact = 421.3375708706767
-    x = 6.043, abs. error = 5.068e-06, rel. error = 1.203e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.353e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.992e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.998e-08
-    Number of iterations = 0
-    f_prime_approx = 476.5466739047366
-    f_prime_exact = 476.54666758424383
-    x = 6.167, abs. error = 6.320e-06, rel. error = 1.326e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 1.896e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.035e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.009e-08
-    Number of iterations = 0
-    f_prime_approx = 538.9899773682508
-    f_prime_exact = 538.9899740399652
-    x = 6.290, abs. error = 3.328e-06, rel. error = 6.175e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.145e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.125e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.031e-08
-    Number of iterations = 0
-    f_prime_approx = 609.6154154834254
-    f_prime_exact = 609.6154099414529
-    x = 6.413, abs. error = 5.542e-06, rel. error = 9.091e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.977e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.994e-08
-    Number of iterations = 0
-    f_prime_approx = 689.4951097737229
-    f_prime_exact = 689.4951036891268
-    x = 6.536, abs. error = 6.085e-06, rel. error = 8.825e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.744e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.920e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.980e-08
-    Number of iterations = 0
-    f_prime_approx = 779.8416804368192
-    f_prime_exact = 779.8416678097716
-    x = 6.659, abs. error = 1.263e-05, rel. error = 1.619e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.030e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 882.0266174559615
-    f_prime_exact = 882.0266070033241
-    x = 6.782, abs. error = 1.045e-05, rel. error = 1.185e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.510e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.034e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.009e-08
-    Number of iterations = 0
-    f_prime_approx = 997.6011475650502
-    f_prime_exact = 997.6011382499878
-    x = 6.905, abs. error = 9.315e-06, rel. error = 9.337e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.970e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.992e-08
-    Number of iterations = 0
-    f_prime_approx = 1128.3197531941196
-    f_prime_exact = 1128.3197390369876
-    x = 7.028, abs. error = 1.416e-05, rel. error = 1.255e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.939e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.985e-08
-    Number of iterations = 0
-    f_prime_approx = 1276.1667895962255
-    f_prime_exact = 1276.1667811785012
-    x = 7.152, abs. error = 8.418e-06, rel. error = 6.596e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.968e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.992e-08
-    Number of iterations = 0
-    f_prime_approx = 1443.3866770686575
-    f_prime_exact = 1443.3866545430617
-    x = 7.275, abs. error = 2.253e-05, rel. error = 1.561e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.989e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 1632.5178510439673
-    f_prime_exact = 1632.517837981244
-    x = 7.398, abs. error = 1.306e-05, rel. error = 8.002e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.010e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.003e-08
-    Number of iterations = 0
-    f_prime_approx = 1846.431457211488
-    f_prime_exact = 1846.4314346668687
-    x = 7.521, abs. error = 2.254e-05, rel. error = 1.221e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.993e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.998e-08
-    Number of iterations = 0
-    f_prime_approx = 2088.3747766768915
-    f_prime_exact = 2088.374756836879
-    x = 7.644, abs. error = 1.984e-05, rel. error = 9.500e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.995e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.999e-08
-    Number of iterations = 0
-    f_prime_approx = 2362.020649088795
-    f_prime_exact = 2362.0206215674402
-    x = 7.767, abs. error = 2.752e-05, rel. error = 1.165e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.350e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.983e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.996e-08
-    Number of iterations = 0
-    f_prime_approx = 2671.5231369114335
-    f_prime_exact = 2671.5231059200228
-    x = 7.890, abs. error = 3.099e-05, rel. error = 1.160e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.967e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.992e-08
-    Number of iterations = 0
-    f_prime_approx = 3021.5806381068205
-    f_prime_exact = 3021.5806078477076
-    x = 8.014, abs. error = 3.026e-05, rel. error = 1.001e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.008e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.002e-08
-    Number of iterations = 0
-    f_prime_approx = 3417.5072094247703
-    f_prime_exact = 3417.5071701568327
-    x = 8.137, abs. error = 3.927e-05, rel. error = 1.149e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 3.400e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.000e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.000e-08
-    Number of iterations = 0
-    f_prime_approx = 3865.313184844544
-    f_prime_exact = 3865.313150256364
-    x = 8.260, abs. error = 3.459e-05, rel. error = 8.948e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.006e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.001e-08
-    Number of iterations = 0
-    f_prime_approx = 4371.796489559483
-    f_prime_exact = 4371.796460300949
-    x = 8.383, abs. error = 2.926e-05, rel. error = 6.693e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.027e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.007e-08
-    Number of iterations = 0
-    f_prime_approx = 4944.645811626237
-    f_prime_exact = 4944.645762797331
-    x = 8.506, abs. error = 4.883e-05, rel. error = 9.875e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.460e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.032e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 5592.5572355205195
-    f_prime_exact = 5592.557188233446
-    x = 8.629, abs. error = 4.729e-05, rel. error = 8.455e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.032e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 6325.366429955118
-    f_prime_exact = 6325.366346560564
-    x = 8.752, abs. error = 8.339e-05, rel. error = 1.318e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.034e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.008e-08
-    Number of iterations = 0
-    f_prime_approx = 7154.197726606585
-    f_prime_exact = 7154.197636526858
-    x = 8.875, abs. error = 9.008e-05, rel. error = 1.259e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.954e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.989e-08
-    Number of iterations = 0
-    f_prime_approx = 8091.633210470089
-    f_prime_exact = 8091.633119450407
-    x = 8.999, abs. error = 9.102e-05, rel. error = 1.125e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.013e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.025e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 9151.903656018781
-    f_prime_exact = 9151.90352101771
-    x = 9.122, abs. error = 1.350e-04, rel. error = 1.475e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.276e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.065e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.016e-08
-    Number of iterations = 0
-    f_prime_approx = 10351.104318170424
-    f_prime_exact = 10351.104260607543
-    x = 9.245, abs. error = 5.756e-05, rel. error = 5.561e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.023e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 11707.439956247661
-    f_prime_exact = 11707.439787570336
-    x = 9.368, abs. error = 1.687e-04, rel. error = 1.441e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.044e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.011e-08
-    Number of iterations = 0
-    f_prime_approx = 13241.500034228247
-    f_prime_exact = 13241.499933606137
-    x = 9.491, abs. error = 1.006e-04, rel. error = 7.599e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.016e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.004e-08
-    Number of iterations = 0
-    f_prime_approx = 14976.572576448476
-    f_prime_exact = 14976.572476404686
-    x = 9.614, abs. error = 1.000e-04, rel. error = 6.680e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.963e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.991e-08
-    Number of iterations = 0
-    f_prime_approx = 16938.996882931042
-    f_prime_exact = 16938.996659415337
-    x = 9.737, abs. error = 2.235e-04, rel. error = 1.320e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.975e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.994e-08
-    Number of iterations = 0
-    f_prime_approx = 19158.56316903247
-    f_prime_exact = 19158.563034348233
-    x = 9.861, abs. error = 1.347e-04, rel. error = 7.030e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.383e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.108e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.027e-08
-    Number of iterations = 0
-    f_prime_approx = 21668.96585374832
-    f_prime_exact = 21668.965696210464
-    x = 9.984, abs. error = 1.575e-04, rel. error = 7.270e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.963e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.991e-08
-    Number of iterations = 0
-    f_prime_approx = 24508.31405880364
-    f_prime_exact = 24508.313776024206
-    x = 10.107, abs. error = 2.828e-04, rel. error = 1.154e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.958e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.990e-08
-    Number of iterations = 0
-    f_prime_approx = 27719.71033686824
-    f_prime_exact = 27719.70995593499
-    x = 10.230, abs. error = 3.809e-04, rel. error = 1.374e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.008e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.002e-08
-    Number of iterations = 0
-    f_prime_approx = 31351.9051618616
-    f_prime_exact = 31351.904788849584
-    x = 10.353, abs. error = 3.730e-04, rel. error = 1.190e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.978e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.995e-08
-    Number of iterations = 0
-    f_prime_approx = 35460.03707918793
-    f_prime_exact = 35460.036755493995
-    x = 10.476, abs. error = 3.237e-04, rel. error = 9.128e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.009e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.002e-08
-    Number of iterations = 0
-    f_prime_approx = 40106.469676093715
-    f_prime_exact = 40106.46929331679
-    x = 10.599, abs. error = 3.828e-04, rel. error = 9.544e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.022e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 45361.73793503671
-    f_prime_exact = 45361.73750374202
-    x = 10.722, abs. error = 4.313e-04, rel. error = 9.508e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.821e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.029e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.007e-08
-    Number of iterations = 0
-    f_prime_approx = 51305.6193479579
-    f_prime_exact = 51305.61890924868
-    x = 10.846, abs. error = 4.387e-04, rel. error = 8.551e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.988e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.997e-08
-    Number of iterations = 0
-    f_prime_approx = 58028.34521039318
-    f_prime_exact = 58028.34451488785
-    x = 10.969, abs. error = 6.955e-04, rel. error = 1.199e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 1.804e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.100e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.025e-08
-    Number of iterations = 0
-    f_prime_approx = 65631.96883406903
-    f_prime_exact = 65631.96855874031
-    x = 11.092, abs. error = 2.753e-04, rel. error = 4.195e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.040e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.081e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.020e-08
-    Number of iterations = 0
-    f_prime_approx = 74231.91805595063
-    f_prime_exact = 74231.91774478974
-    x = 11.215, abs. error = 3.112e-04, rel. error = 4.192e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.979e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.995e-08
-    Number of iterations = 0
-    f_prime_approx = 83958.7441591778
-    f_prime_exact = 83958.74347632064
-    x = 11.338, abs. error = 6.829e-04, rel. error = 8.133e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.016e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.004e-08
-    Number of iterations = 0
-    f_prime_approx = 94960.10466445105
-    f_prime_exact = 94960.10368959374
-    x = 11.461, abs. error = 9.749e-04, rel. error = 1.027e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.952e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.936e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.984e-08
-    Number of iterations = 0
-    f_prime_approx = 107403.00562060768
-    f_prime_exact = 107403.00437299456
-    x = 11.584, abs. error = 1.248e-03, rel. error = 1.162e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.023e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.006e-08
-    Number of iterations = 0
-    f_prime_approx = 121476.33603374472
-    f_prime_exact = 121476.3347990068
-    x = 11.707, abs. error = 1.235e-03, rel. error = 1.016e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 1.888e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 3.934e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 1.983e-08
-    Number of iterations = 0
-    f_prime_approx = 137393.73681119774
-    f_prime_exact = 137393.73495505998
-    x = 11.831, abs. error = 1.856e-03, rel. error = 1.351e-08, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.030e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.007e-08
-    Number of iterations = 0
-    f_prime_approx = 155396.83940901345
-    f_prime_exact = 155396.8387022461
-    x = 11.954, abs. error = 7.068e-04, rel. error = 4.548e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = 2.416e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.094e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.023e-08
-    Number of iterations = 0
-    f_prime_approx = 175758.94272226808
-    f_prime_exact = 175758.941894625
-    x = 12.077, abs. error = 8.276e-04, rel. error = 4.709e-09, Func. eval. = 12
-    kmin = 1.000e-13, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-13, kmax = 1.000e-01, k = 1.000e-07, c(k) = 4.018e-02
-      c in [0.001, 0.1]: stop!
-    Computed step = 2.004e-08
-    Number of iterations = 0
-    f_prime_approx = 198789.15250293532
-    f_prime_exact = 198789.1511429544
-    x = 12.200, abs. error = 1.360e-03, rel. error = 6.841e-09, Func. eval. = 12
-    Average error = 1.0306611027792858e-08
-    Average number of function evaluations = 12.0
+    + Benchmark on several points on SinProblem
+    Average error = 1.0720752779539923e-07
+    Average number of function evaluations = 18.0
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 205-243
+.. GENERATED FROM PYTHON SOURCE LINES 323-324
+
+Plot the condition error depending on k.
+
+.. GENERATED FROM PYTHON SOURCE LINES 324-333
+
+.. code-block:: Python
+
+    number_of_points = 200
+    problem = nd.SinProblem()
+    x = -np.pi
+    name = problem.get_name()
+    function = problem.get_function()
+    kmin = 1.0e-17
+    kmax = 1.0e-10
+    plot_condition_error(name, function, x, kmin, kmax)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_002.png
+   :alt: Condition error of sin at x = -3.141592653589793
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_002.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 334-337
+
+In the previous plot, we see that there is no satisfactory
+value of :math:`h_\Phi` for the sin function
+at point :math:`x = -\pi`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 339-341
+
+Plot the error depending on the step
+------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 343-345
+
+For each function, at point x = 1, plot the error vs the step computed
+by the method
+
+.. GENERATED FROM PYTHON SOURCE LINES 348-407
 
 .. code-block:: Python
 
     def plot_error_vs_h_with_GMSW_steps(
-        name, function, function_derivative, x, h_array, kmin, kmax, verbose=False
+        name, function, first_derivative, x, step_array, kmin, kmax, verbose=False
     ):
+        """
+        Plot the computed error depending on the step for an array of F.D. steps
+
+        Parameters
+        ----------
+        name : str
+            The name of the problem
+        function : function
+            The function.
+        first_derivative : function
+            The exact first derivative of the function
+        x : float
+            The input point where the test is done
+        step_array : list(float)
+            The array of finite difference steps
+        kmin : float, > 0
+            The minimum step k for the second derivative.
+        kmax : float, > kmin
+            The maximum step k for the second derivative.
+        verbose : bool, optional
+            Set to True to print intermediate messages. The default is False.
+        """
         algorithm = nd.GillMurraySaundersWright(function, x)
-        number_of_points = len(h_array)
+        number_of_points = len(step_array)
         error_array = np.zeros((number_of_points))
         for i in range(number_of_points):
-            h = h_array[i]
-            f_prime_approx = algorithm.compute_first_derivative(h)
-            error_array[i] = abs(f_prime_approx - function_derivative(x))
+            f_prime_approx = algorithm.compute_first_derivative(step_array[i])
+            error_array[i] = abs(f_prime_approx - first_derivative(x))
 
         step, number_of_iterations = algorithm.compute_step(kmin, kmax)
 
@@ -1241,7 +627,7 @@ References
         maximum_error = np.nanmax(error_array)
 
         pl.figure()
-        pl.plot(h_array, error_array)
+        pl.plot(step_array, error_array)
         pl.plot(
             [step] * 2,
             [minimum_error, maximum_error],
@@ -1265,17 +651,35 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 244-257
+.. GENERATED FROM PYTHON SOURCE LINES 408-439
 
 .. code-block:: Python
 
-    def plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax, verbose=False):
+    def plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, verbose=False):
+        """
+        Plot the computed error depending on the step for an array of F.D. steps
+
+        Parameters
+        ----------
+        problem : nd.BenchmarkProblem
+            The problem
+        x : float
+            The input point where the test is done
+        step_array : list(float)
+            The array of finite difference steps
+        kmin : float, > 0
+            The minimum step k for the second derivative.
+        kmax : float, > kmin
+            The maximum step k for the second derivative.
+        verbose : bool, optional
+            Set to True to print intermediate messages. The default is False.
+        """
         plot_error_vs_h_with_GMSW_steps(
-            benchmark.name,
-            benchmark.function,
-            benchmark.first_derivative,
+            problem.get_name(),
+            problem.get_function(),
+            problem.get_first_derivative(),
             x,
-            h_array,
+            step_array,
             kmin,
             kmax,
             verbose,
@@ -1289,24 +693,24 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 258-266
+.. GENERATED FROM PYTHON SOURCE LINES 440-448
 
 .. code-block:: Python
 
-    benchmark = nd.ExponentialProblem()
+    problem = nd.ExponentialProblem()
     x = 1.0
-    number_of_points = 1000
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
+    number_of_points = 200
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
     kmin = 1.0e-15
     kmax = 1.0e-1
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax, True)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
 
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_001.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_003.png
    :alt: (GMS & W). exp at point x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_001.png
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_003.png
    :class: sphx-glr-single-img
 
 
@@ -1320,66 +724,66 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 267-271
+.. GENERATED FROM PYTHON SOURCE LINES 449-453
 
 .. code-block:: Python
 
     x = 12.0
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax)
-
-
-
-
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_002.png
-   :alt: (GMS & W). exp at point x = 12.0
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_002.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 272-279
-
-.. code-block:: Python
-
-    benchmark = nd.ScaledExponentialProblem()
-    x = 1.0
-    kmin = 1.0e-10
-    kmax = 1.0e8
-    h_array = np.logspace(-10.0, 8.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax)
-
-
-
-
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_003.png
-   :alt: (GMS & W). scaled exp at point x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_003.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 280-287
-
-.. code-block:: Python
-
-    benchmark = nd.LogarithmicProblem()
-    x = 1.1
-    kmin = 1.0e-14
-    kmax = 1.0e-1
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax, True)
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax)
 
 
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_004.png
-   :alt: (GMS & W). log at point x = 1.1
+   :alt: (GMS & W). exp at point x = 12.0
    :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_004.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 454-461
+
+.. code-block:: Python
+
+    problem = nd.ScaledExponentialProblem()
+    x = 1.0
+    kmin = 1.0e-10
+    kmax = 1.0e8
+    step_array = np.logspace(-10.0, 8.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_005.png
+   :alt: (GMS & W). scaled exp at point x = 1.0
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_005.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 462-469
+
+.. code-block:: Python
+
+    problem = nd.LogarithmicProblem()
+    x = 1.1
+    kmin = 1.0e-14
+    kmax = 1.0e-1
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_006.png
+   :alt: (GMS & W). log at point x = 1.1
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_006.png
    :class: sphx-glr-single-img
 
 
@@ -1393,46 +797,46 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 288-295
+.. GENERATED FROM PYTHON SOURCE LINES 470-477
 
 .. code-block:: Python
 
-    benchmark = nd.SinProblem()
+    problem = nd.SinProblem()
     x = 1.0
     kmin = 1.0e-15
     kmax = 1.0e-1
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax)
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax)
 
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_005.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_007.png
    :alt: (GMS & W). sin at point x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_005.png
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_007.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 296-303
+.. GENERATED FROM PYTHON SOURCE LINES 478-485
 
 .. code-block:: Python
 
-    benchmark = nd.SquareRootProblem()
+    problem = nd.SquareRootProblem()
     x = 1.0
     kmin = 1.0e-15
     kmax = 1.0e-1
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax, True)
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
 
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_006.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_008.png
    :alt: (GMS & W). sqrt at point x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_006.png
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_008.png
    :class: sphx-glr-single-img
 
 
@@ -1446,33 +850,276 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 304-311
+.. GENERATED FROM PYTHON SOURCE LINES 486-493
 
 .. code-block:: Python
 
-    benchmark = nd.AtanProblem()
+    problem = nd.AtanProblem()
     x = 1.1
     kmin = 1.0e-15
     kmax = 1.0e-1
-    h_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(benchmark, x, h_array, kmin, kmax)
+    step_array = np.logspace(-15.0, -1.0, number_of_points)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax)
 
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_007.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_009.png
    :alt: (GMS & W). atan at point x = 1.1
-   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_007.png
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_009.png
    :class: sphx-glr-single-img
 
 
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 494-496
+
+See the history of steps during the bissection search
+-----------------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 498-512
+
+In G, M, S & W's method, the bisection algorithm
+produces a sequence of steps :math:`(k_i)_{1 \leq i \leq n_{iter}}`
+where :math:`n_{iter} \in \mathbb{N}` is the number of iterations.
+These steps are meant to converge to an
+approximately optimal step of for the central finite difference formula of the
+second derivative.
+The optimal step :math:`k^\star` for the central finite difference formula of the
+second derivative can be computed depending on the fourth derivative of the
+function.
+In the next example, we want to compute the absolute error between
+each intermediate step :math:`k_i` and the exact value :math:`k^\star`
+to see how close the algorithm gets to the exact step.
+The list of intermediate steps during the algorithm can be obtained
+thanks to the :meth:`~numericalderivative.GillMurraySaundersWright.get_step_history` method.
+
+.. GENERATED FROM PYTHON SOURCE LINES 515-522
+
+In the next example, we print the intermediate steps k during
+the bissection algorithm that searches for a step such
+that the L ratio is satisfactory.
+The algorithm has two different methods to update the step:
+
+- using the mean,
+- using the mean in the logarithm space (this is generally much faster).
+
+.. GENERATED FROM PYTHON SOURCE LINES 522-564
+
+.. code-block:: Python
+
+
+
+    def plot_GMSW_step_history(problem, kmin, kmax, logscale):
+        function = problem.get_function()
+        name = problem.get_name()
+        x = problem.get_x()
+        algorithm = nd.GillMurraySaundersWright(function, x, verbose=True)
+        step, number_of_iterations = algorithm.compute_step(
+            kmin=kmin, kmax=kmax, logscale=logscale
+        )
+        step_k_history = algorithm.get_step_history()
+        print(f"Number of iterations = {number_of_iterations}")
+        print(f"History of steps k : {step_k_history}")
+        last_step_k = step_k_history[-1]
+        print(f"Last step k : {last_step_k}")
+
+        # Then we compute the exact step, using :meth:`~numericalderivative.SecondDerivativeCentral.compute_step`.
+        fourth_derivative = problem.get_fourth_derivative()
+        fourth_derivative_value = fourth_derivative(x)
+        print(f"f^(4)(x) = {fourth_derivative_value}")
+        absolute_precision = 1.0e-16
+        exact_step_k, absolute_error = nd.SecondDerivativeCentral.compute_step(
+            fourth_derivative_value, absolute_precision
+        )
+        print(f"Optimal step k for f^(2)(x) = {exact_step_k}")
+
+        # Plot the absolute error between the exact step k and the intermediate k
+        # of the algorithm.
+        error_step_k = [
+            abs(step_k_history[i] - exact_step_k) for i in range(len(step_k_history))
+        ]
+        fig = pl.figure()
+        pl.title(f"GMSW on {name} at x = {x}. Log scale = {logscale}")
+        pl.plot(range(len(step_k_history)), error_step_k, "o-")
+        pl.xlabel("Iterations")
+        pl.ylabel(r"$|k_i - k^\star|$")
+        pl.yscale("log")
+        ax = fig.gca()
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        pl.tight_layout()
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 565-566
+
+First, test the logarithmic log scale.
+
+.. GENERATED FROM PYTHON SOURCE LINES 566-572
+
+.. code-block:: Python
+
+    problem = nd.SinProblem()
+    kmin = 1.0e-15
+    kmax = 1.0e3
+    logscale = True
+    plot_GMSW_step_history(problem, kmin, kmax, logscale)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_010.png
+   :alt: GMSW on sin at x = 1.0. Log scale = True
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_010.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    kmin = 1.000e-15, c(kmin) = inf
+    kmax = 1.000e+03, c(kmax) = 4.570e-16
+    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 1.000e-06, c(k) = 4.000e-04
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #1, kmin = 1.000e-15, kmax = 1.000e-06, k = 3.162e-11, c(k) = 3.032e+00
+      c(k) >= c_threshold_min: increase kmin.
+    Iter #2, kmin = 3.162e-11, kmax = 1.000e-06, k = 5.623e-09, c(k) = inf
+      c(k) >= c_threshold_min: increase kmin.
+    Iter #3, kmin = 5.623e-09, kmax = 1.000e-06, k = 7.499e-08, c(k) = 7.218e-02
+      c in [0.001, 0.1]: stop!
+    Number of iterations = 3
+    History of steps k : [np.float64(1.0000000000000004e-06), np.float64(3.162277660168382e-11), np.float64(5.623413251903494e-09), np.float64(7.498942093324563e-08)]
+    Last step k : 7.498942093324563e-08
+    f^(4)(x) = 0.8414709848078965
+    Optimal step k for f^(2)(x) = 0.0002748213843759035
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 573-576
+
+The previous figure shows that the algorithm does not necessarily
+reduce the distance to the optimal step when we use the logarithmic scale.
+The algorithm quickly stops and gets an error approximately equal to :math:`10^{-4}`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 578-579
+
+Secondly, test the ordinary scale, using the mean.
+
+.. GENERATED FROM PYTHON SOURCE LINES 579-585
+
+.. code-block:: Python
+
+    problem = nd.SinProblem()
+    kmin = 1.0e-15
+    kmax = 1.0e3
+    logscale = False
+    plot_GMSW_step_history(problem, kmin, kmax, logscale)
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_011.png
+   :alt: GMSW on sin at x = 1.0. Log scale = False
+   :srcset: /auto_example/images/sphx_glr_plot_gill_murray_saunders_wright_011.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    kmin = 1.000e-15, c(kmin) = inf
+    kmax = 1.000e+03, c(kmax) = 4.570e-16
+    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 5.000e+02, c(k) = 1.062e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #1, kmin = 1.000e-15, kmax = 5.000e+02, k = 2.500e+02, c(k) = 2.635e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #2, kmin = 1.000e-15, kmax = 2.500e+02, k = 1.250e+02, c(k) = 9.421e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #3, kmin = 1.000e-15, kmax = 1.250e+02, k = 6.250e+01, c(k) = 3.666e-15
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #4, kmin = 1.000e-15, kmax = 6.250e+01, k = 3.125e+01, c(k) = 1.456e-14
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #5, kmin = 1.000e-15, kmax = 3.125e+01, k = 1.562e+01, c(k) = 1.002e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #6, kmin = 1.000e-15, kmax = 1.562e+01, k = 7.813e+00, c(k) = 2.087e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #7, kmin = 1.000e-15, kmax = 7.813e+00, k = 3.906e+00, c(k) = 1.162e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #8, kmin = 1.000e-15, kmax = 3.906e+00, k = 1.953e+00, c(k) = 1.457e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #9, kmin = 1.000e-15, kmax = 1.953e+00, k = 9.766e-01, c(k) = 4.544e-16
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #10, kmin = 1.000e-15, kmax = 9.766e-01, k = 4.883e-01, c(k) = 1.711e-15
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #11, kmin = 1.000e-15, kmax = 4.883e-01, k = 2.441e-01, c(k) = 6.744e-15
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #12, kmin = 1.000e-15, kmax = 2.441e-01, k = 1.221e-01, c(k) = 2.688e-14
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #13, kmin = 1.000e-15, kmax = 1.221e-01, k = 6.104e-02, c(k) = 1.074e-13
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #14, kmin = 1.000e-15, kmax = 6.104e-02, k = 3.052e-02, c(k) = 4.295e-13
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #15, kmin = 1.000e-15, kmax = 3.052e-02, k = 1.526e-02, c(k) = 1.718e-12
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #16, kmin = 1.000e-15, kmax = 1.526e-02, k = 7.629e-03, c(k) = 6.872e-12
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #17, kmin = 1.000e-15, kmax = 7.629e-03, k = 3.815e-03, c(k) = 2.749e-11
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #18, kmin = 1.000e-15, kmax = 3.815e-03, k = 1.907e-03, c(k) = 1.100e-10
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #19, kmin = 1.000e-15, kmax = 1.907e-03, k = 9.537e-04, c(k) = 4.398e-10
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #20, kmin = 1.000e-15, kmax = 9.537e-04, k = 4.768e-04, c(k) = 1.759e-09
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #21, kmin = 1.000e-15, kmax = 4.768e-04, k = 2.384e-04, c(k) = 7.037e-09
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #22, kmin = 1.000e-15, kmax = 2.384e-04, k = 1.192e-04, c(k) = 2.815e-08
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #23, kmin = 1.000e-15, kmax = 1.192e-04, k = 5.960e-05, c(k) = 1.126e-07
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #24, kmin = 1.000e-15, kmax = 5.960e-05, k = 2.980e-05, c(k) = 4.504e-07
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #25, kmin = 1.000e-15, kmax = 2.980e-05, k = 1.490e-05, c(k) = 1.801e-06
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #26, kmin = 1.000e-15, kmax = 1.490e-05, k = 7.451e-06, c(k) = 7.206e-06
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #27, kmin = 1.000e-15, kmax = 7.451e-06, k = 3.725e-06, c(k) = 2.882e-05
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #28, kmin = 1.000e-15, kmax = 3.725e-06, k = 1.863e-06, c(k) = 1.153e-04
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #29, kmin = 1.000e-15, kmax = 1.863e-06, k = 9.313e-07, c(k) = 4.612e-04
+      c(k) < c_threshold_min: reduce kmax.
+    Iter #30, kmin = 1.000e-15, kmax = 9.313e-07, k = 4.657e-07, c(k) = 1.845e-03
+      c in [0.001, 0.1]: stop!
+    Number of iterations = 30
+    History of steps k : [500.0, 250.0, 125.0, 62.5, 31.25, 15.625, 7.812500000000001, 3.906250000000001, 1.9531250000000009, 0.976562500000001, 0.488281250000001, 0.244140625000001, 0.122070312500001, 0.061035156250001, 0.030517578125001, 0.015258789062501, 0.007629394531250999, 0.0038146972656259996, 0.0019073486328134999, 0.00095367431640725, 0.00047683715820412496, 0.0002384185791025625, 0.00011920928955178124, 5.960464477639062e-05, 2.980232238869531e-05, 1.4901161194847655e-05, 7.450580597923828e-06, 3.725290299461914e-06, 1.862645150230957e-06, 9.313225756154784e-07, 4.656612883077392e-07]
+    Last step k : 4.656612883077392e-07
+    f^(4)(x) = 0.8414709848078965
+    Optimal step k for f^(2)(x) = 0.0002748213843759035
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 586-589
+
+In the previous plot, we see that the error first decreases
+down to an error approximately equal to :math:`10^{-4}`.
+Then the error slightly increases before the algorithm stops.
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.423 seconds)
+   **Total running time of the script:** (0 minutes 2.780 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright.py:

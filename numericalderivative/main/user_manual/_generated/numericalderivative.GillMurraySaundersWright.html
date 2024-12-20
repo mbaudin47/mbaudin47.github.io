@@ -47,12 +47,44 @@
 <dd><p>Compute an approximately optimal step for the forward F.D. formula of the first derivative</p>
 <p>The method is based on three steps:</p>
 <ul class="simple">
-<li><p>compute an approximate optimal step for the second derivative using central finite difference formula,</p></li>
-<li><p>compute the approximate second derivative using central finite difference formula,</p></li>
-<li><p>compute the approximate optimal step for the first derivative using the forward finite difference formula.</p></li>
+<li><p>compute an approximate optimal step <span class="math notranslate nohighlight">\(h_\Phi\)</span> for the second
+derivative using central finite difference formula,</p></li>
+<li><p>compute the approximate second derivative using central finite
+difference formula,</p></li>
+<li><p>compute the approximate optimal step for the first derivative using the
+forward finite difference formula.</p></li>
 </ul>
 <p>Finally, this approximately optimal step can be use to compute the
 first derivative using the forward finite difference formula.</p>
+<p>The goal of the method is to compute the approximation of <span class="math notranslate nohighlight">\(f'(x)\)</span>
+using the forward finite difference formula (see (G, M, S &amp; W, 1983) eq. 1 page 311):</p>
+<div class="math notranslate nohighlight">
+\[f'(x) \approx \frac{f(x + h) - f(x)}{h}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the function, <span class="math notranslate nohighlight">\(x \in \mathbb{R}\)</span> is the
+input point and <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step.
+If <span class="math notranslate nohighlight">\(f''(x) \neq 0\)</span>, then the step which minimizes the total error is:</p>
+<div class="math notranslate nohighlight">
+\[h^\star = 2 \sqrt{\frac{\epsilon_f}{\left|f''(x)\right|}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon_f &gt; 0\)</span> is the absolute error of the function evaluation.
+The goal of the method is to compute <span class="math notranslate nohighlight">\(h^\star\)</span> using
+function evaluations only.
+An approximate value of the second derivative can be computed from the
+central finite difference formula (see (G, M, S &amp; W, 1983) eq. 8 page 314):</p>
+<div class="math notranslate nohighlight">
+\[f''(x) \approx \Phi(h_\Phi)
+= \frac{f(x + h_\Phi) - 2 f(x) + f(x - h_\Phi)}{h_\Phi^2}.\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Phi\)</span> is the approximation of <span class="math notranslate nohighlight">\(f''(x)\)</span> from the
+central finite difference formula and <span class="math notranslate nohighlight">\(h_\Phi &gt; 0\)</span> is the step of
+the second derivative finite difference formula.
+The method is based on the condition error (see (G, M, S &amp; W, 1983) eq. 1 page 315):</p>
+<div class="math notranslate nohighlight">
+\[c(h_\Phi) = \frac{4 \epsilon_f}{h_\Phi^2 |\Phi|}.\]</div>
+<p>The condition error is a decreasing function of <span class="math notranslate nohighlight">\(h_\Phi\)</span>.
+The algorithm searches for a step <span class="math notranslate nohighlight">\(h_\Phi\)</span> such that:</p>
+<div class="math notranslate nohighlight">
+\[c_{\min} \leq c(h_\Phi) \leq c_{\max}\]</div>
+<p>where <span class="math notranslate nohighlight">\(c_{\min}\)</span> and <span class="math notranslate nohighlight">\(c_{\max}\)</span> are thresholds defined by the
+user.</p>
 <p>This algorithm is a simplified version of the algorithm published in
 (Gill, Murray, Saunders &amp; Wright, 1983) section 3.2 page 316.
 While (Gill, Murray, Saunders &amp; Wright, 1983) simultaneously considers
@@ -60,6 +92,17 @@ the finite difference step of the forward, backward formula for the
 first derivative and the central formula for the second derivative,
 this algorithm only searches for the optimal step for the central
 formula for the second derivative.</p>
+<p>The algorithm can fail in the case where the function is odd
+or approximately linear.
+For example, the function <span class="math notranslate nohighlight">\(\sin\)</span> is linear at point <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
+In this case, the second derivative is zero, which produces a
+value of <span class="math notranslate nohighlight">\(\Phi\)</span> zero or close to zero.
+This produces an infinite value of the condition error.
+The same problem appears at <span class="math notranslate nohighlight">\(x = 0\)</span>.</p>
+<p>In this algorithm fails to produce a consistent step, one can compute
+an approximately optimal step using <a class="reference internal" href="numericalderivative.FirstDerivativeForward.html#numericalderivative.FirstDerivativeForward.compute_step" title="numericalderivative.FirstDerivativeForward.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a>.
+Since the value of the second derivative is unknown, we can make the
+hypothesis that <span class="math notranslate nohighlight">\(f''(x) \approx 1\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -102,6 +145,15 @@ arg1, arg2, ..., are the items in the args list.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="numericalderivative.GillMurraySaundersWright.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
+<td><p>Return the relative precision of the function evaluation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_step_history" title="numericalderivative.GillMurraySaundersWright.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
+<td><p>Return the history of steps during the search.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_threshold_min_max" title="numericalderivative.GillMurraySaundersWright.get_threshold_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_threshold_min_max</span></code></a>()</p></td>
+<td><p>Return the threshold min and max of the condition error</p></td>
 </tr>
 </tbody>
 </table>
@@ -160,17 +212,26 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="numericalderivative.GillMurraySaundersWright.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
+<td><p>Return the relative precision of the function evaluation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_step_history" title="numericalderivative.GillMurraySaundersWright.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
+<td><p>Return the history of steps during the search.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_threshold_min_max" title="numericalderivative.GillMurraySaundersWright.get_threshold_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_threshold_min_max</span></code></a>()</p></td>
+<td><p>Return the threshold min and max of the condition error</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.compute_condition">
 <span class="sig-name descname"><span class="pre">compute_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.compute_condition" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the condition error for given step k.</p>
-<p>This is the condition error of the finite difference formula
-of the second derivative finite difference :</p>
+<p>This function evaluates the condition error <span class="math notranslate nohighlight">\(c(h_\Phi)\)</span> of the
+finite difference formula of the second derivative finite difference
+depending on the step <span class="math notranslate nohighlight">\(h_\Phi\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[f''(x) \approx \frac{f(x + k) - 2 f(x) + f(x - k)}{k^2}\]</div>
-<p>The condition error is a decreasing function of k.</p>
+\[c(h_\Phi) = \frac{4 \epsilon_f}{h_\Phi^2 |\Phi|}.\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -217,7 +278,7 @@ of the second derivative.</p>
 <dd><p>Compute the optimal step suitable to approximate the fist derivative.</p>
 <p>This method computes the approximately optimal step for the second derivative.
 Then the approximate value of the second derivative can be computed using
-compute_2nd_derivative().</p>
+this step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -249,7 +310,19 @@ The default is True.</p>
 <span class="sig-name descname"><span class="pre">compute_step_for_second_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the optimal step k suitable to approximate the second derivative.</p>
 <p>Then the approximate value of the second derivative can be computed using
-compute_2nd_derivative().</p>
+this step.</p>
+<p>The update formula depends on <cite>logscale</cite>.
+If it is true, then the logarithmic scale is used:</p>
+<div class="math notranslate nohighlight">
+\[h = \exp\left(\frac{\log(k_{\min}) + \log(k_{\max})}{2}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_\min\)</span> is the current lower bound of the search
+interval and <span class="math notranslate nohighlight">\(k_\max\)</span> is the current upper bound.
+This implies that the update is the geometrical mean:</p>
+<div class="math notranslate nohighlight">
+\[h = \sqrt{k_{\min} k_{\max}}.\]</div>
+<p>Otherwise, we use the arithmetic mean:</p>
+<div class="math notranslate nohighlight">
+\[h = \frac{k_{\min} + k_{\max}}{2}.\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -284,6 +357,51 @@ The default is True.</p>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>number_of_function_evaluations</strong><span class="classifier">int</span></dt><dd><p>The number of function evaluations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_relative_precision">
+<span class="sig-name descname"><span class="pre">get_relative_precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="Link to this definition">¶</a></dt>
+<dd><p>Return the relative precision of the function evaluation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>relative_precision</strong><span class="classifier">float</span></dt><dd><p>The relative precision of evaluation of f.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_step_history">
+<span class="sig-name descname"><span class="pre">get_step_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_step_history" title="Link to this definition">¶</a></dt>
+<dd><p>Return the history of steps during the search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>step_history</strong><span class="classifier">list(float)</span></dt><dd><p>The list of steps h during intermediate iterations of the search.
+This is updated by <a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step_for_second_derivative()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_threshold_min_max">
+<span class="sig-name descname"><span class="pre">get_threshold_min_max</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_threshold_min_max" title="Link to this definition">¶</a></dt>
+<dd><p>Return the threshold min and max of the condition error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>c_threshold_min</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The minimum value of the threshold of the condition error.</p>
+</dd>
+<dt><strong>c_threshold_max</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The maxiimum value of the threshold of the condition error.</p>
 </dd>
 </dl>
 </dd>
@@ -326,10 +444,12 @@ The default is True.</p>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.ShiXieXuanNocedalForward.html">numericalderivative.ShiXieXuanNocedalForward</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

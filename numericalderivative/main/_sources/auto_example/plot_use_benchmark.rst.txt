@@ -41,17 +41,85 @@ all the problems.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-24
+.. GENERATED FROM PYTHON SOURCE LINES 21-26
 
 First, we create an use a single problem.
 We create the problem and get the function and its
-first derivative
+first derivative.
+Printing the object evaluates the function and its
+derivatives at the test point.
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-31
+.. GENERATED FROM PYTHON SOURCE LINES 28-31
 
 .. code-block:: Python
 
     problem = nd.ExponentialProblem()
+    print(problem)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    DerivativeBenchmarkProblem
+    name = exp
+    x = 1.0
+    f(x) = 2.718281828459045
+    f'(x) = 2.718281828459045
+    f''(x) = 2.718281828459045
+    f^(3)(x) = 2.718281828459045
+    f^(4)(x) = 2.718281828459045
+    f^(5)(x) = 2.718281828459045
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 32-33
+
+We can also use the pretty-print.
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-35
+
+.. code-block:: Python
+
+    problem
+
+
+
+
+
+
+.. raw:: html
+
+    <div class="output_subarea output_html rendered_html output_result">
+    <b>DerivativeBenchmarkProblem</b>
+    <ul>
+    <li>name = exp</li>
+    <li>x = 1.0</li>
+    <li>f(x) = 2.718281828459045</li>
+    <li>f'(x) = 2.718281828459045</li>
+    <li>f''(x) = 2.718281828459045</li>
+    <li>f^(3)(x) = 2.718281828459045</li>
+    <li>f^(4)(x) = 2.718281828459045</li>
+    <li>f^(5)(x) = 2.718281828459045</li>
+    </ul>
+
+    </div>
+    <br />
+    <br />
+
+.. GENERATED FROM PYTHON SOURCE LINES 36-37
+
+Get the data from the problem
+
+.. GENERATED FROM PYTHON SOURCE LINES 37-41
+
+.. code-block:: Python
+
     x = problem.get_x()
     function = problem.get_function()
     first_derivative = problem.get_first_derivative()
@@ -63,12 +131,12 @@ first derivative
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-34
+.. GENERATED FROM PYTHON SOURCE LINES 42-44
 
 Then we use a finite difference formula and compare it to the
 exact derivative.
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-45
+.. GENERATED FROM PYTHON SOURCE LINES 46-55
 
 .. code-block:: Python
 
@@ -96,13 +164,13 @@ exact derivative.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-49
+.. GENERATED FROM PYTHON SOURCE LINES 56-59
 
 The problem is that the optimal step might not be the exact one.
 The optimal step can be computed using the second derivative, which is
 known in this problem.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-59
+.. GENERATED FROM PYTHON SOURCE LINES 61-69
 
 .. code-block:: Python
 
@@ -128,11 +196,11 @@ known in this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-61
+.. GENERATED FROM PYTHON SOURCE LINES 70-71
 
 Now use this step
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-70
+.. GENERATED FROM PYTHON SOURCE LINES 73-80
 
 .. code-block:: Python
 
@@ -158,15 +226,15 @@ Now use this step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-72
+.. GENERATED FROM PYTHON SOURCE LINES 81-82
 
 We can use a collection of benchmark problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-97
+.. GENERATED FROM PYTHON SOURCE LINES 84-108
 
 .. code-block:: Python
 
-    benchmark = nd.BuildBenchmark()
+    benchmark = nd.build_benchmark()
     number_of_problems = len(benchmark)
     data = []
     for i in range(number_of_problems):
@@ -194,6 +262,7 @@ We can use a collection of benchmark problems.
 
 
 
+
 .. raw:: html
 
     <div class="output_subarea output_html rendered_html output_result">
@@ -210,7 +279,7 @@ We can use a collection of benchmark problems.
     <tr><td>#5 / 16 </td><td>atan      </td><td style="text-align: right;"> 0.5    </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
     <tr><td>#6 / 16 </td><td>sin       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;"> -3.14159</td><td style="text-align: right;"> 3.14159</td></tr>
     <tr><td>#7 / 16 </td><td>scaled exp</td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
-    <tr><td>#8 / 16 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
+    <tr><td>#8 / 16 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.001  </td><td style="text-align: right;">12      </td></tr>
     <tr><td>#9 / 16 </td><td>SXXN1     </td><td style="text-align: right;">-8      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
     <tr><td>#10 / 16</td><td>SXXN2     </td><td style="text-align: right;"> 0.01   </td><td style="text-align: right;"> -1      </td><td style="text-align: right;"> 1      </td></tr>
     <tr><td>#11 / 16</td><td>SXXN3     </td><td style="text-align: right;"> 0.99999</td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
@@ -224,15 +293,202 @@ We can use a collection of benchmark problems.
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-99
+.. GENERATED FROM PYTHON SOURCE LINES 109-110
 
-Plot the benchmark problems.
+Print each benchmark problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-126
+.. GENERATED FROM PYTHON SOURCE LINES 112-119
 
 .. code-block:: Python
 
-    benchmark = nd.BuildBenchmark()
+    benchmark = nd.build_benchmark()
+    number_of_problems = len(benchmark)
+    for i in range(number_of_problems):
+        problem = benchmark[i]
+        print(problem)
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    DerivativeBenchmarkProblem
+    name = polynomial
+    x = 1.0
+    f(x) = 1.0
+    f'(x) = 2.0
+    f''(x) = 2.0
+    f^(3)(x) = 0.0
+    f^(4)(x) = 0.0
+    f^(5)(x) = 0.0
+
+    DerivativeBenchmarkProblem
+    name = inverse
+    x = 1.0
+    f(x) = 1.0
+    f'(x) = -1.0
+    f''(x) = 2.0
+    f^(3)(x) = -6.0
+    f^(4)(x) = 24.0
+    f^(5)(x) = -120.0
+
+    DerivativeBenchmarkProblem
+    name = exp
+    x = 1.0
+    f(x) = 2.718281828459045
+    f'(x) = 2.718281828459045
+    f''(x) = 2.718281828459045
+    f^(3)(x) = 2.718281828459045
+    f^(4)(x) = 2.718281828459045
+    f^(5)(x) = 2.718281828459045
+
+    DerivativeBenchmarkProblem
+    name = log
+    x = 1.0
+    f(x) = 0.0
+    f'(x) = 1.0
+    f''(x) = -1.0
+    f^(3)(x) = 2.0
+    f^(4)(x) = -6.0
+    f^(5)(x) = 24.0
+
+    DerivativeBenchmarkProblem
+    name = sqrt
+    x = 1.0
+    f(x) = 1.0
+    f'(x) = 0.5
+    f''(x) = -0.25
+    f^(3)(x) = 0.375
+    f^(4)(x) = -0.9375
+    f^(5)(x) = 3.28125
+
+    DerivativeBenchmarkProblem
+    name = atan
+    x = 0.5
+    f(x) = 0.4636476090008061
+    f'(x) = 0.8
+    f''(x) = -0.64
+    f^(3)(x) = -0.256
+    f^(4)(x) = 3.6864
+    f^(5)(x) = -9.33888
+
+    DerivativeBenchmarkProblem
+    name = sin
+    x = 1.0
+    f(x) = 0.8414709848078965
+    f'(x) = 0.5403023058681398
+    f''(x) = -0.8414709848078965
+    f^(3)(x) = -0.5403023058681398
+    f^(4)(x) = 0.8414709848078965
+    f^(5)(x) = 0.5403023058681398
+
+    DerivativeBenchmarkProblem
+    name = scaled exp
+    x = 1.0
+    f(x) = 0.9999990000005
+    f'(x) = -9.999990000004999e-07
+    f''(x) = 9.999990000005e-13
+    f^(3)(x) = -9.999990000005e-19
+    f^(4)(x) = 9.999990000004998e-25
+    f^(5)(x) = -9.999990000004998e-31
+
+    DerivativeBenchmarkProblem
+    name = GMSW
+    x = 1.0
+    f(x) = 3.0382788796394644
+    f'(x) = 9.548655322129756
+    f''(x) = 24.266107348211236
+    f^(3)(x) = 53.1455550486372
+    f^(4)(x) = 113.23547948425671
+    f^(5)(x) = 211.44420430021552
+
+    DerivativeBenchmarkProblem
+    name = SXXN1
+    x = -8.0
+    f(x) = 0.9993291872793697
+    f'(x) = -0.0006707001854555852
+    f''(x) = -0.0006704751151061466
+    f^(3)(x) = -0.0006700249744072696
+    f^(4)(x) = -0.0006691246930095155
+    f^(5)(x) = -0.0006673241302140074
+
+    DerivativeBenchmarkProblem
+    name = SXXN2
+    x = 0.01
+    f(x) = 2.718281828459045
+    f'(x) = 271.8281828459045
+    f''(x) = 27182.818284590452
+    f^(3)(x) = 2718281.828459045
+    f^(4)(x) = 271828182.8459045
+    f^(5)(x) = 27182818284.59045
+
+    DerivativeBenchmarkProblem
+    name = SXXN3
+    x = 0.99999
+    f(x) = -5.9999999991000035
+    f'(x) = -0.00017999880000374446
+    f''(x) = 17.999760001200002
+    f^(3)(x) = 23.999760000000002
+    f^(4)(x) = 24
+    f^(5)(x) = 0.0
+
+    DerivativeBenchmarkProblem
+    name = SXXN4
+    x = 1e-09
+    f(x) = 5.00000000001001e-09
+    f'(x) = 5.00000000002003
+    f''(x) = 0.02006
+    f^(3)(x) = 60000.0
+    f^(4)(x) = 0
+    f^(5)(x) = 0
+
+    DerivativeBenchmarkProblem
+    name = Oliver1
+    x = 1.0
+    f(x) = 54.598150033144236
+    f'(x) = 218.39260013257694
+    f''(x) = 873.5704005303078
+    f^(3)(x) = 3494.281602121231
+    f^(4)(x) = 13977.126408484924
+    f^(5)(x) = 55908.5056339397
+
+    DerivativeBenchmarkProblem
+    name = Oliver2
+    x = 1.0
+    f(x) = 2.718281828459045
+    f'(x) = 5.43656365691809
+    f''(x) = 16.30969097075427
+    f^(3)(x) = 54.3656365691809
+    f^(4)(x) = 206.58941896288744
+    f^(5)(x) = 848.1039304792221
+
+    DerivativeBenchmarkProblem
+    name = Oliver3
+    x = 1.0
+    f(x) = 0.0
+    f'(x) = 1.0
+    f''(x) = 3.0
+    f^(3)(x) = 2.0
+    f^(4)(x) = -2.0
+    f^(5)(x) = 4.0
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 120-121
+
+Plot the benchmark problems.
+
+.. GENERATED FROM PYTHON SOURCE LINES 123-148
+
+.. code-block:: Python
+
+    benchmark = nd.build_benchmark()
     number_of_problems = len(benchmark)
     number_of_columns = 3
     number_of_rows = math.ceil(number_of_problems / number_of_columns)
@@ -293,7 +549,7 @@ Plot the benchmark problems.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.392 seconds)
+   **Total running time of the script:** (0 minutes 0.419 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_use_benchmark.py:

@@ -18,7 +18,10 @@
       ~DumontetVignes.compute_first_derivative
       ~DumontetVignes.compute_step
       ~DumontetVignes.compute_third_derivative
+      ~DumontetVignes.get_ell_min_max
       ~DumontetVignes.get_number_of_function_evaluations
+      ~DumontetVignes.get_relative_precision
+      ~DumontetVignes.get_step_history
    
    
 

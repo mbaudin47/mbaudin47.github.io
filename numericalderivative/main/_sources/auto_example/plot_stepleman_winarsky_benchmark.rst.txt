@@ -21,8 +21,10 @@
 Benchmark Stepleman & Winarsky's method
 =======================================
 
-Find a step which is near to optimal for a centered finite difference 
-formula.
+The goal of this example is to benchmark the :class:`~numericalderivative.SteplemanWinarsky`
+class on a collection of test problems.
+These problems are created by the :meth:`~numericalderivative.build_benchmark()` 
+static method, which returns a list of problems.
 
 References
 ----------
@@ -30,7 +32,7 @@ References
   R. S. Stepleman and N. D. Winarsky
   Journal: Math. Comp. 33 (1979), 1257-1264 
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-25
+.. GENERATED FROM PYTHON SOURCE LINES 21-26
 
 .. code-block:: Python
 
@@ -46,62 +48,59 @@ References
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 27-29
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-79
+Compute the first derivative
+----------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 31-33
+
+The next function computes the approximate first derivative from finite
+differences using Stepleman & Winarsky's method.
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-74
 
 .. code-block:: Python
 
-    def compute_first_derivative_SW(
-        f,
-        x,
-        initial_step,
-        f_prime,
-        beta=4.0,
-        verbose=False,
-    ):
-        """
-        Compute the approximate derivative from finite differences
 
-        Uses bisection to find the approximate optimal step for the first
-        derivative.
 
-        Parameters
-        ----------
-        f : function
-            The function.
-        x : float
-            The point where the derivative is to be evaluated
-        initial_step : float, > 0
-            A initial step.
-        f_prime : function
-            The exact first derivative of the function.
-        beta : float, > 1.0
-            The reduction factor of h at each iteration.
-        verbose : bool, optional
-            Set to True to print intermediate messages. The default is False.
+    class SteplemanWinarskyMethod:
+        def __init__(self, initial_step):
+            """
+            Create a SteplemanWinarsky method to compute the approximate first derivative
 
-        Returns
-        -------
-        absolute_error : float, > 0
-            The absolute error between the approximate first derivative
-            and the true first derivative.
+            Parameters
+            ----------
+            initial_step : float, > 0
+                A initial step.
+            """
+            self.initial_step = initial_step
 
-        feval : int
-            The number of function evaluations.
-        """
-        try:
-            algorithm = nd.SteplemanWinarsky(f, x, verbose=verbose)
+        def compute_first_derivative(self, function, x):
+            """
+            Compute the first derivative using SteplemanWinarsky
+
+            Parameters
+            ----------
+            function : function
+                The function
+            x : float
+                The test point
+
+            Returns
+            -------
+            f_prime_approx : float
+                The approximate value of the first derivative of the function at point x
+            number_of_function_evaluations : int
+                The number of function evaluations.
+            """
+            algorithm = nd.SteplemanWinarsky(function, x)
             step, _ = algorithm.compute_step(
-                initial_step,
-                beta=beta,
+                self.initial_step,
             )
             f_prime_approx = algorithm.compute_first_derivative(step)
-            feval = algorithm.get_number_of_function_evaluations()
-            absolute_error = abs(f_prime_approx - f_prime(x))
-        except:
-            absolute_error = np.nan
-            feval = np.nan
-        return absolute_error, feval
+            number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+            return f_prime_approx, number_of_function_evaluations
 
 
 
@@ -111,22 +110,25 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-81
+.. GENERATED FROM PYTHON SOURCE LINES 75-76
 
-Test
+The next script is a simple use of the :class:`~numericalderivative.SteplemanWinarsky` class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-121
+.. GENERATED FROM PYTHON SOURCE LINES 78-116
 
 .. code-block:: Python
 
-    x = 1.0
-    benchmark = nd.ExponentialProblem()
+    problem = nd.ExponentialProblem()
+    print(problem)
+    function = problem.get_function()
+    x = problem.get_x()
     algorithm = nd.SteplemanWinarsky(
-        benchmark.function,
+        function,
         x,
         verbose=True,
     )
-    third_derivative_value = benchmark.third_derivative(x)
+    third_derivative = problem.get_third_derivative()
+    third_derivative_value = third_derivative(x)
     optimal_step, absolute_error = nd.FirstDerivativeCentral.compute_step(
         third_derivative_value
     )
@@ -139,20 +141,16 @@ Test
     print("Pas initial = ", h0, ", iterations = ", iterations)
     lost_digits = algorithm.number_of_lost_digits(h0)
     print("lost_digits = ", lost_digits)
-
     initial_step = 1.0e1
+    function = problem.get_function()
+    first_derivative = problem.get_first_derivative()
     x = 1.0
-    (
-        absolute_error,
-        number_of_function_evaluations,
-    ) = compute_first_derivative_SW(
-        benchmark.function,
-        x,
-        initial_step,
-        benchmark.first_derivative,
-        beta=10.0,
-        verbose=True,
+    method = SteplemanWinarskyMethod(initial_step)
+    f_prime_approx, number_of_function_evaluations = method.compute_first_derivative(
+        function, x
     )
+    f_prime_exact = first_derivative(x)
+    absolute_error = abs(f_prime_approx - f_prime_exact)
     print(
         "x = %.3f, error = %.3e, Func. eval. = %d"
         % (x, absolute_error, number_of_function_evaluations)
@@ -162,10 +160,19 @@ Test
 
 
 
-
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
+
+    DerivativeBenchmarkProblem
+    name = exp
+    x = 1.0
+    f(x) = 2.718281828459045
+    f'(x) = 2.718281828459045
+    f''(x) = 2.718281828459045
+    f^(3)(x) = 2.718281828459045
+    f^(4)(x) = 2.718281828459045
+    f^(5)(x) = 2.718281828459045
 
     Exact h* = 4.797e-06
     + search_step_with_bisection()
@@ -177,106 +184,40 @@ Test
       h is just right : stop !
     Pas initial =  0.001 , iterations =  0
     lost_digits =  2.6989699319536102
-    + compute_step()
-    initial_step=1.000e+01
-    number_of_iterations=0, h=1.0000e+00, |FD(h_current) - FD(h_previous)|=2.9905e+03
-    number_of_iterations=1, h=1.0000e-01, |FD(h_current) - FD(h_previous)|=4.7171e-01
-    number_of_iterations=2, h=1.0000e-02, |FD(h_current) - FD(h_previous)|=4.4874e-03
-    number_of_iterations=3, h=1.0000e-03, |FD(h_current) - FD(h_previous)|=4.4852e-05
-    number_of_iterations=4, h=1.0000e-04, |FD(h_current) - FD(h_previous)|=4.4852e-07
-    number_of_iterations=5, h=1.0000e-05, |FD(h_current) - FD(h_previous)|=4.4901e-09
-    number_of_iterations=6, h=1.0000e-06, |FD(h_current) - FD(h_previous)|=1.9387e-11
-    number_of_iterations=7, h=1.0000e-07, |FD(h_current) - FD(h_previous)|=6.3175e-10
-    Stop because no monotony anymore.
-    x = 1.000, error = 6.017e-11, Func. eval. = 20
+    x = 1.000, error = 5.991e-11, Func. eval. = 28
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-183
+.. GENERATED FROM PYTHON SOURCE LINES 117-119
 
-.. code-block:: Python
+Perform the benchmark
+---------------------
 
-    def benchmark_SteplemanWinarsky_method(
-        function, derivative_function, test_points, initial_step, verbose=False
-    ):
-        """
-        Apply Stepleman & Winarsky method to compute the approximate first
-        derivative using finite difference formula.
+.. GENERATED FROM PYTHON SOURCE LINES 122-124
 
-        Parameters
-        ----------
-        f : function
-            The function.
-        derivative_function : function
-            The exact first derivative of the function
-        test_points : list(float)
-            The list of x points where the benchmark must be performed.
-        initial_step : float, > 0
-            The initial step.
-        verbose : bool, optional
-            Set to True to print intermediate messages. The default is False.
+The next example computes the approximate derivative on the
+:class:`~numericalderivative.ExponentialProblem` on a set of points.
 
-        Returns
-        -------
-        absolute_error : float, > 0
-            The absolute error between the approximate first derivative
-            and the true first derivative.
-
-        feval : int
-            The number of function evaluations.
-
-        """
-        number_of_test_points = len(test_points)
-        relative_error_array = np.zeros(number_of_test_points)
-        feval_array = np.zeros(number_of_test_points)
-        for i in range(number_of_test_points):
-            x = test_points[i]
-            (
-                absolute_error,
-                number_of_function_evaluations,
-            ) = compute_first_derivative_SW(
-                function,
-                x,
-                initial_step,
-                derivative_function,
-            )
-            relative_error = absolute_error / abs(derivative_function(x))
-            if verbose:
-                print(
-                    "x = %.3f, abs. error = %.3e, rel. error = %.3e, Func. eval. = %d"
-                    % (x, absolute_error, relative_error, number_of_function_evaluations)
-                )
-            relative_error_array[i] = relative_error
-            feval_array[i] = number_of_function_evaluations
-
-        average_relative_error = np.mean(relative_error_array)
-        average_feval = np.mean(feval_array)
-        if verbose:
-            print("Average error =", average_relative_error)
-            print("Average number of function evaluations =", average_feval)
-        return average_relative_error, average_feval
-
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 184-193
+.. GENERATED FROM PYTHON SOURCE LINES 126-142
 
 .. code-block:: Python
 
-    print("+ Benchmark on several points")
-    number_of_test_points = 100
-    test_points = np.linspace(0.01, 12.2, number_of_test_points)
+    number_of_test_points = 20
     initial_step = 1.0e-1
-    benchmark = nd.ExponentialProblem()
-    average_relative_error, average_feval = benchmark_SteplemanWinarsky_method(
-        benchmark.function, benchmark.first_derivative, test_points, initial_step, True
+    problem = nd.ExponentialProblem()
+    function = problem.get_function()
+    first_derivative = problem.get_first_derivative()
+    interval = problem.get_interval()
+    test_points = np.linspace(interval[0], interval[1], number_of_test_points)
+    method = SteplemanWinarskyMethod(initial_step)
+    average_relative_error, average_feval, data = nd.benchmark_method(
+        function, first_derivative, test_points, method.compute_first_derivative, True
     )
+    print("Average error =", average_relative_error)
+    print("Average number of function evaluations =", average_feval)
+    tabulate.tabulate(data, headers=["x", "Rel. err.", "F. Eval."], tablefmt="html")
+
 
 
 
@@ -286,124 +227,75 @@ Test
 
  .. code-block:: none
 
-    + Benchmark on several points
-    x = 0.010, abs. error = 1.353e-11, rel. error = 1.339e-11, Func. eval. = 24
-    x = 0.133, abs. error = 6.850e-13, rel. error = 5.996e-13, Func. eval. = 22
-    x = 0.256, abs. error = 3.322e-12, rel. error = 2.571e-12, Func. eval. = 22
-    x = 0.379, abs. error = 1.464e-11, rel. error = 1.002e-11, Func. eval. = 22
-    x = 0.503, abs. error = 3.951e-11, rel. error = 2.390e-11, Func. eval. = 22
-    x = 0.626, abs. error = 6.698e-12, rel. error = 3.583e-12, Func. eval. = 24
-    x = 0.749, abs. error = 7.767e-11, rel. error = 3.673e-11, Func. eval. = 22
-    x = 0.872, abs. error = 3.640e-11, rel. error = 1.522e-11, Func. eval. = 22
-    x = 0.995, abs. error = 4.928e-11, rel. error = 1.822e-11, Func. eval. = 22
-    x = 1.118, abs. error = 3.429e-11, rel. error = 1.121e-11, Func. eval. = 22
-    x = 1.241, abs. error = 2.450e-11, rel. error = 7.080e-12, Func. eval. = 22
-    x = 1.364, abs. error = 9.496e-11, rel. error = 2.426e-11, Func. eval. = 22
-    x = 1.488, abs. error = 1.134e-11, rel. error = 2.562e-12, Func. eval. = 22
-    x = 1.611, abs. error = 8.920e-11, rel. error = 1.782e-11, Func. eval. = 22
-    x = 1.734, abs. error = 1.355e-10, rel. error = 2.393e-11, Func. eval. = 22
-    x = 1.857, abs. error = 6.644e-11, rel. error = 1.037e-11, Func. eval. = 22
-    x = 1.980, abs. error = 3.580e-11, rel. error = 4.943e-12, Func. eval. = 22
-    x = 2.103, abs. error = 3.141e-10, rel. error = 3.835e-11, Func. eval. = 22
-    x = 2.226, abs. error = 3.096e-10, rel. error = 3.342e-11, Func. eval. = 22
-    x = 2.349, abs. error = 9.443e-12, rel. error = 9.010e-13, Func. eval. = 24
-    x = 2.473, abs. error = 1.437e-10, rel. error = 1.212e-11, Func. eval. = 22
-    x = 2.596, abs. error = 1.270e-10, rel. error = 9.471e-12, Func. eval. = 22
-    x = 2.719, abs. error = 1.064e-10, rel. error = 7.020e-12, Func. eval. = 22
-    x = 2.842, abs. error = 5.203e-10, rel. error = 3.034e-11, Func. eval. = 22
-    x = 2.965, abs. error = 6.404e-10, rel. error = 3.302e-11, Func. eval. = 22
-    x = 3.088, abs. error = 7.254e-10, rel. error = 3.307e-11, Func. eval. = 22
-    x = 3.211, abs. error = 1.084e-09, rel. error = 4.369e-11, Func. eval. = 24
-    x = 3.335, abs. error = 5.794e-11, rel. error = 2.065e-12, Func. eval. = 22
-    x = 3.458, abs. error = 7.709e-10, rel. error = 2.429e-11, Func. eval. = 22
-    x = 3.581, abs. error = 3.492e-10, rel. error = 9.727e-12, Func. eval. = 22
-    x = 3.704, abs. error = 9.865e-10, rel. error = 2.429e-11, Func. eval. = 22
-    x = 3.827, abs. error = 1.944e-09, rel. error = 4.233e-11, Func. eval. = 22
-    x = 3.950, abs. error = 1.270e-09, rel. error = 2.445e-11, Func. eval. = 22
-    x = 4.073, abs. error = 1.115e-09, rel. error = 1.898e-11, Func. eval. = 22
-    x = 4.196, abs. error = 2.188e-09, rel. error = 3.292e-11, Func. eval. = 22
-    x = 4.320, abs. error = 1.721e-09, rel. error = 2.290e-11, Func. eval. = 22
-    x = 4.443, abs. error = 2.614e-09, rel. error = 3.075e-11, Func. eval. = 24
-    x = 4.566, abs. error = 6.223e-10, rel. error = 6.472e-12, Func. eval. = 22
-    x = 4.689, abs. error = 9.318e-10, rel. error = 8.568e-12, Func. eval. = 22
-    x = 4.812, abs. error = 7.719e-11, rel. error = 6.276e-13, Func. eval. = 22
-    x = 4.935, abs. error = 3.429e-09, rel. error = 2.465e-11, Func. eval. = 22
-    x = 5.058, abs. error = 4.691e-09, rel. error = 2.982e-11, Func. eval. = 22
-    x = 5.182, abs. error = 4.122e-09, rel. error = 2.316e-11, Func. eval. = 22
-    x = 5.305, abs. error = 4.727e-09, rel. error = 2.349e-11, Func. eval. = 22
-    x = 5.428, abs. error = 5.971e-10, rel. error = 2.623e-12, Func. eval. = 22
-    x = 5.551, abs. error = 6.593e-09, rel. error = 2.561e-11, Func. eval. = 24
-    x = 5.674, abs. error = 6.365e-09, rel. error = 2.186e-11, Func. eval. = 22
-    x = 5.797, abs. error = 6.289e-09, rel. error = 1.909e-11, Func. eval. = 22
-    x = 5.920, abs. error = 5.434e-09, rel. error = 1.459e-11, Func. eval. = 22
-    x = 6.043, abs. error = 1.001e-09, rel. error = 2.377e-12, Func. eval. = 22
-    x = 6.167, abs. error = 5.689e-09, rel. error = 1.194e-11, Func. eval. = 22
-    x = 6.290, abs. error = 2.667e-08, rel. error = 4.948e-11, Func. eval. = 22
-    x = 6.413, abs. error = 2.176e-08, rel. error = 3.569e-11, Func. eval. = 22
-    x = 6.536, abs. error = 1.690e-08, rel. error = 2.450e-11, Func. eval. = 22
-    x = 6.659, abs. error = 9.028e-09, rel. error = 1.158e-11, Func. eval. = 22
-    x = 6.782, abs. error = 2.107e-10, rel. error = 2.388e-13, Func. eval. = 22
-    x = 6.905, abs. error = 3.560e-10, rel. error = 3.568e-13, Func. eval. = 22
-    x = 7.028, abs. error = 3.101e-08, rel. error = 2.749e-11, Func. eval. = 22
-    x = 7.152, abs. error = 7.664e-09, rel. error = 6.005e-12, Func. eval. = 22
-    x = 7.275, abs. error = 2.373e-08, rel. error = 1.644e-11, Func. eval. = 22
-    x = 7.398, abs. error = 5.738e-08, rel. error = 3.515e-11, Func. eval. = 22
-    x = 7.521, abs. error = 7.946e-09, rel. error = 4.304e-12, Func. eval. = 22
-    x = 7.644, abs. error = 7.498e-08, rel. error = 3.590e-11, Func. eval. = 22
-    x = 7.767, abs. error = 1.577e-08, rel. error = 6.676e-12, Func. eval. = 22
-    x = 7.890, abs. error = 7.429e-08, rel. error = 2.781e-11, Func. eval. = 24
-    x = 8.014, abs. error = 1.834e-09, rel. error = 6.068e-13, Func. eval. = 22
-    x = 8.137, abs. error = 3.455e-08, rel. error = 1.011e-11, Func. eval. = 22
-    x = 8.260, abs. error = 3.620e-08, rel. error = 9.366e-12, Func. eval. = 22
-    x = 8.383, abs. error = 2.546e-08, rel. error = 5.823e-12, Func. eval. = 22
-    x = 8.506, abs. error = 1.905e-07, rel. error = 3.852e-11, Func. eval. = 24
-    x = 8.629, abs. error = 1.491e-07, rel. error = 2.665e-11, Func. eval. = 22
-    x = 8.752, abs. error = 3.987e-08, rel. error = 6.304e-12, Func. eval. = 22
-    x = 8.875, abs. error = 1.046e-07, rel. error = 1.462e-11, Func. eval. = 22
-    x = 8.999, abs. error = 6.946e-08, rel. error = 8.584e-12, Func. eval. = 22
-    x = 9.122, abs. error = 1.475e-07, rel. error = 1.612e-11, Func. eval. = 22
-    x = 9.245, abs. error = 1.014e-07, rel. error = 9.795e-12, Func. eval. = 22
-    x = 9.368, abs. error = 1.592e-07, rel. error = 1.360e-11, Func. eval. = 22
-    x = 9.491, abs. error = 4.990e-07, rel. error = 3.768e-11, Func. eval. = 22
-    x = 9.614, abs. error = 1.315e-07, rel. error = 8.779e-12, Func. eval. = 22
-    x = 9.737, abs. error = 4.696e-07, rel. error = 2.772e-11, Func. eval. = 22
-    x = 9.861, abs. error = 1.215e-07, rel. error = 6.339e-12, Func. eval. = 22
-    x = 9.984, abs. error = 1.628e-07, rel. error = 7.512e-12, Func. eval. = 22
-    x = 10.107, abs. error = 2.373e-08, rel. error = 9.683e-13, Func. eval. = 22
-    x = 10.230, abs. error = 1.241e-08, rel. error = 4.478e-13, Func. eval. = 22
-    x = 10.353, abs. error = 5.069e-07, rel. error = 1.617e-11, Func. eval. = 22
-    x = 10.476, abs. error = 2.178e-07, rel. error = 6.142e-12, Func. eval. = 22
-    x = 10.599, abs. error = 8.748e-07, rel. error = 2.181e-11, Func. eval. = 22
-    x = 10.722, abs. error = 9.323e-07, rel. error = 2.055e-11, Func. eval. = 24
-    x = 10.846, abs. error = 1.565e-06, rel. error = 3.051e-11, Func. eval. = 22
-    x = 10.969, abs. error = 1.312e-06, rel. error = 2.261e-11, Func. eval. = 22
-    x = 11.092, abs. error = 2.455e-06, rel. error = 3.740e-11, Func. eval. = 22
-    x = 11.215, abs. error = 2.897e-06, rel. error = 3.902e-11, Func. eval. = 22
-    x = 11.338, abs. error = 1.022e-06, rel. error = 1.217e-11, Func. eval. = 22
-    x = 11.461, abs. error = 8.069e-07, rel. error = 8.497e-12, Func. eval. = 24
-    x = 11.584, abs. error = 2.094e-06, rel. error = 1.950e-11, Func. eval. = 22
-    x = 11.707, abs. error = 1.387e-06, rel. error = 1.141e-11, Func. eval. = 22
-    x = 11.831, abs. error = 1.516e-06, rel. error = 1.103e-11, Func. eval. = 24
-    x = 11.954, abs. error = 1.056e-06, rel. error = 6.798e-12, Func. eval. = 22
-    x = 12.077, abs. error = 6.496e-06, rel. error = 3.696e-11, Func. eval. = 22
-    x = 12.200, abs. error = 3.262e-07, rel. error = 1.641e-12, Func. eval. = 22
-    Average error = 1.748780882865038e-11
-    Average number of function evaluations = 22.22
+    x = 0.000, abs. error = 8.731e-11, rel. error = 8.731e-11, Func. eval. = 24
+    x = 0.632, abs. error = 5.396e-11, rel. error = 2.869e-11, Func. eval. = 22
+    x = 1.263, abs. error = 8.263e-12, rel. error = 2.336e-12, Func. eval. = 22
+    x = 1.895, abs. error = 1.120e-10, rel. error = 1.684e-11, Func. eval. = 22
+    x = 2.526, abs. error = 2.627e-12, rel. error = 2.101e-13, Func. eval. = 22
+    x = 3.158, abs. error = 3.719e-10, rel. error = 1.581e-11, Func. eval. = 24
+    x = 3.789, abs. error = 3.768e-10, rel. error = 8.518e-12, Func. eval. = 22
+    x = 4.421, abs. error = 1.067e-09, rel. error = 1.283e-11, Func. eval. = 22
+    x = 5.053, abs. error = 2.960e-09, rel. error = 1.892e-11, Func. eval. = 22
+    x = 5.684, abs. error = 7.466e-09, rel. error = 2.538e-11, Func. eval. = 22
+    x = 6.316, abs. error = 2.987e-08, rel. error = 5.399e-11, Func. eval. = 24
+    x = 6.947, abs. error = 1.086e-08, rel. error = 1.044e-11, Func. eval. = 22
+    x = 7.579, abs. error = 4.227e-08, rel. error = 2.160e-11, Func. eval. = 22
+    x = 8.211, abs. error = 6.198e-08, rel. error = 1.685e-11, Func. eval. = 22
+    x = 8.842, abs. error = 1.519e-07, rel. error = 2.195e-11, Func. eval. = 22
+    x = 9.474, abs. error = 2.038e-07, rel. error = 1.566e-11, Func. eval. = 22
+    x = 10.105, abs. error = 5.643e-07, rel. error = 2.306e-11, Func. eval. = 22
+    x = 10.737, abs. error = 9.915e-07, rel. error = 2.155e-11, Func. eval. = 22
+    x = 11.368, abs. error = 7.865e-08, rel. error = 9.088e-13, Func. eval. = 22
+    x = 12.000, abs. error = 2.634e-06, rel. error = 1.618e-11, Func. eval. = 22
+    Average error = 2.0952510337707866e-11
+    Average number of function evaluations = 22.3
 
 
+.. raw:: html
 
+    <div class="output_subarea output_html rendered_html output_result">
+    <table>
+    <thead>
+    <tr><th style="text-align: right;">        x</th><th style="text-align: right;">  Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
+    </thead>
+    <tbody>
+    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">8.73115e-11</td><td style="text-align: right;">        24</td></tr>
+    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">2.86919e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">2.33637e-12</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">1.68435e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">2.10055e-13</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">1.58133e-11</td><td style="text-align: right;">        24</td></tr>
+    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">8.51756e-12</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">1.28329e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">1.89231e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">2.538e-11  </td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">5.39932e-11</td><td style="text-align: right;">        24</td></tr>
+    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">1.04363e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">2.16026e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">1.68451e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">2.19522e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">1.56649e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">2.30602e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">2.15451e-11</td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">9.0881e-13 </td><td style="text-align: right;">        22</td></tr>
+    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">1.61818e-11</td><td style="text-align: right;">        22</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <br />
+    <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 194-195
+.. GENERATED FROM PYTHON SOURCE LINES 143-144
 
-Map from the problem name to the initial step
+Map from the problem name to the initial step.
 
-.. GENERATED FROM PYTHON SOURCE LINES 197-216
+.. GENERATED FROM PYTHON SOURCE LINES 146-165
 
 .. code-block:: Python
 
     initial_step_map = {
         "polynomial": 1.0,
-        "inverse": 1.0e0,
+        "inverse": 1.0e-3,
         "exp": 1.0e-1,
         "log": 1.0e-3,  # x > 0
         "sqrt": 1.0e-3,  # x > 0
@@ -412,7 +304,7 @@ Map from the problem name to the initial step
         "scaled exp": 1.0e5,
         "GMSW": 1.0e0,
         "SXXN1": 1.0e0,
-        "SXXN2": 1.0e0,  # Fails
+        "SXXN2": 1.0e0,
         "SXXN3": 1.0e0,
         "SXXN4": 1.0e0,
         "Oliver1": 1.0e0,
@@ -427,17 +319,18 @@ Map from the problem name to the initial step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-218
+.. GENERATED FROM PYTHON SOURCE LINES 166-168
 
-Benchmark SteplemanWinarsky
+The next script evaluates a collection of benchmark problems
+using the :class:`~numericalderivative.SteplemanWinarsky` class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 218-260
+.. GENERATED FROM PYTHON SOURCE LINES 170-213
 
 .. code-block:: Python
 
     number_of_test_points = 100
     data = []
-    function_list = nd.BuildBenchmark()
+    function_list = nd.build_benchmark()
     number_of_functions = len(function_list)
     average_relative_error_list = []
     average_feval_list = []
@@ -450,8 +343,9 @@ Benchmark SteplemanWinarsky
         interval = problem.get_interval()
         test_points = np.linspace(interval[0], interval[1], number_of_test_points)
         print(f"Function #{i}, {name}")
-        average_relative_error, average_feval = benchmark_SteplemanWinarsky_method(
-            function, first_derivative, test_points, initial_step
+        method = SteplemanWinarskyMethod(initial_step)
+        average_relative_error, average_feval, _ = nd.benchmark_method(
+            function, first_derivative, test_points, method.compute_first_derivative
         )
         average_relative_error_list.append(average_relative_error)
         average_feval_list.append(average_feval)
@@ -494,8 +388,6 @@ Benchmark SteplemanWinarsky
     Function #6, sin
     Function #7, scaled exp
     Function #8, GMSW
-    /home/runner/work/numericalderivative/numericalderivative/doc/examples/plot_stepleman_winarsky_benchmark.py:166: RuntimeWarning: invalid value encountered in scalar divide
-      relative_error = absolute_error / abs(derivative_function(x))
     Function #9, SXXN1
     Function #10, SXXN2
     Function #11, SXXN3
@@ -514,14 +406,14 @@ Benchmark SteplemanWinarsky
     </thead>
     <tbody>
     <tr><td>polynomial</td><td>1.0     </td><td style="text-align: right;">         2.7803e-16 </td><td style="text-align: right;">              7.28  </td></tr>
-    <tr><td>inverse   </td><td>1.0     </td><td style="text-align: right;">         0.0238099  </td><td style="text-align: right;">             22.98  </td></tr>
+    <tr><td>inverse   </td><td>0.001   </td><td style="text-align: right;">         2.60826e-11</td><td style="text-align: right;">             13.8   </td></tr>
     <tr><td>exp       </td><td>0.1     </td><td style="text-align: right;">         1.81258e-11</td><td style="text-align: right;">             22.34  </td></tr>
     <tr><td>log       </td><td>0.001   </td><td style="text-align: right;">         2.73807e-11</td><td style="text-align: right;">             13.24  </td></tr>
     <tr><td>sqrt      </td><td>0.001   </td><td style="text-align: right;">         2.43901e-11</td><td style="text-align: right;">             12.86  </td></tr>
     <tr><td>atan      </td><td>1.0     </td><td style="text-align: right;">         1.02142e-10</td><td style="text-align: right;">             22.28  </td></tr>
     <tr><td>sin       </td><td>1.0     </td><td style="text-align: right;">         3.09318e-11</td><td style="text-align: right;">             25.02  </td></tr>
     <tr><td>scaled exp</td><td>100000.0</td><td style="text-align: right;">         1.32527e-11</td><td style="text-align: right;">             21.88  </td></tr>
-    <tr><td>GMSW      </td><td>1.0     </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">             26.34  </td></tr>
+    <tr><td>GMSW      </td><td>1.0     </td><td style="text-align: right;">         3.33368e-11</td><td style="text-align: right;">             26.22  </td></tr>
     <tr><td>SXXN1     </td><td>1.0     </td><td style="text-align: right;">         2.67332e-09</td><td style="text-align: right;">             24.3   </td></tr>
     <tr><td>SXXN2     </td><td>1.0     </td><td style="text-align: right;">         1.90792e-11</td><td style="text-align: right;">             31.64  </td></tr>
     <tr><td>SXXN3     </td><td>1.0     </td><td style="text-align: right;">         1.46924e-11</td><td style="text-align: right;">             23.88  </td></tr>
@@ -529,7 +421,7 @@ Benchmark SteplemanWinarsky
     <tr><td>Oliver1   </td><td>1.0     </td><td style="text-align: right;">         1.63577e-11</td><td style="text-align: right;">             27     </td></tr>
     <tr><td>Oliver2   </td><td>1.0     </td><td style="text-align: right;">         1.8908e-10 </td><td style="text-align: right;">             27.04  </td></tr>
     <tr><td>Oliver3   </td><td>0.001   </td><td style="text-align: right;">         1.04484e-11</td><td style="text-align: right;">             13.2   </td></tr>
-    <tr><td>Average   </td><td>-       </td><td style="text-align: right;">         0.00158733 </td><td style="text-align: right;">             21.5475</td></tr>
+    <tr><td>Average   </td><td>-       </td><td style="text-align: right;">         2.00654e-10</td><td style="text-align: right;">             20.9662</td></tr>
     </tbody>
     </table>
     </div>
@@ -539,7 +431,7 @@ Benchmark SteplemanWinarsky
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.057 seconds)
+   **Total running time of the script:** (0 minutes 0.054 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_stepleman_winarsky_benchmark.py:

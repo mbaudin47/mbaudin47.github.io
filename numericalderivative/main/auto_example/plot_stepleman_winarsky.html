@@ -16,6 +16,7 @@
     <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="icon" href="../_static/Icon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -45,7 +46,7 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="experiment-with-stepleman-winarsky-method">
 <span id="sphx-glr-auto-example-plot-stepleman-winarsky-py"></span><h1>Experiment with Stepleman &amp; Winarsky method<a class="headerlink" href="#experiment-with-stepleman-winarsky-method" title="Link to this heading">¶</a></h1>
-<p>Find a step which is near to optimal for a centered finite difference
+<p>Find a step which is near to optimal for a central finite difference
 formula.</p>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
@@ -57,13 +58,80 @@ Journal: Math. Comp. 33 (1979), 1257-1264</p></li>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
 <span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
 </pre></div>
 </div>
+</section>
+<section id="use-the-method-on-a-simple-problem">
+<h2>Use the method on a simple problem<a class="headerlink" href="#use-the-method-on-a-simple-problem" title="Link to this heading">¶</a></h2>
+<p>In the next example, we use the algorithm on the exponential function.
+We create the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky" title="numericalderivative.SteplemanWinarsky"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteplemanWinarsky</span></code></a> algorithm using the function and the point x.
+Then we use the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.compute_step" title="numericalderivative.SteplemanWinarsky.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a> method to compute the step,
+using an upper bound of the step as an initial point of the algorithm.
+Finally, use the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.compute_first_derivative" title="numericalderivative.SteplemanWinarsky.compute_first_derivative"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_first_derivative()</span></code></a> method to compute
+an approximate value of the first derivative using finite differences.
+The <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.get_number_of_function_evaluations" title="numericalderivative.SteplemanWinarsky.get_number_of_function_evaluations"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_number_of_function_evaluations()</span></code></a> method
+can be used to get the number of function evaluations.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+<span class="n">step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">initial_step</span><span class="p">)</span>
+<span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+<span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+<span class="n">f_prime_exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Since the derivative of exp is exp.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computed step = </span><span class="si">{</span><span class="n">step</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of iterations = </span><span class="si">{</span><span class="n">number_of_iterations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;f_prime_approx = </span><span class="si">{</span><span class="n">f_prime_approx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;f_prime_exact = </span><span class="si">{</span><span class="n">f_prime_exact</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">f_prime_exact</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ compute_step()
+initial_step=1.000e+00
+  number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=4.4784e-01
+  number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6634e-02
+  number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.6595e-03
+  number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=1.0370e-04
+  number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=6.4809e-06
+  number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=4.0506e-07
+  number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.5315e-08
+  number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.5825e-09
+  number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=1.1642e-10
+  number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=1.1642e-10
+  number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=4.6566e-10
+  Stop because no monotony anymore.
+Computed step = 9.537e-07
+Number of iterations = 10
+f_prime_approx = 2.7182818283326924
+f_prime_exact = 2.718281828459045
+</pre></div>
+</div>
+</section>
+<section id="use-the-method-on-the-scaledexponentialproblem">
+<h2>Use the method on the ScaledExponentialProblem<a class="headerlink" href="#use-the-method-on-the-scaledexponentialproblem" title="Link to this heading">¶</a></h2>
 <p>Consider this problem.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialProblem</span><span class="p">()</span>
-<span class="n">name</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
-<span class="n">third_derivative</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">get_third_derivative</span><span class="p">()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ScaledExponentialProblem</span><span class="p">()</span>
+<span class="n">problem</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<b>DerivativeBenchmarkProblem</b>
+<ul>
+<li>name = scaled exp</li>
+<li>x = 1.0</li>
+<li>f(x) = 0.9999990000005</li>
+<li>f'(x) = -9.999990000004999e-07</li>
+<li>f''(x) = 9.999990000005e-13</li>
+<li>f^(3)(x) = -9.999990000005e-19</li>
+<li>f^(4)(x) = 9.999990000004998e-25</li>
+<li>f^(5)(x) = -9.999990000004998e-31</li>
+</ul>
+
+</div>
+<br />
+<br /><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="n">third_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_third_derivative</span><span class="p">()</span>
 <span class="n">third_derivative_value</span> <span class="o">=</span> <span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">optimum_step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
     <span class="n">third_derivative_value</span>
@@ -78,24 +146,25 @@ Optimal step for central finite difference formula = 6.694331732265233
 Minimum absolute error= 2.2407016263779204e-17
 </pre></div>
 </div>
-<ol class="arabic simple">
-<li><p>Plot the error vs h</p></li>
-</ol>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-<span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+</section>
+<section id="plot-the-error-vs-h">
+<h2>Plot the error vs h<a class="headerlink" href="#plot-the-error-vs-h" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+<span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
 <span class="n">error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-    <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">optimum_step</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">error_array</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">error_array</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^*$&quot;</span><span class="p">)</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Central finite difference&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Central finite difference on </span><span class="si">{</span><span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> at x = </span><span class="si">{</span><span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
@@ -104,66 +173,89 @@ Minimum absolute error= 2.2407016263779204e-17
 <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_stepleman_winarsky_001.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_001.png" alt="Central finite difference" class = "sphx-glr-single-img"/><ol class="arabic simple" start="2">
-<li><p>Algorithm to detect h*</p></li>
-</ol>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<img src="../_images/sphx_glr_plot_stepleman_winarsky_001.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_001.png" alt="Central finite difference on scaled exp at x = 1.0" class = "sphx-glr-single-img"/><p>Use the algorithm to detect h*</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e8</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
 <span class="n">h_optimal</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">initial_step</span><span class="p">)</span>
 <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimum h =&quot;</span><span class="p">,</span> <span class="n">h_optimal</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;iterations =&quot;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Function evaluations =&quot;</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
 <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h_optimal</span><span class="p">)</span>
-<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error = &quot;</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">)</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Absolute error = &quot;</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ compute_step()
 initial_step=1.000e+08
-number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.3441e+35
-number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=1.4401e+03
-number_of_iterations=2, h=1.5625e+06, |FD(h_current) - FD(h_previous)|=3.9981e-05
-number_of_iterations=3, h=3.9062e+05, |FD(h_current) - FD(h_previous)|=4.3393e-07
-number_of_iterations=4, h=9.7656e+04, |FD(h_current) - FD(h_previous)|=2.4036e-08
-number_of_iterations=5, h=2.4414e+04, |FD(h_current) - FD(h_previous)|=1.4909e-09
-number_of_iterations=6, h=6.1035e+03, |FD(h_current) - FD(h_previous)|=9.3135e-11
-number_of_iterations=7, h=1.5259e+03, |FD(h_current) - FD(h_previous)|=5.8208e-12
-number_of_iterations=8, h=3.8147e+02, |FD(h_current) - FD(h_previous)|=3.6380e-13
-number_of_iterations=9, h=9.5367e+01, |FD(h_current) - FD(h_previous)|=2.2738e-14
-number_of_iterations=10, h=2.3842e+01, |FD(h_current) - FD(h_previous)|=1.4208e-15
-number_of_iterations=11, h=5.9605e+00, |FD(h_current) - FD(h_previous)|=8.3819e-17
-number_of_iterations=12, h=1.4901e+00, |FD(h_current) - FD(h_previous)|=9.3131e-18
-number_of_iterations=13, h=3.7253e-01, |FD(h_current) - FD(h_previous)|=3.7253e-17
-Stop because no monotony anymore.
+  number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.3441e+35
+  number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=1.4401e+03
+  number_of_iterations=2, h=1.5625e+06, |FD(h_current) - FD(h_previous)|=3.9981e-05
+  number_of_iterations=3, h=3.9062e+05, |FD(h_current) - FD(h_previous)|=4.3393e-07
+  number_of_iterations=4, h=9.7656e+04, |FD(h_current) - FD(h_previous)|=2.4036e-08
+  number_of_iterations=5, h=2.4414e+04, |FD(h_current) - FD(h_previous)|=1.4909e-09
+  number_of_iterations=6, h=6.1035e+03, |FD(h_current) - FD(h_previous)|=9.3135e-11
+  number_of_iterations=7, h=1.5259e+03, |FD(h_current) - FD(h_previous)|=5.8208e-12
+  number_of_iterations=8, h=3.8147e+02, |FD(h_current) - FD(h_previous)|=3.6380e-13
+  number_of_iterations=9, h=9.5367e+01, |FD(h_current) - FD(h_previous)|=2.2738e-14
+  number_of_iterations=10, h=2.3842e+01, |FD(h_current) - FD(h_previous)|=1.4208e-15
+  number_of_iterations=11, h=5.9605e+00, |FD(h_current) - FD(h_previous)|=8.3819e-17
+  number_of_iterations=12, h=1.4901e+00, |FD(h_current) - FD(h_previous)|=9.3131e-18
+  number_of_iterations=13, h=3.7253e-01, |FD(h_current) - FD(h_previous)|=3.7253e-17
+  Stop because no monotony anymore.
 Optimum h = 1.4901161193847656
 iterations = 13
 Function evaluations = 30
-Error =  1.9825229646960527e-17
+Absolute error =  1.9825229646960527e-17
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fd_difference</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</section>
+<section id="plot-the-absolute-difference-depending-on-the-step">
+<h2>Plot the absolute difference depending on the step<a class="headerlink" href="#plot-the-absolute-difference-depending-on-the-step" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fd_difference</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the difference of central difference approx. for different step sizes</span>
+
+<span class="sd">    This function computes the absolute value of the difference of approximations</span>
+<span class="sd">    evaluated at two different steps h1 and h2:</span>
+
+<span class="sd">        d = abs(FD(h1) - FD(h2))</span>
+
+<span class="sd">    where FD(h) is the approximation from the finite difference formula</span>
+<span class="sd">    evaluated from the step h.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h1 : float, &gt; 0</span>
+<span class="sd">        The first step</span>
+<span class="sd">    h2 : float, &gt; 0</span>
+<span class="sd">        The second step</span>
+<span class="sd">    function : function</span>
+<span class="sd">        The function</span>
+<span class="sd">    x : float</span>
+<span class="sd">        The input point where the derivative is approximated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">finite_difference</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
     <span class="n">f_prime_approx_1</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">h1</span><span class="p">)</span>
     <span class="n">f_prime_approx_2</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">h2</span><span class="p">)</span>
     <span class="n">diff_current</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx_1</span> <span class="o">-</span> <span class="n">f_prime_approx_2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">diff_current</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="3">
-<li><p>Plot the evolution of | FD(h) - FD(h / 2) | for different values of h</p></li>
-</ol>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<p>Plot the evolution of | FD(h) - FD(h / 2) | for different values of h</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
 <span class="n">diff_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">diff_array</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">diff_array</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;F.D. difference&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$|\operatorname</span><span class="si">{FD}</span><span class="s2">(h) - \operatorname</span><span class="si">{FD}</span><span class="s2">(h / 2) |$&quot;</span><span class="p">)</span>
@@ -172,25 +264,27 @@ Error =  1.9825229646960527e-17
 <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_stepleman_winarsky_002.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_002.png" alt="F.D. difference" class = "sphx-glr-single-img"/><ol class="arabic simple" start="4">
-<li><p>Plot the evolution of | FD(h) - FD(h / 2) | for different values of h</p></li>
-</ol>
+<img src="../_images/sphx_glr_plot_stepleman_winarsky_002.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_002.png" alt="F.D. difference" class = "sphx-glr-single-img"/></section>
+<section id="plot-the-criterion-depending-on-the-step">
+<h2>Plot the criterion depending on the step<a class="headerlink" href="#plot-the-criterion-depending-on-the-step" title="Link to this heading">¶</a></h2>
+<p>Plot the evolution of | FD(h) - FD(h / 2) | for different values of h</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">h_initial</span> <span class="o">=</span> <span class="mf">1.0e5</span>
 <span class="n">beta</span> <span class="o">=</span> <span class="mf">4.0</span>
-<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
 <span class="n">diff_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_initial</span> <span class="o">/</span> <span class="n">beta</span>
-        <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">h_initial</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_initial</span> <span class="o">/</span> <span class="n">beta</span>
+        <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">h_initial</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">beta</span>
-        <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_array</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">beta</span>
+        <span class="n">diff_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd_difference</span><span class="p">(</span><span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">step_array</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">diff_array</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">diff_array</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;F.D. difference&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$|\operatorname</span><span class="si">{FD}</span><span class="s2">(h) - \operatorname</span><span class="si">{FD}</span><span class="s2">(h / 2) |$&quot;</span><span class="p">)</span>
@@ -199,9 +293,9 @@ Error =  1.9825229646960527e-17
 <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_stepleman_winarsky_003.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_003.png" alt="F.D. difference" class = "sphx-glr-single-img"/><ol class="arabic simple" start="5">
-<li><p>Compute suggested step</p></li>
-</ol>
+<img src="../_images/sphx_glr_plot_stepleman_winarsky_003.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_003.png" alt="F.D. difference" class = "sphx-glr-single-img"/></section>
+<section id="compute-reference-step">
+<h2>Compute reference step<a class="headerlink" href="#compute-reference-step" title="Link to this heading">¶</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mf">1.0e-16</span>
 <span class="n">beta</span> <span class="o">=</span> <span class="mf">4.0</span>
 <span class="n">h_reference</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">p</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span>
@@ -211,9 +305,12 @@ Error =  1.9825229646960527e-17
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Suggested h0 =  1.8566355334451128e-05
 </pre></div>
 </div>
-<ol class="arabic simple" start="6">
-<li><p>Plot number of lost digits vs h</p></li>
-</ol>
+</section>
+<section id="plot-number-of-lost-digits-vs-h">
+<h2>Plot number of lost digits vs h<a class="headerlink" href="#plot-number-of-lost-digits-vs-h" title="Link to this heading">¶</a></h2>
+<p>The <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.number_of_lost_digits" title="numericalderivative.SteplemanWinarsky.number_of_lost_digits"><code class="xref py py-meth docutils literal notranslate"><span class="pre">number_of_lost_digits()</span></code></a> method
+computes the number of lost digits in the approximated derivative
+depending on the step.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">h</span> <span class="o">=</span> <span class="mf">1.0e4</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting h = &quot;</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
 <span class="n">n_digits</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">number_of_lost_digits</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
@@ -247,30 +344,30 @@ step_zero =  10.0
 iterations =  0
 + compute_step()
 initial_step=1.000e+01
-number_of_iterations=0, h=6.6667e+00, |FD(h_current) - FD(h_previous)|=2.4980e-17
-number_of_iterations=1, h=4.4444e+00, |FD(h_current) - FD(h_previous)|=4.1634e-18
-number_of_iterations=2, h=2.9630e+00, |FD(h_current) - FD(h_previous)|=6.2450e-18
-Stop because no monotony anymore.
+  number_of_iterations=0, h=6.6667e+00, |FD(h_current) - FD(h_previous)|=2.4980e-17
+  number_of_iterations=1, h=4.4444e+00, |FD(h_current) - FD(h_previous)|=4.1634e-18
+  number_of_iterations=2, h=2.9630e+00, |FD(h_current) - FD(h_previous)|=6.2450e-18
+  Stop because no monotony anymore.
 estim_step =  4.444444444444445
 iterations =  2
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">h_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_points</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">)</span>
 <span class="n">n_digits_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_points</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_points</span><span class="p">):</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">h_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">n_digits_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">number_of_lost_digits</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">y_max</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">number_of_lost_digits</span><span class="p">(</span><span class="n">h_reference</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">n_digits_array</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$N(h)$&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">n_digits_array</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$N(h)$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">h_reference</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h_</span><span class="si">{ref}</span><span class="s2">$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">step_zero</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^{(0)}$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">estim_step</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^\star$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">h_array</span><span class="p">,</span>
+    <span class="n">step_array</span><span class="p">,</span>
     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">threshold</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_points</span><span class="p">),</span>
     <span class="s2">&quot;:&quot;</span><span class="p">,</span>
     <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$T$&quot;</span><span class="p">,</span>
@@ -284,7 +381,7 @@ iterations =  2
 </pre></div>
 </div>
 <img src="../_images/sphx_glr_plot_stepleman_winarsky_004.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_004.png" alt="Number of digits lost by F.D." class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">error_array</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">step_zero</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0e-9</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^{(0)}$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">estim_step</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0e-9</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$h^\star$&quot;</span><span class="p">)</span>
 <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Finite difference&quot;</span><span class="p">)</span>
@@ -296,8 +393,15 @@ iterations =  2
 <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_stepleman_winarsky_005.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_005.png" alt="Finite difference" class = "sphx-glr-single-img"/><p>7. Benchmark
-Test with single point</p>
+<img src="../_images/sphx_glr_plot_stepleman_winarsky_005.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_005.png" alt="Finite difference" class = "sphx-glr-single-img"/></section>
+<section id="use-the-bisection-search">
+<h2>Use the bisection search<a class="headerlink" href="#use-the-bisection-search" title="Link to this heading">¶</a></h2>
+<p>In some cases, it is difficult to find the initial step.
+In this case, we can use the bisection algorithm, which can produce
+an initial guess for the step.c
+This algorithm is based on a search for a suitable step within
+an interval.</p>
+<p>Test with single point and default parameters.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">f_prime_approx</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
     <span class="mf">1.0e-7</span><span class="p">,</span>
@@ -321,13 +425,14 @@ n_min = 12.699, n_treshold = 4.731, n_max = -4.343
   h is just right : stop !
 FD(x) =  3162.2776601683795
 number_of_iterations =  1
-Func. eval =  3067
+Func. eval =  667
 </pre></div>
 </div>
-<p>Algorithme de dichotomie pour le pas initial</p>
+<p>See how the algorithm behaves if we use or do not use the log scale
+when searching for the optimal step (this can be slower).</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">maximum_bisection</span> <span class="o">=</span> <span class="mi">53</span>
-<span class="n">log_scale</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ No log scale.&quot;</span><span class="p">)</span>
 <span class="n">h0</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
     <span class="mf">1.0e-7</span><span class="p">,</span>
     <span class="mf">1.0e1</span><span class="p">,</span>
@@ -335,6 +440,7 @@ Func. eval =  3067
     <span class="n">log_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pas initial = &quot;</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="s2">&quot;, iterations = &quot;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Log scale.&quot;</span><span class="p">)</span>
 <span class="n">h0</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
     <span class="mf">1.0e-7</span><span class="p">,</span>
     <span class="mf">1.0e1</span><span class="p">,</span>
@@ -344,11 +450,13 @@ Func. eval =  3067
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pas initial = &quot;</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="s2">&quot;, iterations = &quot;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ search_step_with_bisection()
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ No log scale.
++ search_step_with_bisection()
 + h_min = 1.000e-07, h_max = 1.000e+01
 + relative_precision = 1.000e-16
 n_min = 12.699, n_treshold = 4.731, n_max = 4.699
 Pas initial =  10.0 , iterations =  0
++ Log scale.
 + search_step_with_bisection()
 + h_min = 1.000e-07, h_max = 1.000e+01
 + relative_precision = 1.000e-16
@@ -356,23 +464,28 @@ n_min = 12.699, n_treshold = 4.731, n_max = 4.699
 Pas initial =  10.0 , iterations =  0
 </pre></div>
 </div>
-<p>Test</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<p>In the next example, we search for an initial step using bisection,
+then use this step as an initial guess for the algorithm.
+Finally, we compute an approximation of the first derivative using
+the finite difference formula.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
 <span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">benchmark</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">f_prime_approx</span><span class="p">,</span> <span class="n">estim_relative_error</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">initial_step</span><span class="p">,</span> <span class="n">estim_relative_error</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">search_step_with_bisection</span><span class="p">(</span>
     <span class="mf">1.0e-6</span><span class="p">,</span>
     <span class="mf">100.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span>
     <span class="n">beta</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">initial_step</span><span class="p">)</span>
+<span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 <span class="n">feval</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span>
     <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, abs. error = </span><span class="si">%.3e</span><span class="s2">, estim. rel. error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
     <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">estim_relative_error</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
 <span class="p">)</span>
-
-<span class="c1">#</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ search_step_with_bisection()
@@ -382,10 +495,110 @@ n_min = 5.699, n_treshold = 4.731, n_max = -43.429
 + Iter 0 / 53, h_min = 1.000e-06, h_max = 1.000e+02
   h = 1.000e-02,   Number of lost digits = 1.699
   h is just right : stop !
-x = 1.000, abs. error = 2.708e+00, estim. rel. error = 0.000e+00, Func. eval. = 30
++ compute_step()
+initial_step=1.000e-02
+  number_of_iterations=0, h=2.5000e-03, |FD(h_current) - FD(h_previous)|=4.2473e-05
+  number_of_iterations=1, h=6.2500e-04, |FD(h_current) - FD(h_previous)|=2.6546e-06
+  number_of_iterations=2, h=1.5625e-04, |FD(h_current) - FD(h_previous)|=1.6591e-07
+  number_of_iterations=3, h=3.9063e-05, |FD(h_current) - FD(h_previous)|=1.0366e-08
+  number_of_iterations=4, h=9.7656e-06, |FD(h_current) - FD(h_previous)|=6.3665e-10
+  number_of_iterations=5, h=2.4414e-06, |FD(h_current) - FD(h_previous)|=6.4055e-12
+  number_of_iterations=6, h=6.1035e-07, |FD(h_current) - FD(h_previous)|=3.2409e-10
+  Stop because no monotony anymore.
+x = 1.000, abs. error = 6.533e-11, estim. rel. error = 0.000e+00, Func. eval. = 30
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.823 seconds)</p>
+</section>
+<section id="see-the-history-of-steps-during-the-search">
+<h2>See the history of steps during the search<a class="headerlink" href="#see-the-history-of-steps-during-the-search" title="Link to this heading">¶</a></h2>
+<p>In Stepleman &amp; Winarsky's method, the algorithm
+produces a sequence of steps <span class="math notranslate nohighlight">\((h_i)_{1 \leq i \leq n_{iter}}\)</span>
+where <span class="math notranslate nohighlight">\(n_{iter} \in \mathbb{N}\)</span> is the number of iterations.
+These steps are meant to converge to an
+approximately optimal step of for the central finite difference formula of the
+first derivative.
+The optimal step <span class="math notranslate nohighlight">\(h^\star\)</span> for the central finite difference formula of the
+first derivative can be computed depending on the third derivative of the
+function.
+In the next example, we want to compute the absolute error between
+each intermediate step <span class="math notranslate nohighlight">\(h_i\)</span> and the exact value <span class="math notranslate nohighlight">\(h^\star\)</span>
+to see how close the algorithm gets to the exact step.
+The list of intermediate steps during the algorithm can be obtained
+thanks to the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.get_step_history" title="numericalderivative.SteplemanWinarsky.get_step_history"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_step_history()</span></code></a> method.</p>
+<p>In the next example, we print the intermediate steps k during
+the bissection algorithm that searches for a step such
+that the L ratio is satisfactory.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SinProblem</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+<span class="n">step</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">initial_step</span><span class="p">)</span>
+<span class="n">step_h_history</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_step_history</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of iterations = </span><span class="si">{</span><span class="n">number_of_iterations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;History of steps h : </span><span class="si">{</span><span class="n">step_h_history</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># The last step is not the best one, sinces it breaks the monotony</span>
+<span class="n">last_step_h</span> <span class="o">=</span> <span class="n">step_h_history</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last step h : </span><span class="si">{</span><span class="n">last_step_h</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ compute_step()
+initial_step=1.000e+00
+  number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=8.0043e-02
+  number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=5.2589e-03
+  number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=3.2971e-04
+  number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.0611e-05
+  number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.2882e-06
+  number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.0511e-08
+  number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=5.0316e-09
+  number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=3.1378e-10
+  number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=2.9104e-11
+  number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=1.4552e-11
+  number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=1.7462e-10
+  Stop because no monotony anymore.
+Number of iterations = 10
+History of steps h : [1.0, 0.25, 0.0625, 0.015625, 0.00390625, 0.0009765625, 0.000244140625, 6.103515625e-05, 1.52587890625e-05, 3.814697265625e-06, 9.5367431640625e-07, 2.384185791015625e-07]
+Last step h : 9.5367431640625e-07
+</pre></div>
+</div>
+<p>Then we compute the exact step, using <a class="reference internal" href="../user_manual/_generated/numericalderivative.ThirdDerivativeCentral.html#numericalderivative.ThirdDerivativeCentral.compute_step" title="numericalderivative.ThirdDerivativeCentral.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">third_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_third_derivative</span><span class="p">()</span>
+<span class="n">third_derivative_value</span> <span class="o">=</span> <span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;f^(3)(x) = </span><span class="si">{</span><span class="n">third_derivative_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">absolute_precision</span> <span class="o">=</span> <span class="mf">1.0e-16</span>
+<span class="n">exact_step_k</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeCentral</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+    <span class="n">third_derivative_value</span><span class="p">,</span> <span class="n">absolute_precision</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal step k for f^(3)(x) = </span><span class="si">{</span><span class="n">exact_step_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>f^(3)(x) = -0.5403023058681398
+Optimal step k for f^(3)(x) = 8.219173432436798e-06
+</pre></div>
+</div>
+<p>Plot the absolute error between the exact step k and the intermediate k
+of the algorithm.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">error_step_h</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nb">abs</span><span class="p">(</span><span class="n">step_h_history</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact_step_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">step_h_history</span><span class="p">))</span>
+<span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stepleman &amp; Winarsky on </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> at x = </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">step_h_history</span><span class="p">)),</span> <span class="n">error_step_h</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Iterations&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$|h_i - h^\star|$&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_stepleman_winarsky_006.png" srcset="../_images/sphx_glr_plot_stepleman_winarsky_006.png" alt="Stepleman & Winarsky on sin at x = 1.0" class = "sphx-glr-single-img"/><p>The previous figure shows that the algorithm gets closer to the optimal
+value of the step k in the early iterations.
+In the last iterations of the algorithm, the absolute error does not
+continue to decrease monotically and produces a final absolute
+error close to <span class="math notranslate nohighlight">\(10^{-3}\)</span>.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.086 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-stepleman-winarsky-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/1cb8753822cc9065fa48439c6cc4b20e/plot_stepleman_winarsky.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_stepleman_winarsky.ipynb</span></code></a></p>
@@ -430,7 +643,23 @@ x = 1.000, abs. error = 2.708e+00, estim. rel. error = 0.000e+00, Func. eval. = 
 <li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Experiment with Stepleman &amp; Winarsky method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">

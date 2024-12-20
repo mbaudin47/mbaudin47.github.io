@@ -45,7 +45,7 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="a-simple-demonstration-of-the-methods">
 <span id="sphx-glr-auto-example-plot-numericalderivative-py"></span><h1>A simple demonstration of the methods<a class="headerlink" href="#a-simple-demonstration-of-the-methods" title="Link to this heading">¶</a></h1>
-<p>Finds a step which is near to optimal for a centered finite difference
+<p>Finds a step which is near to optimal for a central finite difference
 formula.</p>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
@@ -57,45 +57,58 @@ formula.</p>
 <span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
 </pre></div>
 </div>
-<p>Define a function
-Here, we do not use the ScaledExponentialDerivativeBenchmark class, for demonstration purposes</p>
+</section>
+<section id="define-the-function">
+<h2>Define the function<a class="headerlink" href="#define-the-function" title="Link to this heading">¶</a></h2>
+<p>We first define a function.
+Here, we do not use the <code class="xref py py-class docutils literal notranslate"><span class="pre">ScaledExponentialDerivativeBenchmark</span></code>
+class, for demonstration purposes.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Define its exact derivative (for testing purposes only)</p>
+<p>Define its exact derivative (for testing purposes only).</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
     <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span>
 </pre></div>
 </div>
-<p>Define its exact second derivative (for testing purposes only)</p>
+<p>Define its exact second derivative (for testing purposes only).</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scaled_exp_second</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0e6</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span><span class="o">**</span><span class="mi">2</span>
 </pre></div>
 </div>
-<p>Function value</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Function&quot;</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+<p>We evaluate the function, its first and second derivatives at the point x.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">exact_f_value</span> <span class="o">=</span> <span class="n">scaled_exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exact_f_value = &quot;</span><span class="p">,</span> <span class="n">exact_f_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f(x) = &quot;</span><span class="p">,</span> <span class="n">exact_f_value</span><span class="p">)</span>
 <span class="n">exact_f_prime_value</span> <span class="o">=</span> <span class="n">scaled_exp_prime</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exact_f_prime_value = &quot;</span><span class="p">,</span> <span class="n">exact_f_prime_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">exact_f_prime_value</span><span class="p">)</span>
 <span class="n">exact_f_second_value</span> <span class="o">=</span> <span class="n">scaled_exp_second</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exact_f_second_value = &quot;</span><span class="p">,</span> <span class="n">exact_f_second_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;f&#39;&#39;(x) = &quot;</span><span class="p">,</span> <span class="n">exact_f_second_value</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Function
-exact_f_value =  0.9999990000005
-exact_f_prime_value =  -9.999990000005e-07
-exact_f_second_value =  9.999990000005e-13
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>f(x) =  0.9999990000005
+f&#39;(x) =  -9.999990000005e-07
+f&#39;&#39;(x) =  9.999990000005e-13
 </pre></div>
 </div>
-<p>Algorithm to detect h*: SteplemanWinarsky</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ SteplemanWinarsky&quot;</span><span class="p">)</span>
-<span class="n">h0</span> <span class="o">=</span> <span class="mf">1.0e5</span>
+</section>
+<section id="steplemanwinarsky">
+<h2>SteplemanWinarsky<a class="headerlink" href="#steplemanwinarsky" title="Link to this heading">¶</a></h2>
+<p>In order to compute the first derivative, we use the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky" title="numericalderivative.SteplemanWinarsky"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteplemanWinarsky</span></code></a>.
+This class uses the central finite difference formula.
+In order to compute a step which is approximately optimal,
+we use the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.compute_step" title="numericalderivative.SteplemanWinarsky.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a> method.
+Then we use the <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.compute_first_derivative" title="numericalderivative.SteplemanWinarsky.compute_first_derivative"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_first_derivative()</span></code></a> method
+to compute the approximate first derivative and use the approximately optimal
+step as input argument.
+The input argument of <a class="reference internal" href="../user_manual/_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky.compute_step" title="numericalderivative.SteplemanWinarsky.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a> is
+an upper bound of the optimal step (but this is not the case for all
+algorithms).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">h0</span> <span class="o">=</span> <span class="mf">1.0e5</span>  <span class="c1"># An upper bound of the truly optimal step</span>
 <span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">h_optimal</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">h0</span><span class="p">)</span>
@@ -113,8 +126,7 @@ exact_f_second_value =  9.999990000005e-13
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Relative error = </span><span class="si">{</span><span class="n">relative_error</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ SteplemanWinarsky
-Optimum h = 1.52587890625
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimum h = 1.52587890625
 iterations = 8
 Function evaluations = 20
 f_prime_approx =  -9.999990000142134e-07
@@ -123,9 +135,14 @@ Absolute error = 1.371e-17
 Relative error = 1.371e-11
 </pre></div>
 </div>
-<p>Algorithm to detect h*: DumontetVignes</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ DumontetVignes&quot;</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+</section>
+<section id="dumontetvignes">
+<h2>DumontetVignes<a class="headerlink" href="#dumontetvignes" title="Link to this heading">¶</a></h2>
+<p>In the next example, we use <code class="xref py py-class docutils literal notranslate"><span class="pre">DumontetVignes</span></code> to compute an approximately
+optimal step.
+For this algorithm, we must provide an interval which contains the
+optimal step for the approximation of the third derivative.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">DumontetVignes</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">h_optimal</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
     <span class="n">kmin</span><span class="o">=</span><span class="mf">1.0e-2</span><span class="p">,</span>
@@ -145,8 +162,7 @@ Relative error = 1.371e-11
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Relative error = </span><span class="si">{</span><span class="n">relative_error</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ DumontetVignes
-Optimum h = 31.05547598808822
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimum h = 31.05547598808822
 iterations = 8
 Function evaluations = 21
 f_prime_approx =  -9.99999000162036e-07
@@ -155,9 +171,14 @@ Absolute error = 1.615e-16
 Relative error = 1.615e-10
 </pre></div>
 </div>
-<p>Algorithm to detect h*: GillMurraySaundersWright</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ GillMurraySaundersWright&quot;</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+</section>
+<section id="gillmurraysaunderswright">
+<h2>GillMurraySaundersWright<a class="headerlink" href="#gillmurraysaunderswright" title="Link to this heading">¶</a></h2>
+<p>In the next example, we use <code class="xref py py-class docutils literal notranslate"><span class="pre">GillMurraySaundersWright</span></code> to compute an approximately
+optimal step.
+For this algorithm, we must provide an interval which contains the
+optimal step for the approximation of the second derivative.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">absolute_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
 <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span><span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">absolute_precision</span><span class="p">)</span>
 <span class="n">kmin</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
@@ -176,8 +197,7 @@ Relative error = 1.615e-10
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Relative error = </span><span class="si">{</span><span class="n">relative_error</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ GillMurraySaundersWright
-Optimum h for f&#39;= 0.06324692604098761
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimum h for f&#39;= 0.06324692604098761
 Function evaluations = 12
 f_prime_approx =  -9.999989694153764e-07
 exact_f_prime_value =  -9.999990000005e-07
@@ -185,14 +205,19 @@ Absolute error = 3.059e-14
 Relative error = 3.059e-08
 </pre></div>
 </div>
-<p>Define a function with arguments</p>
+</section>
+<section id="function-with-extra-arguments">
+<h2>Function with extra arguments<a class="headerlink" href="#function-with-extra-arguments" title="Link to this heading">¶</a></h2>
+<p>Some function use extra arguments, such as parameters for examples.
+For such a function, the <cite>args</cite> optionnal argument can be used
+to pass extra parameters to the function.</p>
+<p>Define a function with arguments.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_exp_with_args</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scaling</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">scaling</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Compute the derivative of a function with extra input arguments</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Function with extra input arguments&quot;</span><span class="p">)</span>
-<span class="n">h0</span> <span class="o">=</span> <span class="mf">1.0e5</span>
+<p>Compute the derivative of a function with extra input arguments.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">h0</span> <span class="o">=</span> <span class="mf">1.0e5</span>
 <span class="n">x</span> <span class="o">=</span> <span class="mf">1.0e0</span>
 <span class="n">scaling</span> <span class="o">=</span> <span class="mf">1.0e6</span>
 <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SteplemanWinarsky</span><span class="p">(</span><span class="n">my_exp_with_args</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">scaling</span><span class="p">])</span>
@@ -203,8 +228,7 @@ Relative error = 3.059e-08
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Function evaluations =&quot;</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Function with extra input arguments
-Optimum h for f&#39;&#39;= 1.52587890625
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimum h for f&#39;&#39;= 1.52587890625
 iterations = 8
 Function evaluations = 20
 </pre></div>
@@ -254,7 +278,26 @@ Function evaluations = 20
 <li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">A simple demonstration of the methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-the-function">Define the function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#steplemanwinarsky">SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dumontetvignes">DumontetVignes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gillmurraysaunderswright">GillMurraySaundersWright</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-with-extra-arguments">Function with extra arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">

@@ -21,14 +21,16 @@
 Benchmark Gill, Murray, Saunders and Wright method
 ==================================================
 
-Find a step which is near to optimal for a centered finite difference 
-formula.
+The goal of this example is to benchmark the :class:`~numericalderivative.GillMurraySaundersWright`
+on a collection of test problems.
+These problems are created by the :meth:`~numericalderivative.build_benchmark()` 
+static method, which returns a list of problems.
 
 References
 ----------
 - Gill, P. E., Murray, W., Saunders, M. A., & Wright, M. H. (1983). Computing forward-difference intervals for numerical optimization. SIAM Journal on Scientific and Statistical Computing, 4(2), 310-321.
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-23
+.. GENERATED FROM PYTHON SOURCE LINES 19-74
 
 .. code-block:: Python
 
@@ -38,77 +40,53 @@ References
     import numericalderivative as nd
 
 
+    class GillMurraySaundersWrightMethod:
+        def __init__(self, relative_precision, kmin, kmax):
+            """
+            Create a GillMurraySaundersWright method to compute the approximate first derivative
 
+            Parameters
+            ----------
+            relative_precision : float, > 0, optional
+                The relative precision of evaluation of f.
+            kmin : float, kmin > 0
+                A minimum bound for the finite difference step of the third derivative.
+                If no value is provided, the default is to compute the smallest
+                possible kmin using number_of_digits and x.
+            kmax : float, kmax > kmin > 0
+                A maximum bound for the finite difference step of the third derivative.
+                If no value is provided, the default is to compute the largest
+                possible kmax using number_of_digits and x.
+            """
+            self.relative_precision = relative_precision
+            self.kmin = kmin
+            self.kmax = kmax
 
+        def compute_first_derivative(self, function, x):
+            """
+            Compute the first derivative using GillMurraySaundersWright
 
+            Parameters
+            ----------
+            function : function
+                The function
+            x : float
+                The test point
 
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 24-86
-
-.. code-block:: Python
-
-    def benchmark_GMSW_method(
-        function, derivative_function, test_points, kmin, kmax, verbose=False
-    ):
-        """
-        Apply Stepleman & Winarsky method to compute the approximate first
-        derivative using finite difference formula.
-
-        Parameters
-        ----------
-        function : function
-            The function.
-        derivative_function : function
-            The exact first derivative of the function
-        test_points : list(float)
-            The list of x points where the benchmark must be performed.
-        verbose : bool, optional
-            Set to True to print intermediate messages. The default is False.
-
-        Returns
-        -------
-        average_relative_error : float, > 0
-            The average relative error between the approximate first derivative
-            and the true first derivative.
-        feval : int
-            The number of function evaluations.
-
-        """
-        number_of_test_points = len(test_points)
-        relative_error_array = np.zeros(number_of_test_points)
-        feval_array = np.zeros(number_of_test_points)
-        for i in range(number_of_test_points):
-            x = test_points[i]
-            if verbose:
-                print(f"x = {x:.3f}")
-            try:
-                algorithm = nd.GillMurraySaundersWright(function, x, verbose=verbose)
-                step, _ = algorithm.compute_step(kmin, kmax)
-                f_prime_approx = algorithm.compute_first_derivative(step)
-                number_of_function_evaluations = (
-                    algorithm.get_number_of_function_evaluations()
-                )
-                absolute_error = abs(f_prime_approx - derivative_function(x))
-                relative_error = absolute_error / abs(derivative_function(x))
-            except:
-                number_of_function_evaluations = np.nan
-                relative_error = np.nan
-            if verbose:
-                print(
-                    "x = %.3f, abs. error = %.3e, rel. error = %.3e, Func. eval. = %d"
-                    % (x, absolute_error, relative_error, number_of_function_evaluations)
-                )
-            relative_error_array[i] = relative_error
-            feval_array[i] = number_of_function_evaluations
-
-        average_relative_error = np.mean(relative_error_array)
-        average_feval = np.mean(feval_array)
-        if verbose:
-            print("Average error =", average_relative_error)
-            print("Average number of function evaluations =", average_feval)
-        return average_relative_error, average_feval
+            Returns
+            -------
+            f_prime_approx : float
+                The approximate value of the first derivative of the function at point x
+            number_of_function_evaluations : int
+                The number of function evaluations.
+            """
+            algorithm = nd.GillMurraySaundersWright(
+                function, x, relative_precision=self.relative_precision
+            )
+            step, _ = algorithm.compute_step(kmin, kmax)
+            f_prime_approx = algorithm.compute_first_derivative(step)
+            number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+            return f_prime_approx, number_of_function_evaluations
 
 
 
@@ -118,19 +96,35 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-98
+.. GENERATED FROM PYTHON SOURCE LINES 75-77
+
+The next example computes the approximate derivative on the
+:class:`~numericalderivative.ExponentialProblem`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 79-101
 
 .. code-block:: Python
 
     print("+ Benchmark on several points")
-    number_of_test_points = 100
-    test_points = np.linspace(0.01, 12.2, number_of_test_points)
+    number_of_test_points = 20
     kmin = 1.0e-16
     kmax = 1.0e-1
-    benchmark = nd.ExponentialProblem()
-    average_relative_error, average_feval = benchmark_GMSW_method(
-        benchmark.function, benchmark.first_derivative, test_points, kmin, kmax, True
+    problem = nd.ExponentialProblem()
+    print(problem)
+    interval = problem.get_interval()
+    test_points = np.linspace(interval[0], interval[1], number_of_test_points)
+    relative_precision = 1.0e-16
+    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    average_relative_error, average_feval, data = nd.benchmark_method(
+        problem.get_function(),
+        problem.get_first_derivative(),
+        test_points,
+        method.compute_first_derivative,
+        True,
     )
+    print("Average relative error =", average_relative_error)
+    print("Average number of function evaluations =", average_feval)
+    tabulate.tabulate(data, headers=["x", "Rel. err.", "F. Eval."], tablefmt="html")
 
 
 
@@ -142,1017 +136,79 @@ References
  .. code-block:: none
 
     + Benchmark on several points
-    x = 0.010
-    kmin = 1.000e-16, c(kmin) = 1.820e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.820e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.080e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.010, abs. error = 2.094e-08, rel. error = 2.073e-08, Func. eval. = 16
-    x = 0.133
-    kmin = 1.000e-16, c(kmin) = 2.058e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.096e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.133, abs. error = 1.542e-08, rel. error = 1.350e-08, Func. eval. = 16
-    x = 0.256
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.118e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.256, abs. error = 9.116e-09, rel. error = 7.055e-09, Func. eval. = 16
-    x = 0.379
-    kmin = 1.000e-16, c(kmin) = 2.633e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.096e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.379, abs. error = 1.910e-08, rel. error = 1.307e-08, Func. eval. = 16
-    x = 0.503
-    kmin = 1.000e-16, c(kmin) = 2.978e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.978e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.503, abs. error = 1.033e-08, rel. error = 6.249e-09, Func. eval. = 16
-    x = 0.626
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.368e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.626, abs. error = 2.086e-08, rel. error = 1.116e-08, Func. eval. = 16
-    x = 0.749
-    kmin = 1.000e-16, c(kmin) = 1.905e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.905e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.106e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.749, abs. error = 4.015e-08, rel. error = 1.899e-08, Func. eval. = 16
-    x = 0.872
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.109e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.872, abs. error = 2.352e-08, rel. error = 9.834e-09, Func. eval. = 16
-    x = 0.995
-    kmin = 1.000e-16, c(kmin) = 2.436e+00
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.436e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.124e-03
-      c in [0.001, 0.1]: stop!
-    x = 0.995, abs. error = 1.994e-08, rel. error = 7.372e-09, Func. eval. = 16
-    x = 1.118
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.756e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.102e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.118, abs. error = 4.679e-08, rel. error = 1.530e-08, Func. eval. = 16
-    x = 1.241
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.116e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.241, abs. error = 2.537e-08, rel. error = 7.333e-09, Func. eval. = 16
-    x = 1.364
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.107e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.364, abs. error = 4.746e-08, rel. error = 1.213e-08, Func. eval. = 16
-    x = 1.488
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.094e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.488, abs. error = 5.148e-08, rel. error = 1.163e-08, Func. eval. = 16
-    x = 1.611
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.112e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.611, abs. error = 2.526e-08, rel. error = 5.045e-09, Func. eval. = 16
-    x = 1.734
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.550e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.103e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.734, abs. error = 6.274e-08, rel. error = 1.108e-08, Func. eval. = 16
-    x = 1.857
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.104e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.857, abs. error = 7.834e-08, rel. error = 1.223e-08, Func. eval. = 16
-    x = 1.980
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 1.980, abs. error = 4.574e-08, rel. error = 6.314e-09, Func. eval. = 16
-    x = 2.103
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.095e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.103, abs. error = 1.098e-07, rel. error = 1.340e-08, Func. eval. = 16
-    x = 2.226
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.121e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.226, abs. error = 1.068e-07, rel. error = 1.153e-08, Func. eval. = 16
-    x = 2.349
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.108e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.349, abs. error = 5.264e-08, rel. error = 5.023e-09, Func. eval. = 16
-    x = 2.473
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.118e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.473, abs. error = 1.123e-07, rel. error = 9.477e-09, Func. eval. = 16
-    x = 2.596
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.019e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.120e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.596, abs. error = 6.064e-08, rel. error = 4.523e-09, Func. eval. = 16
-    x = 2.719
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.415e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.114e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.719, abs. error = 1.920e-07, rel. error = 1.266e-08, Func. eval. = 16
-    x = 2.842
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.931e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.099e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.842, abs. error = 2.620e-07, rel. error = 1.528e-08, Func. eval. = 16
-    x = 2.965
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.114e-03
-      c in [0.001, 0.1]: stop!
-    x = 2.965, abs. error = 1.495e-07, rel. error = 7.710e-09, Func. eval. = 16
-    x = 3.088
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.470e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.098e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.088, abs. error = 2.516e-07, rel. error = 1.147e-08, Func. eval. = 16
-    x = 3.211
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.109e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.211, abs. error = 2.378e-07, rel. error = 9.583e-09, Func. eval. = 16
-    x = 3.335
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.160e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.117e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.335, abs. error = 2.872e-07, rel. error = 1.023e-08, Func. eval. = 16
-    x = 3.458
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.458, abs. error = 4.115e-07, rel. error = 1.296e-08, Func. eval. = 16
-    x = 3.581
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.117e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.581, abs. error = 2.076e-07, rel. error = 5.782e-09, Func. eval. = 16
-    x = 3.704
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.286e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.121e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.704, abs. error = 3.121e-07, rel. error = 7.685e-09, Func. eval. = 16
-    x = 3.827
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.586e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.827, abs. error = 2.959e-07, rel. error = 6.442e-09, Func. eval. = 16
-    x = 3.950
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.115e-03
-      c in [0.001, 0.1]: stop!
-    x = 3.950, abs. error = 4.373e-07, rel. error = 8.418e-09, Func. eval. = 16
-    x = 4.073
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.307e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.128e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.073, abs. error = 3.823e-07, rel. error = 6.506e-09, Func. eval. = 16
-    x = 4.196
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.112e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.196, abs. error = 3.690e-07, rel. error = 5.553e-09, Func. eval. = 16
-    x = 4.320
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.116e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.099e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.320, abs. error = 1.053e-06, rel. error = 1.400e-08, Func. eval. = 16
-    x = 4.443
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.393e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.121e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.443, abs. error = 4.262e-07, rel. error = 5.014e-09, Func. eval. = 16
-    x = 4.566
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.122e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.566, abs. error = 9.717e-07, rel. error = 1.011e-08, Func. eval. = 16
-    x = 4.689
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.118e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.689, abs. error = 8.989e-07, rel. error = 8.266e-09, Func. eval. = 16
-    x = 4.812
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.462e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.109e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.812, abs. error = 1.491e-06, rel. error = 1.212e-08, Func. eval. = 16
-    x = 4.935
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.119e-03
-      c in [0.001, 0.1]: stop!
-    x = 4.935, abs. error = 1.928e-06, rel. error = 1.386e-08, Func. eval. = 16
-    x = 5.058
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.214e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.143e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.058, abs. error = 1.611e-06, rel. error = 1.024e-08, Func. eval. = 16
-    x = 5.182
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.504e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.115e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.182, abs. error = 1.223e-06, rel. error = 6.874e-09, Func. eval. = 16
-    x = 5.305
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.117e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.305, abs. error = 1.614e-06, rel. error = 8.019e-09, Func. eval. = 16
-    x = 5.428
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.120e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.428, abs. error = 2.089e-06, rel. error = 9.175e-09, Func. eval. = 16
-    x = 5.551
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.812e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.551, abs. error = 1.533e-06, rel. error = 5.955e-09, Func. eval. = 16
-    x = 5.674
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.049e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.091e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.674, abs. error = 3.788e-06, rel. error = 1.301e-08, Func. eval. = 16
-    x = 5.797
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.318e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.110e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.797, abs. error = 3.070e-06, rel. error = 9.321e-09, Func. eval. = 16
-    x = 5.920
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 5.920, abs. error = 1.935e-06, rel. error = 5.195e-09, Func. eval. = 16
-    x = 6.043
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.110e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.043, abs. error = 2.706e-06, rel. error = 6.422e-09, Func. eval. = 16
-    x = 6.167
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.353e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.167, abs. error = 6.130e-06, rel. error = 1.286e-08, Func. eval. = 16
-    x = 6.290
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.896e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.129e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.290, abs. error = 4.734e-06, rel. error = 8.783e-09, Func. eval. = 16
-    x = 6.413
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.145e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.126e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.413, abs. error = 1.469e-06, rel. error = 2.410e-09, Func. eval. = 16
-    x = 6.536
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.093e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.536, abs. error = 8.505e-06, rel. error = 1.234e-08, Func. eval. = 16
-    x = 6.659
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.744e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.108e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.659, abs. error = 9.662e-06, rel. error = 1.239e-08, Func. eval. = 16
-    x = 6.782
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.103e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.118e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.782, abs. error = 5.812e-06, rel. error = 6.590e-09, Func. eval. = 16
-    x = 6.905
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.510e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.134e-03
-      c in [0.001, 0.1]: stop!
-    x = 6.905, abs. error = 8.897e-06, rel. error = 8.919e-09, Func. eval. = 16
-    x = 7.028
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.985e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.089e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.028, abs. error = 1.293e-05, rel. error = 1.146e-08, Func. eval. = 16
-    x = 7.152
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.152, abs. error = 8.737e-06, rel. error = 6.847e-09, Func. eval. = 16
-    x = 7.275
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.093e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.275, abs. error = 1.978e-05, rel. error = 1.370e-08, Func. eval. = 16
-    x = 7.398
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.109e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.398, abs. error = 1.634e-05, rel. error = 1.001e-08, Func. eval. = 16
-    x = 7.521
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.521, abs. error = 1.777e-05, rel. error = 9.626e-09, Func. eval. = 16
-    x = 7.644
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.092e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.644, abs. error = 3.350e-05, rel. error = 1.604e-08, Func. eval. = 16
-    x = 7.767
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.115e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.767, abs. error = 2.636e-05, rel. error = 1.116e-08, Func. eval. = 16
-    x = 7.890
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.099e-03
-      c in [0.001, 0.1]: stop!
-    x = 7.890, abs. error = 3.740e-05, rel. error = 1.400e-08, Func. eval. = 16
-    x = 8.014
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.658e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.125e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.014, abs. error = 2.369e-05, rel. error = 7.839e-09, Func. eval. = 16
-    x = 8.137
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.137, abs. error = 2.720e-05, rel. error = 7.958e-09, Func. eval. = 16
-    x = 8.260
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.098e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.260, abs. error = 3.904e-05, rel. error = 1.010e-08, Func. eval. = 16
-    x = 8.383
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.923e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.121e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.383, abs. error = 2.647e-05, rel. error = 6.055e-09, Func. eval. = 16
-    x = 8.506
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.107e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.506, abs. error = 5.681e-05, rel. error = 1.149e-08, Func. eval. = 16
-    x = 8.629
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.129e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.629, abs. error = 4.113e-05, rel. error = 7.354e-09, Func. eval. = 16
-    x = 8.752
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.115e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.752, abs. error = 6.455e-05, rel. error = 1.021e-08, Func. eval. = 16
-    x = 8.875
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.103e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.875, abs. error = 7.262e-05, rel. error = 1.015e-08, Func. eval. = 16
-    x = 8.999
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.559e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.103e-03
-      c in [0.001, 0.1]: stop!
-    x = 8.999, abs. error = 7.245e-05, rel. error = 8.954e-09, Func. eval. = 16
-    x = 9.122
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.111e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.122, abs. error = 8.361e-05, rel. error = 9.136e-09, Func. eval. = 16
-    x = 9.245
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.276e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.136e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.245, abs. error = 3.047e-05, rel. error = 2.944e-09, Func. eval. = 16
-    x = 9.368
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.574e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.112e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.368, abs. error = 1.714e-04, rel. error = 1.464e-08, Func. eval. = 16
-    x = 9.491
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.119e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.491, abs. error = 8.548e-05, rel. error = 6.456e-09, Func. eval. = 16
-    x = 9.614
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.113e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.614, abs. error = 1.406e-04, rel. error = 9.388e-09, Func. eval. = 16
-    x = 9.737
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.862e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.109e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.737, abs. error = 2.010e-04, rel. error = 1.187e-08, Func. eval. = 16
-    x = 9.861
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.117e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.861, abs. error = 1.561e-04, rel. error = 8.150e-09, Func. eval. = 16
-    x = 9.984
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.133e-03
-      c in [0.001, 0.1]: stop!
-    x = 9.984, abs. error = 1.306e-04, rel. error = 6.026e-09, Func. eval. = 16
-    x = 10.107
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.695e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.091e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.107, abs. error = 2.671e-04, rel. error = 1.090e-08, Func. eval. = 16
-    x = 10.230
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 3.048e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.104e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.230, abs. error = 3.223e-04, rel. error = 1.163e-08, Func. eval. = 16
-    x = 10.353
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.108e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.353, abs. error = 2.080e-04, rel. error = 6.635e-09, Func. eval. = 16
-    x = 10.476
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.949e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.089e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.476, abs. error = 5.605e-04, rel. error = 1.581e-08, Func. eval. = 16
-    x = 10.599
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.113e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.599, abs. error = 4.593e-04, rel. error = 1.145e-08, Func. eval. = 16
-    x = 10.722
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.125e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.722, abs. error = 3.966e-04, rel. error = 8.743e-09, Func. eval. = 16
-    x = 10.846
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.123e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.846, abs. error = 4.268e-04, rel. error = 8.318e-09, Func. eval. = 16
-    x = 10.969
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.105e-03
-      c in [0.001, 0.1]: stop!
-    x = 10.969, abs. error = 6.433e-04, rel. error = 1.109e-08, Func. eval. = 16
-    x = 11.092
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.131e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.092, abs. error = 3.722e-04, rel. error = 5.670e-09, Func. eval. = 16
-    x = 11.215
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.040e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.135e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.215, abs. error = 5.810e-04, rel. error = 7.827e-09, Func. eval. = 16
-    x = 11.338
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.308e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.101e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.338, abs. error = 1.289e-03, rel. error = 1.535e-08, Func. eval. = 16
-    x = 11.461
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.112e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.461, abs. error = 1.225e-03, rel. error = 1.290e-08, Func. eval. = 16
-    x = 11.584
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 2.952e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.097e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.584, abs. error = 1.339e-03, rel. error = 1.246e-08, Func. eval. = 16
-    x = 11.707
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.120e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.707, abs. error = 1.045e-03, rel. error = 8.606e-09, Func. eval. = 16
-    x = 11.831
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = 1.888e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.126e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.831, abs. error = 2.212e-03, rel. error = 1.610e-08, Func. eval. = 16
-    x = 11.954
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.119e-03
-      c in [0.001, 0.1]: stop!
-    x = 11.954, abs. error = 6.084e-04, rel. error = 3.915e-09, Func. eval. = 16
-    x = 12.077
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.126e-03
-      c in [0.001, 0.1]: stop!
-    x = 12.077, abs. error = 3.872e-04, rel. error = 2.203e-09, Func. eval. = 16
-    x = 12.200
-    kmin = 1.000e-16, c(kmin) = inf
-    kmax = 1.000e-01, c(kmax) = 3.997e-14
-    Iter #0, kmin = 1.000e-16, kmax = 1.000e-01, k = 3.162e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #1, kmin = 3.162e-09, kmax = 1.000e-01, k = 1.778e-05, c(k) = 1.265e-06
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 3.162e-09, kmax = 1.778e-05, k = 2.371e-07, c(k) = 7.115e-03
-      c in [0.001, 0.1]: stop!
-    x = 12.200, abs. error = 1.826e-03, rel. error = 9.184e-09, Func. eval. = 16
-    Average error = 9.75463767456613e-09
+    DerivativeBenchmarkProblem
+    name = exp
+    x = 1.0
+    f(x) = 2.718281828459045
+    f'(x) = 2.718281828459045
+    f''(x) = 2.718281828459045
+    f^(3)(x) = 2.718281828459045
+    f^(4)(x) = 2.718281828459045
+    f^(5)(x) = 2.718281828459045
+
+    x = 0.000, abs. error = 7.834e-09, rel. error = 7.834e-09, Func. eval. = 16
+    x = 0.632, abs. error = 1.490e-08, rel. error = 7.923e-09, Func. eval. = 16
+    x = 1.263, abs. error = 2.406e-08, rel. error = 6.803e-09, Func. eval. = 16
+    x = 1.895, abs. error = 7.543e-08, rel. error = 1.134e-08, Func. eval. = 16
+    x = 2.526, abs. error = 9.082e-08, rel. error = 7.262e-09, Func. eval. = 16
+    x = 3.158, abs. error = 3.543e-07, rel. error = 1.506e-08, Func. eval. = 16
+    x = 3.789, abs. error = 5.208e-07, rel. error = 1.177e-08, Func. eval. = 16
+    x = 4.421, abs. error = 9.058e-07, rel. error = 1.089e-08, Func. eval. = 16
+    x = 5.053, abs. error = 2.098e-06, rel. error = 1.341e-08, Func. eval. = 16
+    x = 5.684, abs. error = 3.223e-06, rel. error = 1.095e-08, Func. eval. = 16
+    x = 6.316, abs. error = 9.323e-06, rel. error = 1.685e-08, Func. eval. = 16
+    x = 6.947, abs. error = 7.871e-06, rel. error = 7.565e-09, Func. eval. = 16
+    x = 7.579, abs. error = 1.835e-05, rel. error = 9.377e-09, Func. eval. = 16
+    x = 8.211, abs. error = 3.103e-05, rel. error = 8.432e-09, Func. eval. = 16
+    x = 8.842, abs. error = 5.438e-05, rel. error = 7.858e-09, Func. eval. = 16
+    x = 9.474, abs. error = 8.491e-05, rel. error = 6.525e-09, Func. eval. = 16
+    x = 10.105, abs. error = 1.934e-04, rel. error = 7.901e-09, Func. eval. = 16
+    x = 10.737, abs. error = 3.913e-04, rel. error = 8.502e-09, Func. eval. = 16
+    x = 11.368, abs. error = 5.613e-04, rel. error = 6.486e-09, Func. eval. = 16
+    x = 12.000, abs. error = 2.590e-03, rel. error = 1.591e-08, Func. eval. = 16
+    Average relative error = 9.933156858517556e-09
     Average number of function evaluations = 16.0
 
 
+.. raw:: html
 
+    <div class="output_subarea output_html rendered_html output_result">
+    <table>
+    <thead>
+    <tr><th style="text-align: right;">        x</th><th style="text-align: right;">  Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
+    </thead>
+    <tbody>
+    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">7.8336e-09 </td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">7.92349e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">6.8029e-09 </td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">1.13422e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">7.26172e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">1.50612e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">1.17732e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">1.08892e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">1.34107e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">1.09548e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">1.68514e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">7.56484e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">9.37713e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">8.43229e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">7.85831e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">6.52532e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">7.9011e-09 </td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">8.50247e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">6.48593e-09</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">1.59114e-08</td><td style="text-align: right;">        16</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <br />
+    <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-100
+.. GENERATED FROM PYTHON SOURCE LINES 102-103
 
 Map from the problem name to kmax
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-121
+.. GENERATED FROM PYTHON SOURCE LINES 105-124
 
 .. code-block:: Python
 
@@ -1182,17 +238,20 @@ Map from the problem name to kmax
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-123
+.. GENERATED FROM PYTHON SOURCE LINES 125-127
 
-Benchmark GillMurraySaundersWright
+Benchmark the :class:`~numericalderivative.GillMurraySaundersWright` class
+on a collection of problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-172
+.. GENERATED FROM PYTHON SOURCE LINES 129-185
 
 .. code-block:: Python
 
     number_of_test_points = 100
+    relative_precision = 1.0e-15
+    delta_x = 1.0e-9
     data = []
-    function_list = nd.BuildBenchmark()
+    function_list = nd.build_benchmark()
     number_of_functions = len(function_list)
     average_relative_error_list = []
     average_feval_list = []
@@ -1203,15 +262,20 @@ Benchmark GillMurraySaundersWright
         name = problem.get_name()
         kmax = kmax_map[name]
         kmin = 1.0e-16 * kmax
-        interval = problem.get_interval()
-        test_points = np.linspace(interval[0], interval[1], number_of_test_points)
+        lower_x_bound, upper_x_bound = problem.get_interval()
+        if name == "sin":
+            # Change the lower and upper bound so that the points +/-pi
+            # are excluded (see below for details).
+            lower_x_bound += delta_x
+            upper_x_bound -= delta_x
+        test_points = np.linspace(lower_x_bound, upper_x_bound, number_of_test_points)
         print(f"Function #{i}, {name}")
-        average_relative_error, average_feval = benchmark_GMSW_method(
+        method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+        average_relative_error, average_feval, _ = nd.benchmark_method(
             function,
             first_derivative,
             test_points,
-            kmin,
-            kmax,
+            method.compute_first_derivative,
         )
         average_relative_error_list.append(average_relative_error)
         average_feval_list.append(average_feval)
@@ -1273,33 +337,46 @@ Benchmark GillMurraySaundersWright
     <tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
-    <tr><td>polynomial</td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    7.20687e-09</td><td style="text-align: right;">             16.24  </td></tr>
-    <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.45449e-08</td><td style="text-align: right;">             16.32  </td></tr>
-    <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">    1.00524e-08</td><td style="text-align: right;">             16     </td></tr>
-    <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.24012e-08</td><td style="text-align: right;">             17.18  </td></tr>
-    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    9.94109e-09</td><td style="text-align: right;">             17.12  </td></tr>
-    <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.92191e-08</td><td style="text-align: right;">             17.04  </td></tr>
-    <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">    9.93016e-09</td><td style="text-align: right;">             16     </td></tr>
-    <tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.3459e-07 </td><td style="text-align: right;">             17.26  </td></tr>
-    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">  nan          </td><td style="text-align: right;">            nan     </td></tr>
-    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.46657e-09</td><td style="text-align: right;">             16.86  </td></tr>
-    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    8.8805e-09 </td><td style="text-align: right;">             16.42  </td></tr>
-    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    9.71593e-09</td><td style="text-align: right;">             18     </td></tr>
-    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.21023e-07</td><td style="text-align: right;">             13.44  </td></tr>
-    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    1.00215e-08</td><td style="text-align: right;">             16.94  </td></tr>
-    <tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">    4.59226e-08</td><td style="text-align: right;">             16.5246</td></tr>
+    <tr><td>polynomial</td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    2.23087e-08</td><td style="text-align: right;">             16.96  </td></tr>
+    <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    4.48797e-08</td><td style="text-align: right;">             16.88  </td></tr>
+    <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">    3.16536e-08</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    3.94827e-08</td><td style="text-align: right;">             16.34  </td></tr>
+    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    3.18116e-08</td><td style="text-align: right;">             16.38  </td></tr>
+    <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.22055e-07</td><td style="text-align: right;">             17.48  </td></tr>
+    <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    1.09185e-07</td><td style="text-align: right;">             16     </td></tr>
+    <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">    3.16955e-08</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.10702e-08</td><td style="text-align: right;">             18.28  </td></tr>
+    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    8.20049e-07</td><td style="text-align: right;">             17.22  </td></tr>
+    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    5.08006e-08</td><td style="text-align: right;">             12     </td></tr>
+    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    2.93358e-08</td><td style="text-align: right;">             16.12  </td></tr>
+    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    2.597e-08  </td><td style="text-align: right;">             16.2   </td></tr>
+    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    3.14977e-08</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">    5.77814e-08</td><td style="text-align: right;">             16.78  </td></tr>
+    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">    3.47391e-08</td><td style="text-align: right;">             17.08  </td></tr>
+    <tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">    9.46447e-08</td><td style="text-align: right;">             16.7325</td></tr>
     </tbody>
     </table>
     </div>
     <br />
     <br />
 
+.. GENERATED FROM PYTHON SOURCE LINES 186-196
+
+Notice that the method cannot perform correctly for the sin function
+at the point
+Indeed, this function is such that :math:`f''(x) = 0` if :math:`x = \pm \pi`.
+In this case, the condition error is infinite and the method
+cannot work.
+Therefore, we make so that the points :math:`\pm \pi` are excluded from the benchmark.
+The same problem appears at the point :math:`x = 0`.
+This point is not included in the test set if the number of points is even
+(e.g. with `number_of_test_points = 100`), but it might appear if the
+number of test points is odd.
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.074 seconds)
+   **Total running time of the script:** (0 minutes 0.061 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright_benchmark.py:

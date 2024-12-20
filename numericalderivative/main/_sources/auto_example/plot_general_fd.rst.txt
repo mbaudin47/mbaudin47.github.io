@@ -286,7 +286,7 @@ this information and compute the exactly optimal step.
 .. GENERATED FROM PYTHON SOURCE LINES 136-138
 
 Compute the coefficients of several central F.D. formulas
-=========================================================
+---------------------------------------------------------
 
 .. GENERATED FROM PYTHON SOURCE LINES 140-142
 
@@ -498,7 +498,7 @@ Make a plot of the coefficients depending on the indices.
 .. GENERATED FROM PYTHON SOURCE LINES 241-243
 
 Compute the coefficients of several forward F.D. formulas
-=========================================================
+---------------------------------------------------------
 
 .. GENERATED FROM PYTHON SOURCE LINES 245-247
 
@@ -695,7 +695,7 @@ Make a plot of the coefficients depending on the indices.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.372 seconds)
+   **Total running time of the script:** (0 minutes 0.397 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_general_fd.py:

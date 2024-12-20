@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="A simple demonstration of the methods" href="../auto_example/plot_numericalderivative.html" />
-    <link rel="prev" title="numericalderivative.OliverProblem3" href="../user_manual/_generated/numericalderivative.OliverProblem3.html" />
+    <link rel="prev" title="numericalderivative.benchmark_method" href="../user_manual/_generated/numericalderivative.benchmark_method.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,6 +46,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_numericalderivative.html">A simple demonstration of the methods</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#define-the-function">Define the function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#steplemanwinarsky">SteplemanWinarsky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#dumontetvignes">DumontetVignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#gillmurraysaunderswright">GillMurraySaundersWright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html#function-with-extra-arguments">Function with extra arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a><ul>
@@ -69,10 +74,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html#references">References</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-first-derivative-using-forward-f-d-formula">Compute the first derivative using forward F.D. formula</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-exact-step-for-the-forward-f-d-formula">Compute the exact step for the forward F.D. formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-coefficients-of-several-central-f-d-formulas">Compute the coefficients of several central F.D. formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-coefficients-of-several-forward-f-d-formulas">Compute the coefficients of several forward F.D. formulas</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-coefficients-of-several-central-f-d-formulas">Compute the coefficients of several central F.D. formulas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_general_fd.html#compute-the-coefficients-of-several-forward-f-d-formulas">Compute the coefficients of several forward F.D. formulas</a></li>
 </ul>
 </div>
 <section id="dumontet-vignes">
@@ -81,6 +86,13 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#use-the-method-on-a-simple-problem">Use the method on a simple problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#useful-functions">Useful functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#plot-the-l-ratio-for-various-problems">Plot the L ratio for various problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#plot-the-error-depending-on-the-step">Plot the error depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#compute-the-lower-and-upper-bounds-of-the-third-derivative">Compute the lower and upper bounds of the third derivative</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#plot-the-lower-and-upper-bounds-of-the-third-derivative">Plot the lower and upper bounds of the third derivative</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html#see-the-history-of-steps-during-the-bissection-search">See the history of steps during the bissection search</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a><ul>
@@ -96,6 +108,12 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#use-the-method-on-a-simple-problem">Use the method on a simple problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#test-the-method-on-the-exponential-problem">Test the method on the exponential problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#benchmark-the-method-on-a-collection-of-test-points">Benchmark the method on a collection of test points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#plot-the-condition-error-depending-on-the-step">Plot the condition error depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#plot-the-error-depending-on-the-step">Plot the error depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html#see-the-history-of-steps-during-the-bissection-search">See the history of steps during the bissection search</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright_benchmark.html">Benchmark Gill, Murray, Saunders and Wright method</a><ul>
@@ -111,6 +129,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#use-the-method-on-a-simple-problem">Use the method on a simple problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#use-the-method-on-the-scaledexponentialproblem">Use the method on the ScaledExponentialProblem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#plot-the-error-vs-h">Plot the error vs h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#plot-the-absolute-difference-depending-on-the-step">Plot the absolute difference depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#plot-the-criterion-depending-on-the-step">Plot the criterion depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#compute-reference-step">Compute reference step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#plot-number-of-lost-digits-vs-h">Plot number of lost digits vs h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#use-the-bisection-search">Use the bisection search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html#see-the-history-of-steps-during-the-search">See the history of steps during the search</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a><ul>
@@ -119,6 +146,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_benchmark.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_benchmark.html#compute-the-first-derivative">Compute the first derivative</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_benchmark.html#perform-the-benchmark">Perform the benchmark</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="shi-xie-xuan-nocedal">
+<h2>Shi, Xie, Xuan &amp; Nocedal<a class="headerlink" href="#shi-xie-xuan-nocedal" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#use-the-method-on-a-simple-problem">Use the method on a simple problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#use-the-method-on-the-scaledexponentialproblem">Use the method on the ScaledExponentialProblem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#plot-the-error-vs-h">Plot the error vs h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#plot-the-criterion-depending-on-the-step">Plot the criterion depending on the step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html#see-the-history-of-steps-during-the-search">See the history of steps during the search</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.html">Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.html#compute-the-first-derivative">Compute the first derivative</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.html#perform-the-benchmark">Perform the benchmark</a></li>
 </ul>
 </li>
 </ul>
@@ -156,14 +206,42 @@
 <li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto_example/plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dumontet-vignes">Dumontet &amp; Vignes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_gill_murray_saunders_wright_benchmark.html">Benchmark Gill, Murray, Saunders and Wright method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#stepleman-winarsky">Stepleman &amp; Winarsky</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward.html">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.html">Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../user_manual/_generated/numericalderivative.OliverProblem3.html" title="previous chapter">numericalderivative.OliverProblem3</a></li>
+      <li>Previous: <a href="../user_manual/_generated/numericalderivative.benchmark_method.html" title="previous chapter">numericalderivative.benchmark_method</a></li>
       <li>Next: <a href="../auto_example/plot_numericalderivative.html" title="next chapter">A simple demonstration of the methods</a></li>
   </ul></li>
 </ul>

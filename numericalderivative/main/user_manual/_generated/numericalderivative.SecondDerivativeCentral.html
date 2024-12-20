@@ -127,7 +127,8 @@ arg1, arg2, ..., are the items in the args list.</p>
 <p>where <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step and <span class="math notranslate nohighlight">\(\xi \in (x, x + h)\)</span>.</p>
 <p>This second derivative can be used to compute an
 approximate optimal step for the forward first finite difference.
-Please use compute_step() to do this.</p>
+Please use <a class="reference internal" href="#numericalderivative.SecondDerivativeCentral.compute_step" title="numericalderivative.SecondDerivativeCentral.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a>
+to do this.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -198,7 +199,9 @@ The optimal step is (see Eq. 8bis, page 314 in Gill, Murray, Saunders, &amp; Wri
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>fourth_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The fourth derivative f^(4) at point x.</p>
+<dt><strong>fourth_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the fourth derivative f^(4) at point x.
+If this value is unknown, we suggest to use the value 1 as
+an initial guess.</p>
 </dd>
 <dt><strong>absolute_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The absolute error of the function f at the point x.
 This is equal to abs(relative_precision * f(x)) where
@@ -290,6 +293,7 @@ value of f at point x.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

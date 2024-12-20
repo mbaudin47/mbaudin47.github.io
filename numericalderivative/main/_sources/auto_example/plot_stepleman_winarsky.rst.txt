@@ -21,7 +21,7 @@
 Experiment with Stepleman & Winarsky method
 ===========================================
 
-Find a step which is near to optimal for a centered finite difference 
+Find a step which is near to optimal for a central finite difference 
 formula.
 
 References
@@ -30,13 +30,14 @@ References
   R. S. Stepleman and N. D. Winarsky
   Journal: Math. Comp. 33 (1979), 1257-1264 
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-22
+.. GENERATED FROM PYTHON SOURCE LINES 18-23
 
 .. code-block:: Python
 
     import numpy as np
     import pylab as pl
     import numericalderivative as nd
+    from matplotlib.ticker import MaxNLocator
 
 
 
@@ -45,18 +46,116 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-24
+.. GENERATED FROM PYTHON SOURCE LINES 24-26
 
-Consider this problem.
+Use the method on a simple problem
+----------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-39
+.. GENERATED FROM PYTHON SOURCE LINES 28-36
+
+In the next example, we use the algorithm on the exponential function.
+We create the :class:`~numericalderivative.SteplemanWinarsky` algorithm using the function and the point x.
+Then we use the :meth:`~numericalderivative.SteplemanWinarsky.compute_step()` method to compute the step,
+using an upper bound of the step as an initial point of the algorithm.
+Finally, use the :meth:`~numericalderivative.SteplemanWinarsky.compute_first_derivative()` method to compute
+an approximate value of the first derivative using finite differences.
+The :meth:`~numericalderivative.SteplemanWinarsky.get_number_of_function_evaluations()` method
+can be used to get the number of function evaluations.
+
+.. GENERATED FROM PYTHON SOURCE LINES 38-51
 
 .. code-block:: Python
 
-    benchmark = nd.ScaledExponentialProblem()
-    name = benchmark.get_name()
-    x = benchmark.get_x()
-    third_derivative = benchmark.get_third_derivative()
+    x = 1.0
+    algorithm = nd.SteplemanWinarsky(np.exp, x, verbose=True)
+    initial_step = 1.0e0
+    step, number_of_iterations = algorithm.compute_step(initial_step)
+    f_prime_approx = algorithm.compute_first_derivative(step)
+    feval = algorithm.get_number_of_function_evaluations()
+    f_prime_exact = np.exp(x)  # Since the derivative of exp is exp.
+    print(f"Computed step = {step:.3e}")
+    print(f"Number of iterations = {number_of_iterations}")
+    print(f"f_prime_approx = {f_prime_approx}")
+    print(f"f_prime_exact = {f_prime_exact}")
+    absolute_error = abs(f_prime_approx - f_prime_exact)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    + compute_step()
+    initial_step=1.000e+00
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=4.4784e-01
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6634e-02
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.6595e-03
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=1.0370e-04
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=6.4809e-06
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=4.0506e-07
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.5315e-08
+      number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.5825e-09
+      number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=1.1642e-10
+      number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=1.1642e-10
+      number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=4.6566e-10
+      Stop because no monotony anymore.
+    Computed step = 9.537e-07
+    Number of iterations = 10
+    f_prime_approx = 2.7182818283326924
+    f_prime_exact = 2.718281828459045
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 52-54
+
+Use the method on the ScaledExponentialProblem
+----------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 56-57
+
+Consider this problem.
+
+.. GENERATED FROM PYTHON SOURCE LINES 59-62
+
+.. code-block:: Python
+
+    problem = nd.ScaledExponentialProblem()
+    problem
+
+
+
+
+
+
+.. raw:: html
+
+    <div class="output_subarea output_html rendered_html output_result">
+    <b>DerivativeBenchmarkProblem</b>
+    <ul>
+    <li>name = scaled exp</li>
+    <li>x = 1.0</li>
+    <li>f(x) = 0.9999990000005</li>
+    <li>f'(x) = -9.999990000004999e-07</li>
+    <li>f''(x) = 9.999990000005e-13</li>
+    <li>f^(3)(x) = -9.999990000005e-19</li>
+    <li>f^(4)(x) = 9.999990000004998e-25</li>
+    <li>f^(5)(x) = -9.999990000004998e-31</li>
+    </ul>
+
+    </div>
+    <br />
+    <br />
+
+.. GENERATED FROM PYTHON SOURCE LINES 63-75
+
+.. code-block:: Python
+
+    name = problem.get_name()
+    x = problem.get_x()
+    third_derivative = problem.get_third_derivative()
     third_derivative_value = third_derivative(x)
     optimum_step, absolute_error = nd.FirstDerivativeCentral.compute_step(
         third_derivative_value
@@ -81,23 +180,25 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-41
+.. GENERATED FROM PYTHON SOURCE LINES 76-78
 
-1. Plot the error vs h
+Plot the error vs h
+-------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-51
+.. GENERATED FROM PYTHON SOURCE LINES 80-91
 
 .. code-block:: Python
 
-    x = 1.0
-    finite_difference = nd.FirstDerivativeCentral(benchmark.function, x)
-    number_of_points = 1000
-    h_array = np.logspace(-7.0, 5.0, number_of_points)
+    x = problem.get_x()
+    function = problem.get_function()
+    first_derivative = problem.get_first_derivative()
+    finite_difference = nd.FirstDerivativeCentral(function, x)
+    number_of_points = 200
+    step_array = np.logspace(-7.0, 5.0, number_of_points)
     error_array = np.zeros((number_of_points))
     for i in range(number_of_points):
-        h = h_array[i]
-        f_prime_approx = finite_difference.compute(h)
-        error_array[i] = abs(f_prime_approx - benchmark.first_derivative(x))
+        f_prime_approx = finite_difference.compute(step_array[i])
+        error_array[i] = abs(f_prime_approx - first_derivative(x))
 
 
 
@@ -106,14 +207,14 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-64
+.. GENERATED FROM PYTHON SOURCE LINES 92-104
 
 .. code-block:: Python
 
     pl.figure()
-    pl.plot(h_array, error_array)
+    pl.plot(step_array, error_array)
     pl.plot([optimum_step] * 2, [min(error_array), max(error_array)], label=r"$h^*$")
-    pl.title("Central finite difference")
+    pl.title(f"Central finite difference on {problem.get_name()} at x = {problem.get_x()}")
     pl.xlabel("h")
     pl.ylabel("Error")
     pl.xscale("log")
@@ -126,7 +227,7 @@ Consider this problem.
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_stepleman_winarsky_001.png
-   :alt: Central finite difference
+   :alt: Central finite difference on scaled exp at x = 1.0
    :srcset: /auto_example/images/sphx_glr_plot_stepleman_winarsky_001.png
    :class: sphx-glr-single-img
 
@@ -134,25 +235,27 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-66
+.. GENERATED FROM PYTHON SOURCE LINES 105-106
 
-2. Algorithm to detect h*
+Use the algorithm to detect h*
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-79
+.. GENERATED FROM PYTHON SOURCE LINES 108-123
 
 .. code-block:: Python
 
-    algorithm = nd.SteplemanWinarsky(benchmark.function, x, verbose=True)
+    function = problem.get_function()
+    first_derivative = problem.get_first_derivative()
+    algorithm = nd.SteplemanWinarsky(function, x, verbose=True)
     initial_step = 1.0e8
-    x = 1.0e0
+    x = problem.get_x()
     h_optimal, iterations = algorithm.compute_step(initial_step)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h =", h_optimal)
     print("iterations =", iterations)
     print("Function evaluations =", number_of_function_evaluations)
     f_prime_approx = algorithm.compute_first_derivative(h_optimal)
-    absolute_error = abs(f_prime_approx - benchmark.first_derivative(x))
-    print("Error = ", absolute_error)
+    absolute_error = abs(f_prime_approx - first_derivative(x))
+    print("Absolute error = ", absolute_error)
 
 
 
@@ -165,35 +268,62 @@ Consider this problem.
 
     + compute_step()
     initial_step=1.000e+08
-    number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.3441e+35
-    number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=1.4401e+03
-    number_of_iterations=2, h=1.5625e+06, |FD(h_current) - FD(h_previous)|=3.9981e-05
-    number_of_iterations=3, h=3.9062e+05, |FD(h_current) - FD(h_previous)|=4.3393e-07
-    number_of_iterations=4, h=9.7656e+04, |FD(h_current) - FD(h_previous)|=2.4036e-08
-    number_of_iterations=5, h=2.4414e+04, |FD(h_current) - FD(h_previous)|=1.4909e-09
-    number_of_iterations=6, h=6.1035e+03, |FD(h_current) - FD(h_previous)|=9.3135e-11
-    number_of_iterations=7, h=1.5259e+03, |FD(h_current) - FD(h_previous)|=5.8208e-12
-    number_of_iterations=8, h=3.8147e+02, |FD(h_current) - FD(h_previous)|=3.6380e-13
-    number_of_iterations=9, h=9.5367e+01, |FD(h_current) - FD(h_previous)|=2.2738e-14
-    number_of_iterations=10, h=2.3842e+01, |FD(h_current) - FD(h_previous)|=1.4208e-15
-    number_of_iterations=11, h=5.9605e+00, |FD(h_current) - FD(h_previous)|=8.3819e-17
-    number_of_iterations=12, h=1.4901e+00, |FD(h_current) - FD(h_previous)|=9.3131e-18
-    number_of_iterations=13, h=3.7253e-01, |FD(h_current) - FD(h_previous)|=3.7253e-17
-    Stop because no monotony anymore.
+      number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.3441e+35
+      number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=1.4401e+03
+      number_of_iterations=2, h=1.5625e+06, |FD(h_current) - FD(h_previous)|=3.9981e-05
+      number_of_iterations=3, h=3.9062e+05, |FD(h_current) - FD(h_previous)|=4.3393e-07
+      number_of_iterations=4, h=9.7656e+04, |FD(h_current) - FD(h_previous)|=2.4036e-08
+      number_of_iterations=5, h=2.4414e+04, |FD(h_current) - FD(h_previous)|=1.4909e-09
+      number_of_iterations=6, h=6.1035e+03, |FD(h_current) - FD(h_previous)|=9.3135e-11
+      number_of_iterations=7, h=1.5259e+03, |FD(h_current) - FD(h_previous)|=5.8208e-12
+      number_of_iterations=8, h=3.8147e+02, |FD(h_current) - FD(h_previous)|=3.6380e-13
+      number_of_iterations=9, h=9.5367e+01, |FD(h_current) - FD(h_previous)|=2.2738e-14
+      number_of_iterations=10, h=2.3842e+01, |FD(h_current) - FD(h_previous)|=1.4208e-15
+      number_of_iterations=11, h=5.9605e+00, |FD(h_current) - FD(h_previous)|=8.3819e-17
+      number_of_iterations=12, h=1.4901e+00, |FD(h_current) - FD(h_previous)|=9.3131e-18
+      number_of_iterations=13, h=3.7253e-01, |FD(h_current) - FD(h_previous)|=3.7253e-17
+      Stop because no monotony anymore.
     Optimum h = 1.4901161193847656
     iterations = 13
     Function evaluations = 30
-    Error =  1.9825229646960527e-17
+    Absolute error =  1.9825229646960527e-17
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-88
+.. GENERATED FROM PYTHON SOURCE LINES 124-126
+
+Plot the absolute difference depending on the step
+--------------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 129-159
 
 .. code-block:: Python
 
-    def fd_difference(h1, h2, f, x):
-        finite_difference = nd.FirstDerivativeCentral(f, x)
+    def fd_difference(h1, h2, function, x):
+        """
+        Compute the difference of central difference approx. for different step sizes
+
+        This function computes the absolute value of the difference of approximations
+        evaluated at two different steps h1 and h2:
+
+            d = abs(FD(h1) - FD(h2))
+
+        where FD(h) is the approximation from the finite difference formula
+        evaluated from the step h.
+
+        Parameters
+        ----------
+        h1 : float, > 0
+            The first step
+        h2 : float, > 0
+            The second step
+        function : function
+            The function
+        x : float
+            The input point where the derivative is approximated.
+        """
+        finite_difference = nd.FirstDerivativeCentral(function, x)
         f_prime_approx_1 = finite_difference.compute(h1)
         f_prime_approx_2 = finite_difference.compute(h2)
         diff_current = abs(f_prime_approx_1 - f_prime_approx_2)
@@ -207,20 +337,20 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-90
+.. GENERATED FROM PYTHON SOURCE LINES 160-161
 
-3. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
+Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-97
+.. GENERATED FROM PYTHON SOURCE LINES 163-170
 
 .. code-block:: Python
 
-    number_of_points = 1000
-    h_array = np.logspace(-7.0, 5.0, number_of_points)
+    number_of_points = 200
+    step_array = np.logspace(-7.0, 5.0, number_of_points)
     diff_array = np.zeros((number_of_points))
+    function = problem.get_function()
     for i in range(number_of_points):
-        h = h_array[i]
-        diff_array[i] = fd_difference(h, h / 2, benchmark.function, x)
+        diff_array[i] = fd_difference(step_array[i], step_array[i] / 2, function, x)
 
 
 
@@ -229,12 +359,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-108
+.. GENERATED FROM PYTHON SOURCE LINES 171-181
 
 .. code-block:: Python
 
     pl.figure()
-    pl.plot(h_array, diff_array)
+    pl.plot(step_array, diff_array)
     pl.title("F.D. difference")
     pl.xlabel("h")
     pl.ylabel(r"$|\operatorname{FD}(h) - \operatorname{FD}(h / 2) |$")
@@ -255,26 +385,32 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-110
+.. GENERATED FROM PYTHON SOURCE LINES 182-184
 
-4. Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
+Plot the criterion depending on the step
+----------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-123
+.. GENERATED FROM PYTHON SOURCE LINES 186-187
+
+Plot the evolution of | FD(h) - FD(h / 2) | for different values of h
+
+.. GENERATED FROM PYTHON SOURCE LINES 189-203
 
 .. code-block:: Python
 
     number_of_points = 20
     h_initial = 1.0e5
     beta = 4.0
-    h_array = np.zeros((number_of_points))
+    step_array = np.zeros((number_of_points))
     diff_array = np.zeros((number_of_points))
+    function = problem.get_function()
     for i in range(number_of_points):
         if i == 0:
-            h_array[i] = h_initial / beta
-            diff_array[i] = fd_difference(h_array[i], h_initial, benchmark.function, x)
+            step_array[i] = h_initial / beta
+            diff_array[i] = fd_difference(step_array[i], h_initial, function, x)
         else:
-            h_array[i] = h_array[i - 1] / beta
-            diff_array[i] = fd_difference(h_array[i], h_array[i - 1], benchmark.function, x)
+            step_array[i] = step_array[i - 1] / beta
+            diff_array[i] = fd_difference(step_array[i], step_array[i - 1], function, x)
 
 
 
@@ -283,12 +419,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-133
+.. GENERATED FROM PYTHON SOURCE LINES 204-213
 
 .. code-block:: Python
 
     pl.figure()
-    pl.plot(h_array, diff_array, "o")
+    pl.plot(step_array, diff_array, "o")
     pl.title("F.D. difference")
     pl.xlabel("h")
     pl.ylabel(r"$|\operatorname{FD}(h) - \operatorname{FD}(h / 2) |$")
@@ -308,11 +444,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-135
+.. GENERATED FROM PYTHON SOURCE LINES 214-216
 
-5. Compute suggested step
+Compute reference step
+----------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 135-140
+.. GENERATED FROM PYTHON SOURCE LINES 218-223
 
 .. code-block:: Python
 
@@ -334,11 +471,18 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-142
+.. GENERATED FROM PYTHON SOURCE LINES 224-226
 
-6. Plot number of lost digits vs h
+Plot number of lost digits vs h
+-------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-160
+.. GENERATED FROM PYTHON SOURCE LINES 228-231
+
+The :meth:`~numericalderivative.SteplemanWinarsky.number_of_lost_digits` method
+computes the number of lost digits in the approximated derivative
+depending on the step.
+
+.. GENERATED FROM PYTHON SOURCE LINES 233-251
 
 .. code-block:: Python
 
@@ -382,25 +526,25 @@ Consider this problem.
     iterations =  0
     + compute_step()
     initial_step=1.000e+01
-    number_of_iterations=0, h=6.6667e+00, |FD(h_current) - FD(h_previous)|=2.4980e-17
-    number_of_iterations=1, h=4.4444e+00, |FD(h_current) - FD(h_previous)|=4.1634e-18
-    number_of_iterations=2, h=2.9630e+00, |FD(h_current) - FD(h_previous)|=6.2450e-18
-    Stop because no monotony anymore.
+      number_of_iterations=0, h=6.6667e+00, |FD(h_current) - FD(h_previous)|=2.4980e-17
+      number_of_iterations=1, h=4.4444e+00, |FD(h_current) - FD(h_previous)|=4.1634e-18
+      number_of_iterations=2, h=2.9630e+00, |FD(h_current) - FD(h_previous)|=6.2450e-18
+      Stop because no monotony anymore.
     estim_step =  4.444444444444445
     iterations =  2
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-168
+.. GENERATED FROM PYTHON SOURCE LINES 252-259
 
 .. code-block:: Python
 
-    number_of_points = 1000
-    h_array = np.logspace(-7.0, 7.0, number_of_points)
+    number_of_points = 200
+    step_array = np.logspace(-7.0, 7.0, number_of_points)
     n_digits_array = np.zeros((number_of_points))
     for i in range(number_of_points):
-        h = h_array[i]
+        h = step_array[i]
         n_digits_array[i] = algorithm.number_of_lost_digits(h)
 
 
@@ -410,18 +554,18 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-189
+.. GENERATED FROM PYTHON SOURCE LINES 260-280
 
 .. code-block:: Python
 
     y_max = algorithm.number_of_lost_digits(h_reference)
     pl.figure()
-    pl.plot(h_array, n_digits_array, label="$N(h)$")
+    pl.plot(step_array, n_digits_array, label="$N(h)$")
     pl.plot([h_reference] * 2, [0.0, y_max], "--", label=r"$h_{ref}$")
     pl.plot([step_zero] * 2, [0.0, y_max], "--", label=r"$h^{(0)}$")
     pl.plot([estim_step] * 2, [0.0, y_max], "--", label=r"$h^\star$")
     pl.plot(
-        h_array,
+        step_array,
         np.array([threshold] * number_of_points),
         ":",
         label=r"$T$",
@@ -446,12 +590,12 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 190-202
+.. GENERATED FROM PYTHON SOURCE LINES 281-293
 
 .. code-block:: Python
 
     pl.figure()
-    pl.plot(h_array, error_array)
+    pl.plot(step_array, error_array)
     pl.plot([step_zero] * 2, [0.0, 1.0e-9], "--", label=r"$h^{(0)}$")
     pl.plot([estim_step] * 2, [0.0, 1.0e-9], "--", label=r"$h^\star$")
     pl.title("Finite difference")
@@ -474,12 +618,24 @@ Consider this problem.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-205
+.. GENERATED FROM PYTHON SOURCE LINES 294-296
 
-7. Benchmark
-Test with single point
+Use the bisection search
+------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 205-215
+.. GENERATED FROM PYTHON SOURCE LINES 299-304
+
+In some cases, it is difficult to find the initial step.
+In this case, we can use the bisection algorithm, which can produce
+an initial guess for the step.c
+This algorithm is based on a search for a suitable step within
+an interval.
+
+.. GENERATED FROM PYTHON SOURCE LINES 306-307
+
+Test with single point and default parameters.
+
+.. GENERATED FROM PYTHON SOURCE LINES 309-319
 
 .. code-block:: Python
 
@@ -513,22 +669,23 @@ Test with single point
       h is just right : stop !
     FD(x) =  3162.2776601683795
     number_of_iterations =  1
-    Func. eval =  3067
+    Func. eval =  667
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-217
+.. GENERATED FROM PYTHON SOURCE LINES 320-322
 
-Algorithme de dichotomie pour le pas initial
+See how the algorithm behaves if we use or do not use the log scale
+when searching for the optimal step (this can be slower).
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-235
+.. GENERATED FROM PYTHON SOURCE LINES 324-343
 
 .. code-block:: Python
 
     x = 1.0
     maximum_bisection = 53
-    log_scale = False
+    print("+ No log scale.")
     h0, iterations = algorithm.search_step_with_bisection(
         1.0e-7,
         1.0e1,
@@ -536,6 +693,7 @@ Algorithme de dichotomie pour le pas initial
         log_scale=False,
     )
     print("Pas initial = ", h0, ", iterations = ", iterations)
+    print("+ Log scale.")
     h0, iterations = algorithm.search_step_with_bisection(
         1.0e-7,
         1.0e1,
@@ -552,11 +710,13 @@ Algorithme de dichotomie pour le pas initial
 
  .. code-block:: none
 
+    + No log scale.
     + search_step_with_bisection()
     + h_min = 1.000e-07, h_max = 1.000e+01
     + relative_precision = 1.000e-16
     n_min = 12.699, n_treshold = 4.731, n_max = 4.699
     Pas initial =  10.0 , iterations =  0
+    + Log scale.
     + search_step_with_bisection()
     + h_min = 1.000e-07, h_max = 1.000e+01
     + relative_precision = 1.000e-16
@@ -566,30 +726,36 @@ Algorithme de dichotomie pour le pas initial
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 236-237
+.. GENERATED FROM PYTHON SOURCE LINES 344-348
 
-Test
+In the next example, we search for an initial step using bisection,
+then use this step as an initial guess for the algorithm.
+Finally, we compute an approximation of the first derivative using
+the finite difference formula.
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-254
+.. GENERATED FROM PYTHON SOURCE LINES 350-370
 
 .. code-block:: Python
 
-    benchmark = nd.ExponentialProblem()
+    problem = nd.ExponentialProblem()
+    function = problem.get_function()
+    first_derivative = problem.get_first_derivative()
     x = 1.0
-    algorithm = nd.SteplemanWinarsky(benchmark.function, x, verbose=True)
-    f_prime_approx, estim_relative_error = algorithm.search_step_with_bisection(
+    algorithm = nd.SteplemanWinarsky(function, x, verbose=True)
+    initial_step, estim_relative_error = algorithm.search_step_with_bisection(
         1.0e-6,
         100.0 * x,
         beta=4.0,
     )
-    absolute_error = abs(f_prime_approx - benchmark.first_derivative(x))
+    step, number_of_iterations = algorithm.compute_step(initial_step)
+    f_prime_approx = algorithm.compute_first_derivative(step)
+    absolute_error = abs(f_prime_approx - first_derivative(x))
     feval = algorithm.get_number_of_function_evaluations()
     print(
         "x = %.3f, abs. error = %.3e, estim. rel. error = %.3e, Func. eval. = %d"
         % (x, absolute_error, estim_relative_error, number_of_function_evaluations)
     )
 
-    #
 
 
 
@@ -606,15 +772,173 @@ Test
     + Iter 0 / 53, h_min = 1.000e-06, h_max = 1.000e+02
       h = 1.000e-02,   Number of lost digits = 1.699
       h is just right : stop !
-    x = 1.000, abs. error = 2.708e+00, estim. rel. error = 0.000e+00, Func. eval. = 30
+    + compute_step()
+    initial_step=1.000e-02
+      number_of_iterations=0, h=2.5000e-03, |FD(h_current) - FD(h_previous)|=4.2473e-05
+      number_of_iterations=1, h=6.2500e-04, |FD(h_current) - FD(h_previous)|=2.6546e-06
+      number_of_iterations=2, h=1.5625e-04, |FD(h_current) - FD(h_previous)|=1.6591e-07
+      number_of_iterations=3, h=3.9063e-05, |FD(h_current) - FD(h_previous)|=1.0366e-08
+      number_of_iterations=4, h=9.7656e-06, |FD(h_current) - FD(h_previous)|=6.3665e-10
+      number_of_iterations=5, h=2.4414e-06, |FD(h_current) - FD(h_previous)|=6.4055e-12
+      number_of_iterations=6, h=6.1035e-07, |FD(h_current) - FD(h_previous)|=3.2409e-10
+      Stop because no monotony anymore.
+    x = 1.000, abs. error = 6.533e-11, estim. rel. error = 0.000e+00, Func. eval. = 30
 
 
 
+
+.. GENERATED FROM PYTHON SOURCE LINES 371-373
+
+See the history of steps during the search
+------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 375-389
+
+In Stepleman & Winarsky's method, the algorithm
+produces a sequence of steps :math:`(h_i)_{1 \leq i \leq n_{iter}}`
+where :math:`n_{iter} \in \mathbb{N}` is the number of iterations.
+These steps are meant to converge to an
+approximately optimal step of for the central finite difference formula of the
+first derivative.
+The optimal step :math:`h^\star` for the central finite difference formula of the
+first derivative can be computed depending on the third derivative of the
+function.
+In the next example, we want to compute the absolute error between
+each intermediate step :math:`h_i` and the exact value :math:`h^\star`
+to see how close the algorithm gets to the exact step.
+The list of intermediate steps during the algorithm can be obtained
+thanks to the :meth:`~numericalderivative.SteplemanWinarsky.get_step_history` method.
+
+.. GENERATED FROM PYTHON SOURCE LINES 392-395
+
+In the next example, we print the intermediate steps k during
+the bissection algorithm that searches for a step such
+that the L ratio is satisfactory.
+
+.. GENERATED FROM PYTHON SOURCE LINES 397-411
+
+.. code-block:: Python
+
+    problem = nd.SinProblem()
+    function = problem.get_function()
+    name = problem.get_name()
+    x = problem.get_x()
+    algorithm = nd.SteplemanWinarsky(function, x, verbose=True)
+    initial_step = 1.0e0
+    step, number_of_iterations = algorithm.compute_step(initial_step)
+    step_h_history = algorithm.get_step_history()
+    print(f"Number of iterations = {number_of_iterations}")
+    print(f"History of steps h : {step_h_history}")
+    # The last step is not the best one, sinces it breaks the monotony
+    last_step_h = step_h_history[-2]
+    print(f"Last step h : {last_step_h}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    + compute_step()
+    initial_step=1.000e+00
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=8.0043e-02
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=5.2589e-03
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=3.2971e-04
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.0611e-05
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.2882e-06
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.0511e-08
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=5.0316e-09
+      number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=3.1378e-10
+      number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=2.9104e-11
+      number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=1.4552e-11
+      number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=1.7462e-10
+      Stop because no monotony anymore.
+    Number of iterations = 10
+    History of steps h : [1.0, 0.25, 0.0625, 0.015625, 0.00390625, 0.0009765625, 0.000244140625, 6.103515625e-05, 1.52587890625e-05, 3.814697265625e-06, 9.5367431640625e-07, 2.384185791015625e-07]
+    Last step h : 9.5367431640625e-07
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 412-413
+
+Then we compute the exact step, using :meth:`~numericalderivative.ThirdDerivativeCentral.compute_step`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 413-422
+
+.. code-block:: Python
+
+    third_derivative = problem.get_third_derivative()
+    third_derivative_value = third_derivative(x)
+    print(f"f^(3)(x) = {third_derivative_value}")
+    absolute_precision = 1.0e-16
+    exact_step_k, absolute_error = nd.FirstDerivativeCentral.compute_step(
+        third_derivative_value, absolute_precision
+    )
+    print(f"Optimal step k for f^(3)(x) = {exact_step_k}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    f^(3)(x) = -0.5403023058681398
+    Optimal step k for f^(3)(x) = 8.219173432436798e-06
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 423-425
+
+Plot the absolute error between the exact step k and the intermediate k
+of the algorithm.
+
+.. GENERATED FROM PYTHON SOURCE LINES 425-438
+
+.. code-block:: Python
+
+    error_step_h = [
+        abs(step_h_history[i] - exact_step_k) for i in range(len(step_h_history))
+    ]
+    fig = pl.figure()
+    pl.title(f"Stepleman & Winarsky on {name} at x = {x}")
+    pl.plot(range(len(step_h_history)), error_step_h, "o-")
+    pl.xlabel("Iterations")
+    pl.ylabel(r"$|h_i - h^\star|$")
+    pl.yscale("log")
+    ax = fig.gca()
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    pl.tight_layout()
+
+
+
+
+.. image-sg:: /auto_example/images/sphx_glr_plot_stepleman_winarsky_006.png
+   :alt: Stepleman & Winarsky on sin at x = 1.0
+   :srcset: /auto_example/images/sphx_glr_plot_stepleman_winarsky_006.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 439-444
+
+The previous figure shows that the algorithm gets closer to the optimal
+value of the step k in the early iterations.
+In the last iterations of the algorithm, the absolute error does not
+continue to decrease monotically and produces a final absolute
+error close to :math:`10^{-3}`.
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.823 seconds)
+   **Total running time of the script:** (0 minutes 1.086 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_stepleman_winarsky.py:

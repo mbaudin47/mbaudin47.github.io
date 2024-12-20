@@ -17,6 +17,7 @@
       ~SteplemanWinarsky.compute_first_derivative
       ~SteplemanWinarsky.compute_step
       ~SteplemanWinarsky.get_number_of_function_evaluations
+      ~SteplemanWinarsky.get_step_history
       ~SteplemanWinarsky.number_of_lost_digits
       ~SteplemanWinarsky.search_step_with_bisection
    

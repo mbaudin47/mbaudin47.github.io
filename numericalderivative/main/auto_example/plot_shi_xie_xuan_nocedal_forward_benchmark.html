@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Benchmark Shi, Xie, Xuan &amp; Nocedal&#39;s forward method &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Experiment with Shi, Xie, Xuan &amp; Nocedal forward method" href="plot_shi_xie_xuan_nocedal_forward.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-example-plot-shi-xie-xuan-nocedal-forward-benchmark-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="benchmark-shi-xie-xuan-nocedal-s-forward-method">
+<span id="sphx-glr-auto-example-plot-shi-xie-xuan-nocedal-forward-benchmark-py"></span><h1>Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method<a class="headerlink" href="#benchmark-shi-xie-xuan-nocedal-s-forward-method" title="Link to this heading">¶</a></h1>
+<p>The goal of this example is to benchmark the <a class="reference internal" href="../user_manual/_generated/numericalderivative.ShiXieXuanNocedalForward.html#numericalderivative.ShiXieXuanNocedalForward" title="numericalderivative.ShiXieXuanNocedalForward"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShiXieXuanNocedalForward</span></code></a>
+class on a collection of test problems.
+These problems are created by the <a class="reference internal" href="../user_manual/_generated/numericalderivative.build_benchmark.html#numericalderivative.build_benchmark" title="numericalderivative.build_benchmark"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_benchmark()</span></code></a>
+static method, which returns a list of problems.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">tabulate</span>
+<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+</pre></div>
+</div>
+<section id="compute-the-first-derivative">
+<h2>Compute the first derivative<a class="headerlink" href="#compute-the-first-derivative" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ShiXieXuanNocedalForwardMethod</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a ShiXieXuanNocedal method to compute the approximate first derivative</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        relative_precision : float, &gt; 0, optional</span>
+<span class="sd">            The relative precision of evaluation of f.</span>
+<span class="sd">        initial_step : float, &gt; 0</span>
+<span class="sd">            The initial step in the algorithm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span> <span class="o">=</span> <span class="n">relative_precision</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_step</span> <span class="o">=</span> <span class="n">initial_step</span>
+
+    <span class="k">def</span> <span class="nf">compute_first_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the first derivative using ShiXieXuanNocedal</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        function : function</span>
+<span class="sd">            The function</span>
+<span class="sd">        x : float</span>
+<span class="sd">            The test point</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        f_prime_approx : float</span>
+<span class="sd">            The approximate value of the first derivative of the function at point x</span>
+<span class="sd">        number_of_function_evaluations : int</span>
+<span class="sd">            The number of function evaluations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">absolute_precision</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ShiXieXuanNocedalForward</span><span class="p">(</span>
+            <span class="n">function</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">absolute_precision</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_step</span><span class="p">)</span>
+        <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">f_prime_approx</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span>
+</pre></div>
+</div>
+<p>The next example computes the approximate derivative on the
+<a class="reference internal" href="../user_manual/_generated/numericalderivative.ExponentialProblem.html#numericalderivative.ExponentialProblem" title="numericalderivative.ExponentialProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExponentialProblem</span></code></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e0</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ShiXieXuanNocedalForward</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">second_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_second_derivative</span><span class="p">()</span>
+<span class="n">second_derivative_value</span> <span class="o">=</span> <span class="n">second_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">optimal_step</span><span class="p">,</span> <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">FirstDerivativeForward</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span>
+    <span class="n">second_derivative_value</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exact h* = </span><span class="si">%.3e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">optimal_step</span><span class="p">))</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">absolute_precision</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">relative_precision</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">ShiXieXuanNocedalForwardMethod</span><span class="p">(</span><span class="n">absolute_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">)</span>
+<span class="p">(</span>
+    <span class="n">f_prime_approx</span><span class="p">,</span>
+    <span class="n">number_of_function_evaluations</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">first_derivative_value</span> <span class="o">=</span> <span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">absolute_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prime_approx</span> <span class="o">-</span> <span class="n">first_derivative_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;x = </span><span class="si">%.3f</span><span class="s2">, error = </span><span class="si">%.3e</span><span class="s2">, Func. eval. = </span><span class="si">%d</span><span class="s2">&quot;</span>
+    <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">absolute_error</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DerivativeBenchmarkProblem
+name = exp
+x = 1.0
+f(x) = 2.718281828459045
+f&#39;(x) = 2.718281828459045
+f&#39;&#39;(x) = 2.718281828459045
+f^(3)(x) = 2.718281828459045
+f^(4)(x) = 2.718281828459045
+f^(5)(x) = 2.718281828459045
+
+Exact h* = 1.213e-08
+x = 1.000, error = 1.633e-07, Func. eval. = 19
+</pre></div>
+</div>
+</section>
+<section id="perform-the-benchmark">
+<h2>Perform the benchmark<a class="headerlink" href="#perform-the-benchmark" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Benchmark on several points&quot;</span><span class="p">)</span>
+<span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">PolynomialProblem</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+<span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+<span class="n">initial_step</span> <span class="o">=</span> <span class="mf">1.0e2</span>
+<span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+<span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">absolute_precision</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">relative_precision</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">ShiXieXuanNocedalForwardMethod</span><span class="p">(</span><span class="n">absolute_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">)</span>
+<span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">benchmark_method</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">first_derivative</span><span class="p">,</span>
+    <span class="n">test_points</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average relative error =&quot;</span><span class="p">,</span> <span class="n">average_relative_error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average number of function evaluations =&quot;</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">)</span>
+<span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;Rel. err.&quot;</span><span class="p">,</span> <span class="s2">&quot;F. Eval.&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>+ Benchmark on several points
+DerivativeBenchmarkProblem
+name = polynomial
+x = 1.0
+f(x) = 1.0
+f&#39;(x) = 2.0
+f&#39;&#39;(x) = 2.0
+f^(3)(x) = 0.0
+f^(4)(x) = 0.0
+f^(5)(x) = 0.0
+
+x = -12.000, abs. error = 7.629e-07, rel. error = 3.179e-08, Func. eval. = 21
+x = -10.800, abs. error = 3.815e-07, rel. error = 1.766e-08, Func. eval. = 19
+x = -9.600, abs. error = 3.815e-07, rel. error = 1.987e-08, Func. eval. = 19
+x = -8.400, abs. error = 3.815e-07, rel. error = 2.271e-08, Func. eval. = 19
+x = -7.200, abs. error = 3.624e-07, rel. error = 2.517e-08, Func. eval. = 19
+x = -6.000, abs. error = 3.815e-07, rel. error = 3.179e-08, Func. eval. = 19
+x = -4.800, abs. error = 1.907e-07, rel. error = 1.987e-08, Func. eval. = 22
+x = -3.600, abs. error = 1.907e-07, rel. error = 2.649e-08, Func. eval. = 22
+x = -2.400, abs. error = 9.537e-08, rel. error = 1.987e-08, Func. eval. = 20
+x = -1.200, abs. error = 4.768e-08, rel. error = 1.987e-08, Func. eval. = 23
+x = 0.000, abs. error = nan, rel. error = nan, Func. eval. = -1
+x = 1.200, abs. error = 4.292e-08, rel. error = 1.788e-08, Func. eval. = 23
+x = 2.400, abs. error = 8.583e-08, rel. error = 1.788e-08, Func. eval. = 20
+x = 3.600, abs. error = 1.907e-07, rel. error = 2.649e-08, Func. eval. = 22
+x = 4.800, abs. error = 1.907e-07, rel. error = 1.987e-08, Func. eval. = 22
+x = 6.000, abs. error = 3.815e-07, rel. error = 3.179e-08, Func. eval. = 19
+x = 7.200, abs. error = 3.815e-07, rel. error = 2.649e-08, Func. eval. = 19
+x = 8.400, abs. error = 3.815e-07, rel. error = 2.271e-08, Func. eval. = 19
+x = 9.600, abs. error = 3.815e-07, rel. error = 1.987e-08, Func. eval. = 19
+x = 10.800, abs. error = 3.815e-07, rel. error = 1.766e-08, Func. eval. = 19
+x = 12.000, abs. error = 7.629e-07, rel. error = 3.179e-08, Func. eval. = 21
+Average relative error = nan
+Average number of function evaluations = 19.285714285714285
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<table>
+<thead>
+<tr><th style="text-align: right;">    x</th><th style="text-align: right;">    Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: right;">-12  </td><td style="text-align: right;">  3.17891e-08</td><td style="text-align: right;">        21</td></tr>
+<tr><td style="text-align: right;">-10.8</td><td style="text-align: right;">  1.76606e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> -9.6</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> -8.4</td><td style="text-align: right;">  2.27065e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> -7.2</td><td style="text-align: right;">  2.51664e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> -6  </td><td style="text-align: right;">  3.17891e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> -4.8</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        22</td></tr>
+<tr><td style="text-align: right;"> -3.6</td><td style="text-align: right;">  2.6491e-08 </td><td style="text-align: right;">        22</td></tr>
+<tr><td style="text-align: right;"> -2.4</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        20</td></tr>
+<tr><td style="text-align: right;"> -1.2</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        23</td></tr>
+<tr><td style="text-align: right;">  0  </td><td style="text-align: right;">nan          </td><td style="text-align: right;">        -1</td></tr>
+<tr><td style="text-align: right;">  1.2</td><td style="text-align: right;">  1.78814e-08</td><td style="text-align: right;">        23</td></tr>
+<tr><td style="text-align: right;">  2.4</td><td style="text-align: right;">  1.78814e-08</td><td style="text-align: right;">        20</td></tr>
+<tr><td style="text-align: right;">  3.6</td><td style="text-align: right;">  2.6491e-08 </td><td style="text-align: right;">        22</td></tr>
+<tr><td style="text-align: right;">  4.8</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        22</td></tr>
+<tr><td style="text-align: right;">  6  </td><td style="text-align: right;">  3.17891e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;">  7.2</td><td style="text-align: right;">  2.6491e-08 </td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;">  8.4</td><td style="text-align: right;">  2.27065e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;">  9.6</td><td style="text-align: right;">  1.98682e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> 10.8</td><td style="text-align: right;">  1.76606e-08</td><td style="text-align: right;">        19</td></tr>
+<tr><td style="text-align: right;"> 12  </td><td style="text-align: right;">  3.17891e-08</td><td style="text-align: right;">        21</td></tr>
+</tbody>
+</table>
+</div>
+<br />
+<br /><p>Map from the problem name to the initial step.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_step_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;polynomial&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="mf">1.0e-1</span><span class="p">,</span>
+    <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>  <span class="c1"># x &gt; 0</span>
+    <span class="s2">&quot;sqrt&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>  <span class="c1"># x &gt; 0</span>
+    <span class="s2">&quot;atan&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;sin&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;scaled exp&quot;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+    <span class="s2">&quot;GMSW&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>  <span class="c1"># Fails</span>
+    <span class="s2">&quot;SXXN3&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;SXXN4&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
+    <span class="s2">&quot;Oliver3&quot;</span><span class="p">:</span> <span class="mf">1.0e-3</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The next script evaluates a collection of benchmark problems
+using the <a class="reference internal" href="../user_manual/_generated/numericalderivative.ShiXieXuanNocedalForward.html#numericalderivative.ShiXieXuanNocedalForward" title="numericalderivative.ShiXieXuanNocedalForward"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShiXieXuanNocedalForward</span></code></a> class.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">function_list</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">build_benchmark</span><span class="p">()</span>
+<span class="n">number_of_functions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span>
+<span class="n">average_absolute_error_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">average_feval_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_functions</span><span class="p">):</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+    <span class="n">initial_step</span> <span class="o">=</span> <span class="n">initial_step_map</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+    <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
+    <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">ShiXieXuanNocedalForwardMethod</span><span class="p">(</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">)</span>
+    <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">benchmark_method</span><span class="p">(</span>
+        <span class="n">function</span><span class="p">,</span> <span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">method</span><span class="o">.</span><span class="n">compute_first_derivative</span>
+    <span class="p">)</span>
+    <span class="n">average_absolute_error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_relative_error</span><span class="p">)</span>
+    <span class="n">average_feval_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_feval</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">average_relative_error</span><span class="p">,</span>
+            <span class="n">average_feval</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;Average&quot;</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_absolute_error_list</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">average_feval_list</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Average rel. error&quot;</span><span class="p">,</span> <span class="s2">&quot;Average func. eval&quot;</span><span class="p">],</span>
+    <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Function #0, polynomial
+Function #1, inverse
+Function #2, exp
+Function #3, log
+Function #4, sqrt
+Function #5, atan
+Function #6, sin
+Function #7, scaled exp
+Function #8, GMSW
+Function #9, SXXN1
+Function #10, SXXN2
+Function #11, SXXN3
+Function #12, SXXN4
+Function #13, Oliver1
+Function #14, Oliver2
+Function #15, Oliver3
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<table>
+<thead>
+<tr><th>Name      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
+</thead>
+<tbody>
+<tr><td>polynomial</td><td style="text-align: right;">         2.26555e-08</td><td style="text-align: right;">              17.6  </td></tr>
+<tr><td>inverse   </td><td style="text-align: right;">         4.6337e-08 </td><td style="text-align: right;">              17.62 </td></tr>
+<tr><td>exp       </td><td style="text-align: right;">         2.72409e-08</td><td style="text-align: right;">              18.68 </td></tr>
+<tr><td>log       </td><td style="text-align: right;">         4.03016e-08</td><td style="text-align: right;">              11.89 </td></tr>
+<tr><td>sqrt      </td><td style="text-align: right;">         3.193e-08  </td><td style="text-align: right;">              11.49 </td></tr>
+<tr><td>atan      </td><td style="text-align: right;">         1.24809e-07</td><td style="text-align: right;">              16.68 </td></tr>
+<tr><td>sin       </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">              16.64 </td></tr>
+<tr><td>scaled exp</td><td style="text-align: right;">         2.38187e-08</td><td style="text-align: right;">              18    </td></tr>
+<tr><td>GMSW      </td><td style="text-align: right;">         2.98893e-08</td><td style="text-align: right;">              19.92 </td></tr>
+<tr><td>SXXN1     </td><td style="text-align: right;">         8.16797e-07</td><td style="text-align: right;">              18.12 </td></tr>
+<tr><td>SXXN2     </td><td style="text-align: right;">         2.32017e-08</td><td style="text-align: right;">              23    </td></tr>
+<tr><td>SXXN3     </td><td style="text-align: right;">         2.98696e-08</td><td style="text-align: right;">              17.84 </td></tr>
+<tr><td>SXXN4     </td><td style="text-align: right;">         2.61695e-08</td><td style="text-align: right;">              17.54 </td></tr>
+<tr><td>Oliver1   </td><td style="text-align: right;">         2.97327e-08</td><td style="text-align: right;">              18    </td></tr>
+<tr><td>Oliver2   </td><td style="text-align: right;">         7.13647e-08</td><td style="text-align: right;">              20.67 </td></tr>
+<tr><td>Oliver3   </td><td style="text-align: right;">         3.26823e-08</td><td style="text-align: right;">              12.39 </td></tr>
+<tr><td>Average   </td><td style="text-align: right;">         9.17866e-08</td><td style="text-align: right;">              17.255</td></tr>
+</tbody>
+</table>
+</div>
+<br />
+<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.058 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-shi-xie-xuan-nocedal-forward-benchmark-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e3ee58894328b57c6e5c99d3709b940c/plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/82b2eff508f37708a7a5d12f94890383/plot_shi_xie_xuan_nocedal_forward_benchmark.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_shi_xie_xuan_nocedal_forward_benchmark.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/405f61486dbb7270dddd0d36215595f4/plot_shi_xie_xuan_nocedal_forward_benchmark.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_shi_xie_xuan_nocedal_forward_benchmark.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_shi_xie_xuan_nocedal_forward.html">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples/examples.html">Examples</a><ul>
+      <li>Previous: <a href="plot_shi_xie_xuan_nocedal_forward.html" title="previous chapter">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

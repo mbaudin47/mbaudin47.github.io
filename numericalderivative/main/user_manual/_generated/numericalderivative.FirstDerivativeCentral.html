@@ -184,7 +184,7 @@ value of f at point x.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">third_derivative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.FirstDerivativeCentral.compute_step" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the exact optimal step for central finite difference for f'.</p>
 <p>This is the step which is optimal to approximate the first derivative
-f'(x) using the centered finite difference formula (see <cite>compute()</cite>).
+f'(x) using the central finite difference formula (see <cite>compute()</cite>).
 The optimal step is:</p>
 <div class="math notranslate nohighlight">
 \[h^\star = \left( \frac{3 \epsilon_f}{|f'''(x)|} \right)^{1/3}\]</div>
@@ -194,7 +194,9 @@ The optimal step is:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>third_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the third derivative at point x.</p>
+<dt><strong>third_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the third derivative at point x.
+If this value is unknown, we suggest to use the value 1 as
+an initial guess.</p>
 </dd>
 <dt><strong>absolute_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The absolute error of the function f at the point x.
 This is equal to abs(relative_precision * f(x)) where
@@ -286,6 +288,7 @@ value of f at point x.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

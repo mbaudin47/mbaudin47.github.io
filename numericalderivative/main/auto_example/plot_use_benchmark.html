@@ -56,9 +56,45 @@ all the problems.</p>
 </div>
 <p>First, we create an use a single problem.
 We create the problem and get the function and its
-first derivative</p>
+first derivative.
+Printing the object evaluates the function and its
+derivatives at the test point.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DerivativeBenchmarkProblem
+name = exp
+x = 1.0
+f(x) = 2.718281828459045
+f&#39;(x) = 2.718281828459045
+f&#39;&#39;(x) = 2.718281828459045
+f^(3)(x) = 2.718281828459045
+f^(4)(x) = 2.718281828459045
+f^(5)(x) = 2.718281828459045
+</pre></div>
+</div>
+<p>We can also use the pretty-print.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<b>DerivativeBenchmarkProblem</b>
+<ul>
+<li>name = exp</li>
+<li>x = 1.0</li>
+<li>f(x) = 2.718281828459045</li>
+<li>f'(x) = 2.718281828459045</li>
+<li>f''(x) = 2.718281828459045</li>
+<li>f^(3)(x) = 2.718281828459045</li>
+<li>f^(4)(x) = 2.718281828459045</li>
+<li>f^(5)(x) = 2.718281828459045</li>
+</ul>
+
+</div>
+<br />
+<br /><p>Get the data from the problem</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
 <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
 <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
 </pre></div>
@@ -111,7 +147,7 @@ Absolute error = 3.953176808124681e-08
 </pre></div>
 </div>
 <p>We can use a collection of benchmark problems.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BuildBenchmark</span><span class="p">()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">build_benchmark</span><span class="p">()</span>
 <span class="n">number_of_problems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">benchmark</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_problems</span><span class="p">):</span>
@@ -150,7 +186,7 @@ Absolute error = 3.953176808124681e-08
 <tr><td>#5 / 16 </td><td>atan      </td><td style="text-align: right;"> 0.5    </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
 <tr><td>#6 / 16 </td><td>sin       </td><td style="text-align: right;"> 1      </td><td style="text-align: right;"> -3.14159</td><td style="text-align: right;"> 3.14159</td></tr>
 <tr><td>#7 / 16 </td><td>scaled exp</td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
-<tr><td>#8 / 16 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0      </td><td style="text-align: right;">12      </td></tr>
+<tr><td>#8 / 16 </td><td>GMSW      </td><td style="text-align: right;"> 1      </td><td style="text-align: right;">  0.001  </td><td style="text-align: right;">12      </td></tr>
 <tr><td>#9 / 16 </td><td>SXXN1     </td><td style="text-align: right;">-8      </td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
 <tr><td>#10 / 16</td><td>SXXN2     </td><td style="text-align: right;"> 0.01   </td><td style="text-align: right;"> -1      </td><td style="text-align: right;"> 1      </td></tr>
 <tr><td>#11 / 16</td><td>SXXN3     </td><td style="text-align: right;"> 0.99999</td><td style="text-align: right;">-12      </td><td style="text-align: right;">12      </td></tr>
@@ -162,8 +198,177 @@ Absolute error = 3.953176808124681e-08
 </table>
 </div>
 <br />
-<br /><p>Plot the benchmark problems.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BuildBenchmark</span><span class="p">()</span>
+<br /><p>Print each benchmark problems.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">build_benchmark</span><span class="p">()</span>
+<span class="n">number_of_problems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">benchmark</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_problems</span><span class="p">):</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">benchmark</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>DerivativeBenchmarkProblem
+name = polynomial
+x = 1.0
+f(x) = 1.0
+f&#39;(x) = 2.0
+f&#39;&#39;(x) = 2.0
+f^(3)(x) = 0.0
+f^(4)(x) = 0.0
+f^(5)(x) = 0.0
+
+DerivativeBenchmarkProblem
+name = inverse
+x = 1.0
+f(x) = 1.0
+f&#39;(x) = -1.0
+f&#39;&#39;(x) = 2.0
+f^(3)(x) = -6.0
+f^(4)(x) = 24.0
+f^(5)(x) = -120.0
+
+DerivativeBenchmarkProblem
+name = exp
+x = 1.0
+f(x) = 2.718281828459045
+f&#39;(x) = 2.718281828459045
+f&#39;&#39;(x) = 2.718281828459045
+f^(3)(x) = 2.718281828459045
+f^(4)(x) = 2.718281828459045
+f^(5)(x) = 2.718281828459045
+
+DerivativeBenchmarkProblem
+name = log
+x = 1.0
+f(x) = 0.0
+f&#39;(x) = 1.0
+f&#39;&#39;(x) = -1.0
+f^(3)(x) = 2.0
+f^(4)(x) = -6.0
+f^(5)(x) = 24.0
+
+DerivativeBenchmarkProblem
+name = sqrt
+x = 1.0
+f(x) = 1.0
+f&#39;(x) = 0.5
+f&#39;&#39;(x) = -0.25
+f^(3)(x) = 0.375
+f^(4)(x) = -0.9375
+f^(5)(x) = 3.28125
+
+DerivativeBenchmarkProblem
+name = atan
+x = 0.5
+f(x) = 0.4636476090008061
+f&#39;(x) = 0.8
+f&#39;&#39;(x) = -0.64
+f^(3)(x) = -0.256
+f^(4)(x) = 3.6864
+f^(5)(x) = -9.33888
+
+DerivativeBenchmarkProblem
+name = sin
+x = 1.0
+f(x) = 0.8414709848078965
+f&#39;(x) = 0.5403023058681398
+f&#39;&#39;(x) = -0.8414709848078965
+f^(3)(x) = -0.5403023058681398
+f^(4)(x) = 0.8414709848078965
+f^(5)(x) = 0.5403023058681398
+
+DerivativeBenchmarkProblem
+name = scaled exp
+x = 1.0
+f(x) = 0.9999990000005
+f&#39;(x) = -9.999990000004999e-07
+f&#39;&#39;(x) = 9.999990000005e-13
+f^(3)(x) = -9.999990000005e-19
+f^(4)(x) = 9.999990000004998e-25
+f^(5)(x) = -9.999990000004998e-31
+
+DerivativeBenchmarkProblem
+name = GMSW
+x = 1.0
+f(x) = 3.0382788796394644
+f&#39;(x) = 9.548655322129756
+f&#39;&#39;(x) = 24.266107348211236
+f^(3)(x) = 53.1455550486372
+f^(4)(x) = 113.23547948425671
+f^(5)(x) = 211.44420430021552
+
+DerivativeBenchmarkProblem
+name = SXXN1
+x = -8.0
+f(x) = 0.9993291872793697
+f&#39;(x) = -0.0006707001854555852
+f&#39;&#39;(x) = -0.0006704751151061466
+f^(3)(x) = -0.0006700249744072696
+f^(4)(x) = -0.0006691246930095155
+f^(5)(x) = -0.0006673241302140074
+
+DerivativeBenchmarkProblem
+name = SXXN2
+x = 0.01
+f(x) = 2.718281828459045
+f&#39;(x) = 271.8281828459045
+f&#39;&#39;(x) = 27182.818284590452
+f^(3)(x) = 2718281.828459045
+f^(4)(x) = 271828182.8459045
+f^(5)(x) = 27182818284.59045
+
+DerivativeBenchmarkProblem
+name = SXXN3
+x = 0.99999
+f(x) = -5.9999999991000035
+f&#39;(x) = -0.00017999880000374446
+f&#39;&#39;(x) = 17.999760001200002
+f^(3)(x) = 23.999760000000002
+f^(4)(x) = 24
+f^(5)(x) = 0.0
+
+DerivativeBenchmarkProblem
+name = SXXN4
+x = 1e-09
+f(x) = 5.00000000001001e-09
+f&#39;(x) = 5.00000000002003
+f&#39;&#39;(x) = 0.02006
+f^(3)(x) = 60000.0
+f^(4)(x) = 0
+f^(5)(x) = 0
+
+DerivativeBenchmarkProblem
+name = Oliver1
+x = 1.0
+f(x) = 54.598150033144236
+f&#39;(x) = 218.39260013257694
+f&#39;&#39;(x) = 873.5704005303078
+f^(3)(x) = 3494.281602121231
+f^(4)(x) = 13977.126408484924
+f^(5)(x) = 55908.5056339397
+
+DerivativeBenchmarkProblem
+name = Oliver2
+x = 1.0
+f(x) = 2.718281828459045
+f&#39;(x) = 5.43656365691809
+f&#39;&#39;(x) = 16.30969097075427
+f^(3)(x) = 54.3656365691809
+f^(4)(x) = 206.58941896288744
+f^(5)(x) = 848.1039304792221
+
+DerivativeBenchmarkProblem
+name = Oliver3
+x = 1.0
+f(x) = 0.0
+f&#39;(x) = 1.0
+f&#39;&#39;(x) = 3.0
+f^(3)(x) = 2.0
+f^(4)(x) = -2.0
+f^(5)(x) = 4.0
+</pre></div>
+</div>
+<p>Plot the benchmark problems.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">build_benchmark</span><span class="p">()</span>
 <span class="n">number_of_problems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">benchmark</span><span class="p">)</span>
 <span class="n">number_of_columns</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">number_of_rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">number_of_problems</span> <span class="o">/</span> <span class="n">number_of_columns</span><span class="p">)</span>
@@ -207,7 +412,7 @@ Plot #14: Oliver2
 Plot #15: Oliver3
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.392 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.419 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-use-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/17b5e0f71d95fed94fdf1d9f2bb23bd7/plot_use_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_use_benchmark.ipynb</span></code></a></p>
@@ -251,7 +456,18 @@ Plot #15: Oliver3
 <li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">

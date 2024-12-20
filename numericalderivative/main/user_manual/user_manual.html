@@ -54,6 +54,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.SteplemanWinarsky.html#numericalderivative.SteplemanWinarsky" title="numericalderivative.SteplemanWinarsky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SteplemanWinarsky</span></code></a>(function, x[, ...])</p></td>
 <td><p>Compute an approximately optimal step for the central F.D.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.ShiXieXuanNocedalForward.html#numericalderivative.ShiXieXuanNocedalForward" title="numericalderivative.ShiXieXuanNocedalForward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShiXieXuanNocedalForward</span></code></a>(function, x[, ...])</p></td>
+<td><p>Compute an approximately optimal step for the forward F.D.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -92,56 +95,66 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.DerivativeBenchmarkProblem.html#numericalderivative.DerivativeBenchmarkProblem" title="numericalderivative.DerivativeBenchmarkProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivativeBenchmarkProblem</span></code></a>(name, function, ...)</p></td>
 <td><p>Create a benchmark problem for numerical derivatives of a function</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.PolynomialProblem.html#numericalderivative.PolynomialProblem" title="numericalderivative.PolynomialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolynomialProblem</span></code></a>([alpha])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.PolynomialProblem.html#numericalderivative.PolynomialProblem" title="numericalderivative.PolynomialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolynomialProblem</span></code></a>([alpha, x, interval])</p></td>
 <td><p>Create a polynomial derivative benchmark problem</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.InverseProblem.html#numericalderivative.InverseProblem" title="numericalderivative.InverseProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InverseProblem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.InverseProblem.html#numericalderivative.InverseProblem" title="numericalderivative.InverseProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InverseProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create an inverse derivative benchmark problem</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.ExponentialProblem.html#numericalderivative.ExponentialProblem" title="numericalderivative.ExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExponentialProblem</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.ExponentialProblem.html#numericalderivative.ExponentialProblem" title="numericalderivative.ExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExponentialProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create an exponential derivative benchmark problem</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.LogarithmicProblem.html#numericalderivative.LogarithmicProblem" title="numericalderivative.LogarithmicProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogarithmicProblem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.LogarithmicProblem.html#numericalderivative.LogarithmicProblem" title="numericalderivative.LogarithmicProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogarithmicProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create a logarithmic derivative benchmark problem</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SquareRootProblem.html#numericalderivative.SquareRootProblem" title="numericalderivative.SquareRootProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SquareRootProblem</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SquareRootProblem.html#numericalderivative.SquareRootProblem" title="numericalderivative.SquareRootProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SquareRootProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create a square root derivative benchmark problem</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.AtanProblem.html#numericalderivative.AtanProblem" title="numericalderivative.AtanProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtanProblem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.AtanProblem.html#numericalderivative.AtanProblem" title="numericalderivative.AtanProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtanProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create an arctangent derivative benchmark problem</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SinProblem.html#numericalderivative.SinProblem" title="numericalderivative.SinProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SinProblem</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SinProblem.html#numericalderivative.SinProblem" title="numericalderivative.SinProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SinProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create a sine derivative benchmark problem</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.ScaledExponentialProblem.html#numericalderivative.ScaledExponentialProblem" title="numericalderivative.ScaledExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledExponentialProblem</span></code></a>([alpha])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.ScaledExponentialProblem.html#numericalderivative.ScaledExponentialProblem" title="numericalderivative.ScaledExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledExponentialProblem</span></code></a>([alpha, x, interval])</p></td>
 <td><p>Create a scaled exponential derivative benchmark problem</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.GMSWExponentialProblem.html#numericalderivative.GMSWExponentialProblem" title="numericalderivative.GMSWExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GMSWExponentialProblem</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.GMSWExponentialProblem.html#numericalderivative.GMSWExponentialProblem" title="numericalderivative.GMSWExponentialProblem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GMSWExponentialProblem</span></code></a>([x, interval])</p></td>
 <td><p>Create an exponential derivative benchmark problem</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.BuildBenchmark.html#numericalderivative.BuildBenchmark" title="numericalderivative.BuildBenchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildBenchmark</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem1.html#numericalderivative.SXXNProblem1" title="numericalderivative.SXXNProblem1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem1</span></code></a>([x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem2.html#numericalderivative.SXXNProblem2" title="numericalderivative.SXXNProblem2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem2</span></code></a>([alpha, x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem3.html#numericalderivative.SXXNProblem3" title="numericalderivative.SXXNProblem3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem3</span></code></a>([x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem4.html#numericalderivative.SXXNProblem4" title="numericalderivative.SXXNProblem4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem4</span></code></a>([x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem1.html#numericalderivative.OliverProblem1" title="numericalderivative.OliverProblem1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem1</span></code></a>([alpha, x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem2.html#numericalderivative.OliverProblem2" title="numericalderivative.OliverProblem2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem2</span></code></a>([x, interval])</p></td>
+<td><p>Create an exponential derivative benchmark problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem3.html#numericalderivative.OliverProblem3" title="numericalderivative.OliverProblem3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem3</span></code></a>([x, interval])</p></td>
+<td><p>Create an logarithmic derivative benchmark problem</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="benchmark-features">
+<h2>Benchmark features<a class="headerlink" href="#benchmark-features" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.build_benchmark.html#numericalderivative.build_benchmark" title="numericalderivative.build_benchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_benchmark</span></code></a>()</p></td>
 <td><p>Create a list of benchmark problems.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem1.html#numericalderivative.SXXNProblem1" title="numericalderivative.SXXNProblem1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem1</span></code></a>()</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem2.html#numericalderivative.SXXNProblem2" title="numericalderivative.SXXNProblem2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem2</span></code></a>([alpha])</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem3.html#numericalderivative.SXXNProblem3" title="numericalderivative.SXXNProblem3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem3</span></code></a>()</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.SXXNProblem4.html#numericalderivative.SXXNProblem4" title="numericalderivative.SXXNProblem4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SXXNProblem4</span></code></a>()</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem1.html#numericalderivative.OliverProblem1" title="numericalderivative.OliverProblem1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem1</span></code></a>()</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem2.html#numericalderivative.OliverProblem2" title="numericalderivative.OliverProblem2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem2</span></code></a>()</p></td>
-<td><p>Create an exponential derivative benchmark problem</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.OliverProblem3.html#numericalderivative.OliverProblem3" title="numericalderivative.OliverProblem3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OliverProblem3</span></code></a>()</p></td>
-<td><p>Create an logarithmic derivative benchmark problem</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/numericalderivative.benchmark_method.html#numericalderivative.benchmark_method" title="numericalderivative.benchmark_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_method</span></code></a>(function, ...[, verbose])</p></td>
+<td><p>Compute the first derivative using Dumontet &amp; Vignes's method.</p></td>
 </tr>
 </tbody>
 </table>
@@ -180,6 +193,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.ShiXieXuanNocedalForward.html">numericalderivative.ShiXieXuanNocedalForward</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#finite-differences">Finite Differences</a><ul>
@@ -203,7 +217,6 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SinProblem.html">numericalderivative.SinProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.ScaledExponentialProblem.html">numericalderivative.ScaledExponentialProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.GMSWExponentialProblem.html">numericalderivative.GMSWExponentialProblem</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.BuildBenchmark.html">numericalderivative.BuildBenchmark</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SXXNProblem1.html">numericalderivative.SXXNProblem1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SXXNProblem2.html">numericalderivative.SXXNProblem2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.SXXNProblem3.html">numericalderivative.SXXNProblem3</a></li>
@@ -211,6 +224,11 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.OliverProblem1.html">numericalderivative.OliverProblem1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.OliverProblem2.html">numericalderivative.OliverProblem2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.OliverProblem3.html">numericalderivative.OliverProblem3</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark-features">Benchmark features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.build_benchmark.html">numericalderivative.build_benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/numericalderivative.benchmark_method.html">numericalderivative.benchmark_method</a></li>
 </ul>
 </li>
 </ul>

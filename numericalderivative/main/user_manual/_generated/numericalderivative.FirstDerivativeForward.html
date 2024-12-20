@@ -186,7 +186,9 @@ function evaluation.</p>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>step</strong><span class="classifier">float</span></dt><dd><p>The differentiation step h.</p>
 </dd>
-<dt><strong>second_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the second derivative at point x.</p>
+<dt><strong>second_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the second derivative at point x.
+If this value is unknown, we suggest to use the value 1 as
+an initial guess.</p>
 </dd>
 <dt><strong>absolute_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The absolute error of the function f at the point x.
 This is equal to abs(relative_precision * f(x)) where
@@ -220,7 +222,9 @@ The total absolute error corresponding to the optimal step is:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>second_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the second derivative at point x.</p>
+<dt><strong>second_derivative_value</strong><span class="classifier">float</span></dt><dd><p>The value of the second derivative at point x.
+If this value is unknown, we suggest to use the value 1 as
+an initial guess.</p>
 </dd>
 <dt><strong>absolute_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The absolute error of the function f at the point x.
 This is equal to abs(relative_precision * f(x)) where
@@ -312,6 +316,7 @@ value of f at point x.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

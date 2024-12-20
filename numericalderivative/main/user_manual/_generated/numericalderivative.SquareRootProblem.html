@@ -43,7 +43,7 @@
 <h1>numericalderivative.SquareRootProblem<a class="headerlink" href="#numericalderivative-squarerootproblem" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="numericalderivative.SquareRootProblem">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">SquareRootProblem</span></span><a class="headerlink" href="#numericalderivative.SquareRootProblem" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">SquareRootProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.01,</span> <span class="pre">12.0]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.SquareRootProblem" title="Link to this definition">¶</a></dt>
 <dd><p>Create a square root derivative benchmark problem</p>
 <p>The function is:</p>
 <div class="math notranslate nohighlight">
@@ -54,6 +54,18 @@ The test point is <span class="math notranslate nohighlight">\(x = 1\)</span>.</
 its first derivative is infinite.</p>
 <p>See problem #3 in (Dumontet &amp; Vignes, 1977) page 23.
 See (Stepleman &amp; Wirnarsky, 1979) page 1263.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The point where the derivative should be computed for a single test.</p>
+</dd>
+<dt><strong>interval</strong><span class="classifier">list of 2 floats</span></dt><dd><p>The lower and upper bounds of the benchmark problem.
+This can be useful for benchmarking on several points.
+We must have interval[0] &lt;= interval[1].</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -88,7 +100,7 @@ See (Stepleman &amp; Wirnarsky, 1979) page 1263.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.SquareRootProblem.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.SquareRootProblem.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.01,</span> <span class="pre">12.0]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.SquareRootProblem.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Create a benchmark problem for numerical derivatives of a function</p>
 <p>This provides the function and the exact first derivative.
 This makes it possible to check the approximation of the first
@@ -134,6 +146,11 @@ We must have interval[0] &lt;= interval[1].</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Print a problem.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ExponentialProblem</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The next example creates a benchmark experiment.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BuildBenchmark</span><span class="p">()</span>
@@ -149,7 +166,7 @@ We must have interval[0] &lt;= interval[1].</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.SquareRootProblem.__init__" title="numericalderivative.SquareRootProblem.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.SquareRootProblem.__init__" title="numericalderivative.SquareRootProblem.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([x, interval])</p></td>
 <td><p>Create a benchmark problem for numerical derivatives of a function</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.SquareRootProblem.get_fifth_derivative" title="numericalderivative.SquareRootProblem.get_fifth_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fifth_derivative</span></code></a>()</p></td>
@@ -352,7 +369,6 @@ We must have interval[0] &lt;= interval[1].</p>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SinProblem.html">numericalderivative.SinProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.ScaledExponentialProblem.html">numericalderivative.ScaledExponentialProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.GMSWExponentialProblem.html">numericalderivative.GMSWExponentialProblem</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numericalderivative.BuildBenchmark.html">numericalderivative.BuildBenchmark</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem1.html">numericalderivative.SXXNProblem1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem2.html">numericalderivative.SXXNProblem2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SXXNProblem3.html">numericalderivative.SXXNProblem3</a></li>
@@ -362,6 +378,7 @@ We must have interval[0] &lt;= interval[1].</p>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.OliverProblem3.html">numericalderivative.OliverProblem3</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

@@ -1,0 +1,6 @@
+﻿numericalderivative.build\_benchmark
+====================================
+
+.. currentmodule:: numericalderivative
+
+.. autofunction:: build_benchmark

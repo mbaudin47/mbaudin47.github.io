@@ -43,11 +43,78 @@
 <h1>numericalderivative.DumontetVignes<a class="headerlink" href="#numericalderivative-dumontetvignes" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">DumontetVignes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">DumontetVignes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes" title="Link to this definition">¶</a></dt>
 <dd><p>Compute an approximately optimal step for the central F.D. formula for the first derivative</p>
 <p>The method is based on computing the third derivative.
 Then the optimal step for the central formula for the first derivative is computed
 from the third derivative.</p>
+<p>The goal of the method is to compute the step of the central finite 
+difference approximation of the first derivative (see 
+(Dumontet &amp; Vignes, 1977) eq. 2 page 13):</p>
+<div class="math notranslate nohighlight">
+\[f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the function, <span class="math notranslate nohighlight">\(x \in \mathbb{R}\)</span> is the 
+input point and <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step.
+The optimal step is (see (Dumontet &amp; Vignes, 1977) eq. 24 page 18):</p>
+<div class="math notranslate nohighlight">
+\[h^\star 
+= \left( \frac{3 \epsilon_f \left|f(x)\right|}{\left|f^{(3)}(x)\right|} \right)^{1/3}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon_f &gt; 0\)</span> is the absolute error of the function evaluation.
+The goal of the method is to compute <span class="math notranslate nohighlight">\(h^\star\)</span> using 
+function evaluations only.</p>
+<p>The third derivative is approximated using the central finite difference formula 
+(see (Dumontet &amp; Vignes, 1977) eq. 25 page 18):</p>
+<div class="math notranslate nohighlight">
+\[f^{(3)}_k(x) 
+= \frac{f(x + 2k) - f(x - 2k) - 2 (f(x + k) - f(x - k))}{2k^3}\]</div>
+<p>where <span class="math notranslate nohighlight">\(k &gt; 0\)</span> is the step used for the third derivative.
+The method introduces <span class="math notranslate nohighlight">\(f^{(3)}_{inf}(x)\)</span> and <span class="math notranslate nohighlight">\(f^{(3)}_{sup}(x)\)</span>
+such that:</p>
+<div class="math notranslate nohighlight">
+\[f^{(3)}_{inf}(x) \leq f^{(3)}_k(x_0) \leq f^{(3)}_{sup}(x).\]</div>
+<p>We evaluate the function on 4 points (see (Dumontet &amp; Vignes, 1977) eq. 28 
+page 19, with 2 errors corrected with respect to the original paper):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}&amp; T_1 = f(x + 2k), \qquad T_2 = -f(x - 2k), \\
+&amp; T_3 = -2f(x + k) , \qquad T_4 = 2f(x - k).\end{split}\]</div>
+<p>Let <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> defined by (see (Dumontet &amp; Vignes, 1977) page 19):</p>
+<div class="math notranslate nohighlight">
+\[A = \sum_{i = 1}^4 \max(T_i, 0),  \quad
+B = \sum_{i = 1}^4 \min(T_i, 0). \tag{16}\]</div>
+<p>The lower and upper bounds of <span class="math notranslate nohighlight">\(f^{(3)}_k(x)\)</span> are computed 
+from (see (Dumontet &amp; Vignes, 1977) eq. 30 page 20):</p>
+<div class="math notranslate nohighlight">
+\[f^{(3)}_{inf}(x_0)
+= \frac{\frac{A}{1 + \epsilon_f} + \frac{B}{1 - \epsilon_f}}{2 k^3}, \qquad
+f^{(3)}_{sup}(x_0)
+= \frac{\frac{A}{1 - \epsilon_f} + \frac{B}{1 + \epsilon_f}}{2 k^3}. \]</div>
+<p>We introduce the ratio (see (Dumontet &amp; Vignes, 1977) eq. 32 page 20):</p>
+<div class="math notranslate nohighlight">
+\[L(k) = \frac{f^{(3)}_{sup}(x)}{f^{(3)}_{inf}(x)} \geq 1.\]</div>
+<p>We search for <span class="math notranslate nohighlight">\(k\)</span> such that the ratio <span class="math notranslate nohighlight">\(L\)</span> is:</p>
+<ul class="simple">
+<li><p>neither too close to 1 because it would mean that <span class="math notranslate nohighlight">\(k\)</span> is too large
+meaning that the truncation error dominates,</p></li>
+<li><p>nor too far away from 1 because it would mean that <span class="math notranslate nohighlight">\(k\)</span> is too small
+meaning that the rounding error dominates.</p></li>
+</ul>
+<p>Let <span class="math notranslate nohighlight">\(k_{inf}\)</span> and <span class="math notranslate nohighlight">\(k_{sup}\)</span> two real numbers representing the 
+minimum and maximum bounds for <span class="math notranslate nohighlight">\(k\)</span>.
+We search for <span class="math notranslate nohighlight">\(k \in [k_{inf}, k_{sup}]\)</span> such that (see 
+(Dumontet &amp; Vignes, 1977) eq. 33 page 20):</p>
+<div class="math notranslate nohighlight">
+\[L(k) \in [L_1, L_2] \cup [L_3, L_4]\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(L_3 = 2\)</span> and <span class="math notranslate nohighlight">\(L_2 = \frac{1}{L_3}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(L_4 = 15\)</span> and <span class="math notranslate nohighlight">\(L_1 = \frac{1}{L_4}\)</span>.</p></li>
+</ul>
+<p>This method does not perform correctly if the third derivative is 
+zero or is close to zero (see (Dumontet &amp; Vignes, 1977) remark page 22).
+This produces a L ratio which is negative, so that there is no value of the 
+step <span class="math notranslate nohighlight">\(k\)</span> such that the condition is satisfied.
+This happens for example for the <a class="reference internal" href="numericalderivative.PolynomialProblem.html#numericalderivative.PolynomialProblem" title="numericalderivative.PolynomialProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolynomialProblem</span></code></a>,
+which has a zero third derivative for any <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -59,9 +126,9 @@ from the third derivative.</p>
 </dd>
 <dt><strong>number_of_digits</strong><span class="classifier">int</span></dt><dd><p>The maximum number of digits of the floating point system.</p>
 </dd>
-<dt><strong>ell_1</strong><span class="classifier">float</span></dt><dd><p>The minimum bound of the L ratio.</p>
+<dt><strong>ell_3</strong><span class="classifier">float</span></dt><dd><p>The minimum bound of the L ratio.</p>
 </dd>
-<dt><strong>ell_2</strong><span class="classifier">float, &gt; ell_1</span></dt><dd><p>The maximum bound of the L ratio.</p>
+<dt><strong>ell_4</strong><span class="classifier">float, &gt; ell_1</span></dt><dd><p>The maximum bound of the L ratio.</p>
 </dd>
 <dt><strong>args</strong><span class="classifier">list</span></dt><dd><p>A list of optional arguments that the function takes as inputs.
 By default, there is no extra argument and calling sequence of
@@ -90,8 +157,17 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.compute_third_derivative" title="numericalderivative.DumontetVignes.compute_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_third_derivative</span></code></a>([...])</p></td>
 <td><p>Compute an approximate third derivative of the function</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_number_of_function_evaluations" title="numericalderivative.DumontetVignes.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_ell_min_max" title="numericalderivative.DumontetVignes.get_ell_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ell_min_max</span></code></a>()</p></td>
+<td><p>Return the minimum and maximum bounds of the L ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_number_of_function_evaluations" title="numericalderivative.DumontetVignes.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_relative_precision" title="numericalderivative.DumontetVignes.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
+<td><p>Return the relative precision of the function evaluation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_step_history" title="numericalderivative.DumontetVignes.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
+<td><p>Return the history of steps during the bissection search.</p></td>
 </tr>
 </tbody>
 </table>
@@ -119,7 +195,7 @@ arg1, arg2, ..., are the items in the args list.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -140,8 +216,17 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.compute_third_derivative" title="numericalderivative.DumontetVignes.compute_third_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_third_derivative</span></code></a>([...])</p></td>
 <td><p>Compute an approximate third derivative of the function</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_number_of_function_evaluations" title="numericalderivative.DumontetVignes.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_ell_min_max" title="numericalderivative.DumontetVignes.get_ell_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ell_min_max</span></code></a>()</p></td>
+<td><p>Return the minimum and maximum bounds of the L ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_number_of_function_evaluations" title="numericalderivative.DumontetVignes.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
 <td><p>Returns the number of function evaluations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_relative_precision" title="numericalderivative.DumontetVignes.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
+<td><p>Return the relative precision of the function evaluation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.DumontetVignes.get_step_history" title="numericalderivative.DumontetVignes.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
+<td><p>Return the history of steps during the bissection search.</p></td>
 </tr>
 </tbody>
 </table>
@@ -149,20 +234,30 @@ arg1, arg2, ..., are the items in the args list.</p>
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes.compute_ell">
 <span class="sig-name descname"><span class="pre">compute_ell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.compute_ell" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the L ratio depending on k.</p>
+<p>A negative L ratio indicates that <span class="math notranslate nohighlight">\(f'''_{inf}(x_0)\)</span> and <span class="math notranslate nohighlight">\(f'''_{sup}(x_0)\)</span>
+do not have the same sign.
+This is because <span class="math notranslate nohighlight">\(f'''_{inf}(x_0) &lt; 0 &lt; f'''_{sup}(x_0)\)</span>
+which can happen if the exact third derivative is zero.
+In this case, the method cannot perform correctly.</p>
+<p>It may happen that <span class="math notranslate nohighlight">\(f'''_{inf}(x_0)\)</span> is zero.
+This prevents from evaluating the L ratio.
+This might happen if the step k is too small (i.e. too close
+to zero).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>k</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The finite difference step for the second derivative.</p>
+<dt><strong>k</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The finite difference step for the third derivative.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>ell</strong><span class="classifier">float</span></dt><dd><p>The ratio f'''sup(x0) / f'''inf(x0).</p>
+<dt><strong>ell</strong><span class="classifier">float</span></dt><dd><p>The ratio <span class="math notranslate nohighlight">\(\frac{f'''_{sup}(x_0)}{f'''_{inf}(x_0)}\)</span>.
+It is expected that <span class="math notranslate nohighlight">\(L(k) \geq 1\)</span>.</p>
 </dd>
 <dt><strong>f3inf</strong><span class="classifier">float</span></dt><dd><p>The lower bound of the third derivative</p>
 </dd>
-<dt>f3sup</dt><dd><p>The upper bound of the third derivative</p>
+<dt><strong>f3sup</strong><span class="classifier">float</span></dt><dd><p>The upper bound of the third derivative</p>
 </dd>
 </dl>
 </dd>
@@ -264,11 +359,9 @@ possible kmin using number_of_digits and x.</p>
 If no value is provided, the default is to compute the largest
 possible kmax using number_of_digits and x.</p>
 </dd>
-<dt><strong>logscale</strong><span class="classifier">bool, optional</span></dt><dd><p>Set to True to use a logarithmic scale when updating
-the step k during the search.
-Set to False to use a linear scale when updating
-the step k during the search.
-The default is False.</p>
+<dt><strong>logscale</strong><span class="classifier">bool, optional</span></dt><dd><p>Set to True to use a logarithmic scale when updating the step k
+during the search. Set to False to use a linear scale when
+updating the step k during the search.</p>
 </dd>
 <dt><strong>markdown</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, then prints a Markdown table of the iterations.</p>
 </dd>
@@ -287,6 +380,25 @@ k.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.DumontetVignes.get_ell_min_max">
+<span class="sig-name descname"><span class="pre">get_ell_min_max</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.get_ell_min_max" title="Link to this definition">¶</a></dt>
+<dd><p>Return the minimum and maximum bounds of the L ratio</p>
+<p>The parameters L1 and L2 can be computed from the equations:</p>
+<div class="math notranslate nohighlight">
+\[L_2 = \frac{1}{L_3}, \qquad L_1 = \frac{1}{L_4}.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ell_3</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The lower bound of the L ratio.</p>
+</dd>
+<dt><strong>ell_4</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The upper bound of the L ratio.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes.get_number_of_function_evaluations">
 <span class="sig-name descname"><span class="pre">get_number_of_function_evaluations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.get_number_of_function_evaluations" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the number of function evaluations.</p>
@@ -294,6 +406,35 @@ k.</p>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>number_of_function_evaluations</strong><span class="classifier">int</span></dt><dd><p>The number of function evaluations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.DumontetVignes.get_relative_precision">
+<span class="sig-name descname"><span class="pre">get_relative_precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.get_relative_precision" title="Link to this definition">¶</a></dt>
+<dd><p>Return the relative precision of the function evaluation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>relative_precision</strong><span class="classifier">float</span></dt><dd><p>The relative precision of evaluation of f.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.DumontetVignes.get_step_history">
+<span class="sig-name descname"><span class="pre">get_step_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes.get_step_history" title="Link to this definition">¶</a></dt>
+<dd><p>Return the history of steps during the bissection search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>step_history</strong><span class="classifier">list(float)</span></dt><dd><p>The list of steps k during intermediate iterations of the bissection search.
+This is updated by <a class="reference internal" href="#numericalderivative.DumontetVignes.compute_third_derivative" title="numericalderivative.DumontetVignes.compute_third_derivative"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_third_derivative()</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -336,10 +477,12 @@ k.</p>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.ShiXieXuanNocedalForward.html">numericalderivative.ShiXieXuanNocedalForward</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#finite-differences">Finite Differences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-problems">Benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_manual.html#benchmark-features">Benchmark features</a></li>
 </ul>
 </li>
 </ul>

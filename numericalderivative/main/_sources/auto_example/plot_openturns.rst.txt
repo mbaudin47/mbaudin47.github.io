@@ -191,18 +191,18 @@ Algorithm to detect h* for Strain
 
     + compute_step()
     initial_step=1.000e+00
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.2076e+08
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=7.4021e+06
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=4.6207e+05
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=2.8877e+04
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=1.8048e+03
-    number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.1280e+02
-    number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=7.0430e+00
-    number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=4.5312e-01
-    number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.2076e+08
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=7.4021e+06
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=4.6207e+05
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=2.8877e+04
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=1.8048e+03
+      number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.1280e+02
+      number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=7.0430e+00
+      number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=4.5312e-01
+      number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     Optimum h = 9.5367431640625e-07
     iterations = 10
     Function evaluations = 24
@@ -265,10 +265,10 @@ Algorithm to detect h* for R
 
     + compute_step()
     initial_step=1.000e+09
-    number_of_iterations=0, h=2.5000e+08, |FD(h_current) - FD(h_previous)|=2.2204e-16
-    number_of_iterations=1, h=6.2500e+07, |FD(h_current) - FD(h_previous)|=2.2204e-16
-    number_of_iterations=2, h=1.5625e+07, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=0, h=2.5000e+08, |FD(h_current) - FD(h_previous)|=2.2204e-16
+      number_of_iterations=1, h=6.2500e+07, |FD(h_current) - FD(h_previous)|=2.2204e-16
+      number_of_iterations=2, h=1.5625e+07, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     Optimum h = 6.250000e+07
     iterations = 2
     Function evaluations = 8
@@ -331,10 +331,10 @@ Algorithm to detect h* for C
 
     + compute_step()
     initial_step=1.000e+15
-    number_of_iterations=0, h=2.5000e+14, |FD(h_current) - FD(h_previous)|=3.4694e-18
-    number_of_iterations=1, h=6.2500e+13, |FD(h_current) - FD(h_previous)|=3.4694e-18
-    number_of_iterations=2, h=1.5625e+13, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=0, h=2.5000e+14, |FD(h_current) - FD(h_previous)|=3.4694e-18
+      number_of_iterations=1, h=6.2500e+13, |FD(h_current) - FD(h_previous)|=3.4694e-18
+      number_of_iterations=2, h=1.5625e+13, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     Optimum h = 6.250000e+13
     iterations = 2
     Function evaluations = 8
@@ -397,14 +397,14 @@ Algorithm to detect h* for Gamma
 
     + compute_step()
     initial_step=1.000e+00
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.7670e-01
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.9785e-02
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.8768e-03
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.2207e-04
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.4414e-04
-    Stop because no monotony anymore.
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.7670e-01
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.9785e-02
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.8768e-03
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.2207e-04
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.4414e-04
+      Stop because no monotony anymore.
     Optimum h = 2.441406e-04
     iterations = 6
     Function evaluations = 16
@@ -488,18 +488,18 @@ Default step size for all components
     + Derivative with respect to Strain at point 0.035
     + compute_step()
     initial_step=1.000e+00
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.2076e+08
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=7.4021e+06
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=4.6207e+05
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=2.8877e+04
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=1.8048e+03
-    number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.1280e+02
-    number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=7.0430e+00
-    number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=4.5312e-01
-    number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=1.2076e+08
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=7.4021e+06
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=4.6207e+05
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=2.8877e+04
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=1.8048e+03
+      number_of_iterations=7, h=1.5259e-05, |FD(h_current) - FD(h_previous)|=1.1280e+02
+      number_of_iterations=8, h=3.8147e-06, |FD(h_current) - FD(h_previous)|=7.0430e+00
+      number_of_iterations=9, h=9.5367e-07, |FD(h_current) - FD(h_previous)|=4.5312e-01
+      number_of_iterations=10, h=2.3842e-07, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
         Optimum h = 9.536743e-07
         Iterations = 10
         Function evaluations = 24
@@ -507,8 +507,8 @@ Default step size for all components
     + Derivative with respect to R at point 750000000.0000002
     + compute_step()
     initial_step=1.000e+08
-    number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
         Optimum h = 1.000000e+08
         Iterations = 0
         Function evaluations = 4
@@ -516,9 +516,9 @@ Default step size for all components
     + Derivative with respect to C at point 2750000000.0
     + compute_step()
     initial_step=1.000e+08
-    number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.1935e-15
-    number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=2.3870e-15
-    Stop because no monotony anymore.
+      number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.1935e-15
+      number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=2.3870e-15
+      Stop because no monotony anymore.
         Optimum h = 2.500000e+07
         Iterations = 1
         Function evaluations = 6
@@ -526,14 +526,14 @@ Default step size for all components
     + Derivative with respect to Gamma at point 10.0
     + compute_step()
     initial_step=1.000e+00
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.7670e-01
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.9785e-02
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.8768e-03
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.2207e-04
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.4414e-04
-    Stop because no monotony anymore.
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.7670e-01
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=2.9785e-02
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.8768e-03
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.2207e-04
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=2.4414e-04
+      Stop because no monotony anymore.
         Optimum h = 2.441406e-04
         Iterations = 6
         Function evaluations = 16
@@ -965,53 +965,53 @@ Compute step from SteplemanWinarsky
     y =  [0.0106748]
     x =  15750000.0
     y =  [0.0128449]
-    number_of_iterations=0, h=2.2500e+06, |FD(h_current) - FD(h_previous)|=7.1361e-11
+      number_of_iterations=0, h=2.2500e+06, |FD(h_current) - FD(h_previous)|=7.1361e-11
     x =  18562500.0
     y =  [0.0113968]
     x =  17437500.0
     y =  [0.011935]
-    number_of_iterations=1, h=5.6250e+05, |FD(h_current) - FD(h_previous)|=3.8542e-12
+      number_of_iterations=1, h=5.6250e+05, |FD(h_current) - FD(h_previous)|=3.8542e-12
     x =  18140625.0
     y =  [0.0115928]
     x =  17859375.0
     y =  [0.0117273]
-    number_of_iterations=2, h=1.4062e+05, |FD(h_current) - FD(h_previous)|=2.3884e-13
+      number_of_iterations=2, h=1.4062e+05, |FD(h_current) - FD(h_previous)|=2.3884e-13
     x =  18035156.25
     y =  [0.0116429]
     x =  17964843.75
     y =  [0.0116765]
-    number_of_iterations=3, h=3.5156e+04, |FD(h_current) - FD(h_previous)|=1.4920e-14
+      number_of_iterations=3, h=3.5156e+04, |FD(h_current) - FD(h_previous)|=1.4920e-14
     x =  18008789.0625
     y =  [0.0116555]
     x =  17991210.9375
     y =  [0.0116639]
-    number_of_iterations=4, h=8.7891e+03, |FD(h_current) - FD(h_previous)|=9.3245e-16
+      number_of_iterations=4, h=8.7891e+03, |FD(h_current) - FD(h_previous)|=9.3245e-16
     x =  18002197.265625
     y =  [0.0116586]
     x =  17997802.734375
     y =  [0.0116607]
-    number_of_iterations=5, h=2.1973e+03, |FD(h_current) - FD(h_previous)|=5.8278e-17
+      number_of_iterations=5, h=2.1973e+03, |FD(h_current) - FD(h_previous)|=5.8278e-17
     x =  18000549.31640625
     y =  [0.0116594]
     x =  17999450.68359375
     y =  [0.0116599]
-    number_of_iterations=6, h=5.4932e+02, |FD(h_current) - FD(h_previous)|=3.6411e-18
+      number_of_iterations=6, h=5.4932e+02, |FD(h_current) - FD(h_previous)|=3.6411e-18
     x =  18000137.329101562
     y =  [0.0116596]
     x =  17999862.670898438
     y =  [0.0116597]
-    number_of_iterations=7, h=1.3733e+02, |FD(h_current) - FD(h_previous)|=2.2737e-19
+      number_of_iterations=7, h=1.3733e+02, |FD(h_current) - FD(h_previous)|=2.2737e-19
     x =  18000034.33227539
     y =  [0.0116597]
     x =  17999965.66772461
     y =  [0.0116597]
-    number_of_iterations=8, h=3.4332e+01, |FD(h_current) - FD(h_previous)|=1.2632e-20
+      number_of_iterations=8, h=3.4332e+01, |FD(h_current) - FD(h_previous)|=1.2632e-20
     x =  18000008.583068848
     y =  [0.0116597]
     x =  17999991.416931152
     y =  [0.0116597]
-    number_of_iterations=9, h=8.5831e+00, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=9, h=8.5831e+00, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     x =  18000034.33227539
     y =  [0.0116597]
     x =  17999965.66772461
@@ -1031,28 +1031,28 @@ Compute step from SteplemanWinarsky
     y =  [0.0116597]
     x =  875.0
     y =  [0.0116597]
-    number_of_iterations=0, h=1.2500e+02, |FD(h_current) - FD(h_previous)|=1.0877e-16
+      number_of_iterations=0, h=1.2500e+02, |FD(h_current) - FD(h_previous)|=1.0877e-16
     x =  1031.25
     y =  [0.0116597]
     x =  968.75
     y =  [0.0116597]
-    number_of_iterations=1, h=3.1250e+01, |FD(h_current) - FD(h_previous)|=6.8140e-18
+      number_of_iterations=1, h=3.1250e+01, |FD(h_current) - FD(h_previous)|=6.8140e-18
     x =  1007.8125
     y =  [0.0116597]
     x =  992.1875
     y =  [0.0116597]
-    number_of_iterations=2, h=7.8125e+00, |FD(h_current) - FD(h_previous)|=3.3307e-19
+      number_of_iterations=2, h=7.8125e+00, |FD(h_current) - FD(h_previous)|=3.3307e-19
     x =  1001.953125
     y =  [0.0116597]
     x =  998.046875
     y =  [0.0116597]
-    number_of_iterations=3, h=1.9531e+00, |FD(h_current) - FD(h_previous)|=1.1102e-19
+      number_of_iterations=3, h=1.9531e+00, |FD(h_current) - FD(h_previous)|=1.1102e-19
     x =  1000.48828125
     y =  [0.0116597]
     x =  999.51171875
     y =  [0.0116597]
-    number_of_iterations=4, h=4.8828e-01, |FD(h_current) - FD(h_previous)|=8.8818e-19
-    Stop because no monotony anymore.
+      number_of_iterations=4, h=4.8828e-01, |FD(h_current) - FD(h_previous)|=8.8818e-19
+      Stop because no monotony anymore.
     x =  1001.953125
     y =  [0.0116597]
     x =  998.046875
@@ -1072,33 +1072,33 @@ Compute step from SteplemanWinarsky
     y =  [0.0116601]
     x =  1225.0
     y =  [0.0116593]
-    number_of_iterations=0, h=1.7500e+02, |FD(h_current) - FD(h_previous)|=9.9805e-14
+      number_of_iterations=0, h=1.7500e+02, |FD(h_current) - FD(h_previous)|=9.9805e-14
     x =  1443.75
     y =  [0.0116598]
     x =  1356.25
     y =  [0.0116596]
-    number_of_iterations=1, h=4.3750e+01, |FD(h_current) - FD(h_previous)|=2.3762e-15
+      number_of_iterations=1, h=4.3750e+01, |FD(h_current) - FD(h_previous)|=2.3762e-15
     x =  1410.9375
     y =  [0.0116597]
     x =  1389.0625
     y =  [0.0116597]
-    number_of_iterations=2, h=1.0938e+01, |FD(h_current) - FD(h_previous)|=1.3822e-16
+      number_of_iterations=2, h=1.0938e+01, |FD(h_current) - FD(h_previous)|=1.3822e-16
     x =  1402.734375
     y =  [0.0116597]
     x =  1397.265625
     y =  [0.0116597]
-    number_of_iterations=3, h=2.7344e+00, |FD(h_current) - FD(h_previous)|=8.5646e-18
+      number_of_iterations=3, h=2.7344e+00, |FD(h_current) - FD(h_previous)|=8.5646e-18
     x =  1400.68359375
     y =  [0.0116597]
     x =  1399.31640625
     y =  [0.0116597]
-    number_of_iterations=4, h=6.8359e-01, |FD(h_current) - FD(h_previous)|=6.3441e-19
+      number_of_iterations=4, h=6.8359e-01, |FD(h_current) - FD(h_previous)|=6.3441e-19
     x =  1400.1708984375
     y =  [0.0116597]
     x =  1399.8291015625
     y =  [0.0116597]
-    number_of_iterations=5, h=1.7090e-01, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=5, h=1.7090e-01, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     x =  1400.68359375
     y =  [0.0116597]
     x =  1399.31640625
@@ -1118,33 +1118,33 @@ Compute step from SteplemanWinarsky
     y =  [0.0116597]
     x =  13.125
     y =  [0.0116597]
-    number_of_iterations=0, h=1.8750e+00, |FD(h_current) - FD(h_previous)|=2.0718e-10
+      number_of_iterations=0, h=1.8750e+00, |FD(h_current) - FD(h_previous)|=2.0718e-10
     x =  15.46875
     y =  [0.0116597]
     x =  14.53125
     y =  [0.0116597]
-    number_of_iterations=1, h=4.6875e-01, |FD(h_current) - FD(h_previous)|=1.3127e-11
+      number_of_iterations=1, h=4.6875e-01, |FD(h_current) - FD(h_previous)|=1.3127e-11
     x =  15.1171875
     y =  [0.0116597]
     x =  14.8828125
     y =  [0.0116597]
-    number_of_iterations=2, h=1.1719e-01, |FD(h_current) - FD(h_previous)|=8.2113e-13
+      number_of_iterations=2, h=1.1719e-01, |FD(h_current) - FD(h_previous)|=8.2113e-13
     x =  15.029296875
     y =  [0.0116597]
     x =  14.970703125
     y =  [0.0116597]
-    number_of_iterations=3, h=2.9297e-02, |FD(h_current) - FD(h_previous)|=5.1300e-14
+      number_of_iterations=3, h=2.9297e-02, |FD(h_current) - FD(h_previous)|=5.1300e-14
     x =  15.00732421875
     y =  [0.0116597]
     x =  14.99267578125
     y =  [0.0116597]
-    number_of_iterations=4, h=7.3242e-03, |FD(h_current) - FD(h_previous)|=3.1086e-15
+      number_of_iterations=4, h=7.3242e-03, |FD(h_current) - FD(h_previous)|=3.1086e-15
     x =  15.0018310546875
     y =  [0.0116597]
     x =  14.9981689453125
     y =  [0.0116597]
-    number_of_iterations=5, h=1.8311e-03, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=5, h=1.8311e-03, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     x =  15.00732421875
     y =  [0.0116597]
     x =  14.99267578125
@@ -1164,38 +1164,38 @@ Compute step from SteplemanWinarsky
     y =  [0.0116601]
     x =  1.75
     y =  [0.0116593]
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=5.2381e-11
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=5.2381e-11
     x =  2.0625
     y =  [0.0116598]
     x =  1.9375
     y =  [0.0116596]
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=3.2740e-12
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=3.2740e-12
     x =  2.015625
     y =  [0.0116597]
     x =  1.984375
     y =  [0.0116597]
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=2.0461e-13
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=2.0461e-13
     x =  2.00390625
     y =  [0.0116597]
     x =  1.99609375
     y =  [0.0116597]
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=1.2546e-14
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=1.2546e-14
     x =  2.0009765625
     y =  [0.0116597]
     x =  1.9990234375
     y =  [0.0116597]
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.1102e-15
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.1102e-15
     x =  2.000244140625
     y =  [0.0116597]
     x =  1.999755859375
     y =  [0.0116597]
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
     x =  2.00006103515625
     y =  [0.0116597]
     x =  1.99993896484375
     y =  [0.0116597]
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
-    Stop because no monotony anymore.
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
+      Stop because no monotony anymore.
     x =  2.000244140625
     y =  [0.0116597]
     x =  1.999755859375
@@ -1215,33 +1215,33 @@ Compute step from SteplemanWinarsky
     y =  [0.0116598]
     x =  0.4375
     y =  [0.0116596]
-    number_of_iterations=0, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.7605e-12
+      number_of_iterations=0, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.7605e-12
     x =  0.515625
     y =  [0.0116597]
     x =  0.484375
     y =  [0.0116596]
-    number_of_iterations=1, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.8504e-13
+      number_of_iterations=1, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.8504e-13
     x =  0.50390625
     y =  [0.0116597]
     x =  0.49609375
     y =  [0.0116597]
-    number_of_iterations=2, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=3.0420e-14
+      number_of_iterations=2, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=3.0420e-14
     x =  0.5009765625
     y =  [0.0116597]
     x =  0.4990234375
     y =  [0.0116597]
-    number_of_iterations=3, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.2204e-15
+      number_of_iterations=3, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.2204e-15
     x =  0.500244140625
     y =  [0.0116597]
     x =  0.499755859375
     y =  [0.0116597]
-    number_of_iterations=4, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
+      number_of_iterations=4, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
     x =  0.50006103515625
     y =  [0.0116597]
     x =  0.49993896484375
     y =  [0.0116597]
-    number_of_iterations=5, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
-    Stop because no monotony anymore.
+      number_of_iterations=5, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
+      Stop because no monotony anymore.
     x =  0.500244140625
     y =  [0.0116597]
     x =  0.499755859375
@@ -1261,18 +1261,18 @@ Compute step from SteplemanWinarsky
     y =  [0.0116597]
     x =  4.375
     y =  [0.0116597]
-    number_of_iterations=0, h=6.2500e-01, |FD(h_current) - FD(h_previous)|=1.3878e-17
+      number_of_iterations=0, h=6.2500e-01, |FD(h_current) - FD(h_previous)|=1.3878e-17
     x =  5.15625
     y =  [0.0116597]
     x =  4.84375
     y =  [0.0116597]
-    number_of_iterations=1, h=1.5625e-01, |FD(h_current) - FD(h_previous)|=4.1633e-18
+      number_of_iterations=1, h=1.5625e-01, |FD(h_current) - FD(h_previous)|=4.1633e-18
     x =  5.0390625
     y =  [0.0116597]
     x =  4.9609375
     y =  [0.0116597]
-    number_of_iterations=2, h=3.9062e-02, |FD(h_current) - FD(h_previous)|=1.1102e-17
-    Stop because no monotony anymore.
+      number_of_iterations=2, h=3.9062e-02, |FD(h_current) - FD(h_previous)|=1.1102e-17
+      Stop because no monotony anymore.
     x =  5.15625
     y =  [0.0116597]
     x =  4.84375
@@ -1292,38 +1292,38 @@ Compute step from SteplemanWinarsky
     y =  [0.0131168]
     x =  1.75
     y =  [0.0102027]
-    number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.6270e-07
+      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.6270e-07
     x =  2.0625
     y =  [0.0120239]
     x =  1.9375
     y =  [0.0112954]
-    number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=1.2330e-08
+      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=1.2330e-08
     x =  2.015625
     y =  [0.0117507]
     x =  1.984375
     y =  [0.0115686]
-    number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=7.5861e-10
+      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=7.5861e-10
     x =  2.00390625
     y =  [0.0116824]
     x =  1.99609375
     y =  [0.0116369]
-    number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=4.7367e-11
+      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=4.7367e-11
     x =  2.0009765625
     y =  [0.0116654]
     x =  1.9990234375
     y =  [0.011654]
-    number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.9607e-12
+      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.9607e-12
     x =  2.000244140625
     y =  [0.0116611]
     x =  1.999755859375
     y =  [0.0116583]
-    number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.8918e-13
+      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.8918e-13
     x =  2.00006103515625
     y =  [0.01166]
     x =  1.99993896484375
     y =  [0.0116593]
-    number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     x =  2.000244140625
     y =  [0.0116611]
     x =  1.999755859375
@@ -1343,38 +1343,38 @@ Compute step from SteplemanWinarsky
     y =  [0.0131168]
     x =  0.875
     y =  [0.0102027]
-    number_of_iterations=0, h=1.2500e-01, |FD(h_current) - FD(h_previous)|=5.2539e-07
+      number_of_iterations=0, h=1.2500e-01, |FD(h_current) - FD(h_previous)|=5.2539e-07
     x =  1.03125
     y =  [0.0120239]
     x =  0.96875
     y =  [0.0112954]
-    number_of_iterations=1, h=3.1250e-02, |FD(h_current) - FD(h_previous)|=2.4659e-08
+      number_of_iterations=1, h=3.1250e-02, |FD(h_current) - FD(h_previous)|=2.4659e-08
     x =  1.0078125
     y =  [0.0117507]
     x =  0.9921875
     y =  [0.0115686]
-    number_of_iterations=2, h=7.8125e-03, |FD(h_current) - FD(h_previous)|=1.5172e-09
+      number_of_iterations=2, h=7.8125e-03, |FD(h_current) - FD(h_previous)|=1.5172e-09
     x =  1.001953125
     y =  [0.0116824]
     x =  0.998046875
     y =  [0.0116369]
-    number_of_iterations=3, h=1.9531e-03, |FD(h_current) - FD(h_previous)|=9.4733e-11
+      number_of_iterations=3, h=1.9531e-03, |FD(h_current) - FD(h_previous)|=9.4733e-11
     x =  1.00048828125
     y =  [0.0116654]
     x =  0.99951171875
     y =  [0.011654]
-    number_of_iterations=4, h=4.8828e-04, |FD(h_current) - FD(h_previous)|=5.9215e-12
+      number_of_iterations=4, h=4.8828e-04, |FD(h_current) - FD(h_previous)|=5.9215e-12
     x =  1.0001220703125
     y =  [0.0116611]
     x =  0.9998779296875
     y =  [0.0116583]
-    number_of_iterations=5, h=1.2207e-04, |FD(h_current) - FD(h_previous)|=3.7836e-13
+      number_of_iterations=5, h=1.2207e-04, |FD(h_current) - FD(h_previous)|=3.7836e-13
     x =  1.000030517578125
     y =  [0.01166]
     x =  0.999969482421875
     y =  [0.0116593]
-    number_of_iterations=6, h=3.0518e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
-    Stop because zero difference.
+      number_of_iterations=6, h=3.0518e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
+      Stop because zero difference.
     x =  1.0001220703125
     y =  [0.0116611]
     x =  0.9998779296875
@@ -1444,7 +1444,7 @@ From SteplemanWinarsky
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.240 seconds)
+   **Total running time of the script:** (0 minutes 0.233 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_openturns.py:

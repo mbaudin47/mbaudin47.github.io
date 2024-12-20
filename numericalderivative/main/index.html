@@ -43,15 +43,18 @@
 <a class="reference internal image-reference" href="_images/error_vs_h.png"><img alt="_images/error_vs_h.png" class="align-left" src="_images/error_vs_h.png" style="width: 200.0px; height: 109.5px;" />
 </a>
 <p>numericalderivative is a module for numerical differentiation.</p>
-<p>The goal of this project is to compute the first derivative of a function using finite difference formulas.
-The difficulty with these formulas is that it must use a finite difference
-step which must be neither too large (otherwise truncation error dominates
-the error) nor too small (otherwise condition error dominates).
-To solve this issue, the module provides algorithms to compute an approximate
-optimal finite difference step.</p>
-<p>Furthermore, this package provides benchmark problems for numerical
+<p>The goal of this project is to compute the derivative of a function
+using finite difference formulas.
+The difficulty with these formulas is that it must use a
+step which must be neither too large (otherwise the truncation error dominates
+the error) nor too small (otherwise the condition error dominates).
+For this purpose, it provides exact methods (based on the value
+of higher derivatives) and approximate methods (based on function values).
+Furthermore, the module provides finite difference formulas for the
+first, second, third or any arbitrary order derivative of a function.
+Finally, this package provides 15 benchmark problems for numerical
 differentiation.</p>
-<p>Documentation about numericalderivative can be found <a class="reference external" href="https://numericalderivative.readthedocs.io/en/latest/">here</a></p>
+<p>Documentation about numericalderivative can be found <a class="reference external" href="https://mbaudin47.github.io/numericalderivative/main/index.html">here</a></p>
 <section id="user-documentation">
 <h2>User documentation<a class="headerlink" href="#user-documentation" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -61,6 +64,7 @@ differentiation.</p>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.GillMurraySaundersWright.html">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.ShiXieXuanNocedalForward.html">numericalderivative.ShiXieXuanNocedalForward</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="user_manual/user_manual.html#finite-differences">Finite Differences</a><ul>
@@ -84,7 +88,6 @@ differentiation.</p>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SinProblem.html">numericalderivative.SinProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.ScaledExponentialProblem.html">numericalderivative.ScaledExponentialProblem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.GMSWExponentialProblem.html">numericalderivative.GMSWExponentialProblem</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.BuildBenchmark.html">numericalderivative.BuildBenchmark</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SXXNProblem1.html">numericalderivative.SXXNProblem1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SXXNProblem2.html">numericalderivative.SXXNProblem2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.SXXNProblem3.html">numericalderivative.SXXNProblem3</a></li>
@@ -92,6 +95,11 @@ differentiation.</p>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.OliverProblem1.html">numericalderivative.OliverProblem1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.OliverProblem2.html">numericalderivative.OliverProblem2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.OliverProblem3.html">numericalderivative.OliverProblem3</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_manual/user_manual.html#benchmark-features">Benchmark features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.build_benchmark.html">numericalderivative.build_benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_manual/_generated/numericalderivative.benchmark_method.html">numericalderivative.benchmark_method</a></li>
 </ul>
 </li>
 </ul>
@@ -103,7 +111,64 @@ differentiation.</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_numericalderivative.html">A simple demonstration of the methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#references">References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#define-the-function">Define the function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#steplemanwinarsky">SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#dumontetvignes">DumontetVignes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#gillmurraysaunderswright">GillMurraySaundersWright</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_numericalderivative.html#function-with-extra-arguments">Function with extra arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_openturns.html#chaboche-model">Chaboche model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_openturns.html#compute-the-step-of-a-ot-function-using-stepleman-winarsky">Compute the step of a ot.Function using Stepleman &amp; Winarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_openturns.html#cantilever-beam-model">Cantilever beam model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_openturns.html#fire-satellite-model">Fire satellite model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_finite_differences.html">Use the finite differences formulas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#references">References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#compute-the-first-derivative-using-forward-f-d-formula">Compute the first derivative using forward F.D. formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#compute-the-exact-step-for-the-forward-f-d-formula">Compute the exact step for the forward F.D. formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#central-f-d-formula-for-first-derivative">Central F.D. formula for first derivative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#central-f-d-formula-for-second-derivative">Central F.D. formula for second derivative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_finite_differences.html#central-f-d-formula-for-third-derivative">Central F.D. formula for third derivative</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="auto_example/plot_general_fd.html">Use the generalized finite differences formulas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_general_fd.html#references">References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_general_fd.html#compute-the-first-derivative-using-forward-f-d-formula">Compute the first derivative using forward F.D. formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_general_fd.html#compute-the-exact-step-for-the-forward-f-d-formula">Compute the exact step for the forward F.D. formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_general_fd.html#compute-the-coefficients-of-several-central-f-d-formulas">Compute the coefficients of several central F.D. formulas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_general_fd.html#compute-the-coefficients-of-several-forward-f-d-formulas">Compute the coefficients of several forward F.D. formulas</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_dumontet_vignes.html">Experiments with Dumontet &amp; Vignes method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_dumontet_vignes_benchmark.html">Benchmark Dumontet &amp; Vignes method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_gill_murray_saunders_wright.html">Experiment with Gill, Murray, Saunders and Wright method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_gill_murray_saunders_wright_benchmark.html">Benchmark Gill, Murray, Saunders and Wright method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_stepleman_winarsky.html">Experiment with Stepleman &amp; Winarsky method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_stepleman_winarsky_plots.html">Plot Stepleman &amp; Winarsky's method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_stepleman_winarsky_benchmark.html">Benchmark Stepleman &amp; Winarsky's method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_shi_xie_xuan_nocedal_forward.html">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark.html">Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
