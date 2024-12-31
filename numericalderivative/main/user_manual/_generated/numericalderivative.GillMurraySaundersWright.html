@@ -43,7 +43,7 @@
 <h1>numericalderivative.GillMurraySaundersWright<a class="headerlink" href="#numericalderivative-gillmurraysaunderswright" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">GillMurraySaundersWright</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">GillMurraySaundersWright</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright" title="Link to this definition">¶</a></dt>
 <dd><p>Compute an approximately optimal step for the forward F.D. formula of the first derivative</p>
 <p>The method is based on three steps:</p>
 <ul class="simple">
@@ -92,9 +92,11 @@ the finite difference step of the forward, backward formula for the
 first derivative and the central formula for the second derivative,
 this algorithm only searches for the optimal step for the central
 formula for the second derivative.</p>
-<p>The algorithm can fail in the case where the function is odd
-or approximately linear.
-For example, the function <span class="math notranslate nohighlight">\(\sin\)</span> is linear at point <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
+<p>The algorithm can fail in the case where the function is
+linear or approximately linear because the second derivative is zero or
+close to zero.
+For example, the function <span class="math notranslate nohighlight">\(f(x) = \sin(x)\)</span> for any real number
+<span class="math notranslate nohighlight">\(x\)</span> is linear at the point <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
 In this case, the second derivative is zero, which produces a
 value of <span class="math notranslate nohighlight">\(\Phi\)</span> zero or close to zero.
 This produces an infinite value of the condition error.
@@ -103,6 +105,11 @@ The same problem appears at <span class="math notranslate nohighlight">\(x = 0\)
 an approximately optimal step using <a class="reference internal" href="numericalderivative.FirstDerivativeForward.html#numericalderivative.FirstDerivativeForward.compute_step" title="numericalderivative.FirstDerivativeForward.compute_step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_step()</span></code></a>.
 Since the value of the second derivative is unknown, we can make the
 hypothesis that <span class="math notranslate nohighlight">\(f''(x) \approx 1\)</span>.</p>
+<p>The method can fail if the absolute precision of the function value
+is set to zero.
+This can happen if the user computes it depending on the relative precision
+and the absolute value of the function: if the value of the function
+at point <span class="math notranslate nohighlight">\(x\)</span> is zero, then the absolute precision is zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -110,7 +117,12 @@ hypothesis that <span class="math notranslate nohighlight">\(f''(x) \approx 1\)<
 </dd>
 <dt><strong>x</strong><span class="classifier">float</span></dt><dd><p>The point where the derivative is approximated.</p>
 </dd>
-<dt><strong>relative_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The relative error of the function f at the point x.</p>
+<dt><strong>absolute_precision</strong><span class="classifier">float, optional</span></dt><dd><p>The absolute error of the value of the function f at the point x.
+If the absolute precision is unknown and if the function
+value at point x is nonzero, then the absolute precision
+can be computed from the relative precision using the equation :
+<span class="math notranslate nohighlight">\(\epsilon_f = \epsilon_r |f(x)|\)</span> where
+<span class="math notranslate nohighlight">\(\epsilon_r &gt; 0\)</span> is the relative precision.</p>
 </dd>
 <dt><strong>c_threshold_min</strong><span class="classifier">float, optional, &gt; 0</span></dt><dd><p>The minimum value of the condition error.</p>
 </dd>
@@ -137,17 +149,17 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_first_derivative" title="numericalderivative.GillMurraySaundersWright.compute_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_first_derivative</span></code></a>(step)</p></td>
 <td><p>Compute an approximate first derivative using finite differences</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step" title="numericalderivative.GillMurraySaundersWright.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>(kmin, kmax[, ...])</p></td>
-<td><p>Compute the optimal step suitable to approximate the fist derivative.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step_for_second_derivative</span></code></a>(kmin, kmax)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step_for_second_derivative</span></code></a>(kmin, kmax)</p></td>
 <td><p>Compute the optimal step k suitable to approximate the second derivative.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
-<td><p>Returns the number of function evaluations.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.find_step" title="numericalderivative.GillMurraySaundersWright.find_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_step</span></code></a>(kmin, kmax[, iteration_maximum, ...])</p></td>
+<td><p>Compute the optimal step suitable to approximate the fist derivative.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="numericalderivative.GillMurraySaundersWright.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
-<td><p>Return the relative precision of the function evaluation</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_absolute_precision" title="numericalderivative.GillMurraySaundersWright.get_absolute_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_absolute_precision</span></code></a>()</p></td>
+<td><p>Return the absolute precision of the function evaluation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
+<td><p>Returns the number of function evaluations.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_step_history" title="numericalderivative.GillMurraySaundersWright.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
 <td><p>Return the history of steps during the search.</p></td>
@@ -182,19 +194,19 @@ arg1, arg2, ..., are the items in the args list.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">scaled_exp</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h_optimal</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h_optimal</span><span class="p">,</span> <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">find_step</span><span class="p">(</span><span class="n">kmin</span><span class="o">=</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="n">kmax</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">h_optimal</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_threshold_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.__init__" title="numericalderivative.GillMurraySaundersWright.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(function, x[, relative_precision, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.__init__" title="numericalderivative.GillMurraySaundersWright.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(function, x[, absolute_precision, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_condition" title="numericalderivative.GillMurraySaundersWright.compute_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_condition</span></code></a>(k)</p></td>
@@ -203,17 +215,17 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_first_derivative" title="numericalderivative.GillMurraySaundersWright.compute_first_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_first_derivative</span></code></a>(step)</p></td>
 <td><p>Compute an approximate first derivative using finite differences</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step" title="numericalderivative.GillMurraySaundersWright.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>(kmin, kmax[, ...])</p></td>
-<td><p>Compute the optimal step suitable to approximate the fist derivative.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step_for_second_derivative</span></code></a>(kmin, kmax)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step_for_second_derivative</span></code></a>(kmin, kmax)</p></td>
 <td><p>Compute the optimal step k suitable to approximate the second derivative.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
-<td><p>Returns the number of function evaluations.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.find_step" title="numericalderivative.GillMurraySaundersWright.find_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_step</span></code></a>(kmin, kmax[, iteration_maximum, ...])</p></td>
+<td><p>Compute the optimal step suitable to approximate the fist derivative.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="numericalderivative.GillMurraySaundersWright.get_relative_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_relative_precision</span></code></a>()</p></td>
-<td><p>Return the relative precision of the function evaluation</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_absolute_precision" title="numericalderivative.GillMurraySaundersWright.get_absolute_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_absolute_precision</span></code></a>()</p></td>
+<td><p>Return the absolute precision of the function evaluation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_number_of_function_evaluations</span></code></a>()</p></td>
+<td><p>Returns the number of function evaluations.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GillMurraySaundersWright.get_step_history" title="numericalderivative.GillMurraySaundersWright.get_step_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_history</span></code></a>()</p></td>
 <td><p>Return the history of steps during the search.</p></td>
@@ -273,41 +285,8 @@ of the second derivative.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.compute_step">
-<span class="sig-name descname"><span class="pre">compute_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.compute_step" title="Link to this definition">¶</a></dt>
-<dd><p>Compute the optimal step suitable to approximate the fist derivative.</p>
-<p>This method computes the approximately optimal step for the second derivative.
-Then the approximate value of the second derivative can be computed using
-this step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>kmin</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The minimum step k for the second derivative.</p>
-</dd>
-<dt><strong>kmax</strong><span class="classifier">float, &gt; kmin</span></dt><dd><p>The maximum step k for the second derivative.</p>
-</dd>
-<dt><strong>iteration_maximum</strong><span class="classifier">in, optional</span></dt><dd><p>The maximum number of iterations. The default is 50.</p>
-</dd>
-<dt><strong>logscale</strong><span class="classifier">bool, optional</span></dt><dd><p>Set to True to use a logarithmic scale to update k.
-Set to False to use a linear scale.
-The default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>step</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The optimum step for the first derivative.</p>
-</dd>
-<dt><strong>number_of_iterations</strong><span class="classifier">int</span></dt><dd><p>The number of iterations required to compute the step.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative">
-<span class="sig-name descname"><span class="pre">compute_step_for_second_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_step_for_second_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.compute_step_for_second_derivative" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the optimal step k suitable to approximate the second derivative.</p>
 <p>Then the approximate value of the second derivative can be computed using
 this step.</p>
@@ -333,8 +312,7 @@ This implies that the update is the geometrical mean:</p>
 <dt><strong>iteration_maximum</strong><span class="classifier">in, optional</span></dt><dd><p>The maximum number of iterations.</p>
 </dd>
 <dt><strong>logscale</strong><span class="classifier">bool, optional</span></dt><dd><p>Set to True to use a logarithmic scale to update k.
-Set to False to use a linear scale.
-The default is True.</p>
+Set to False to use a linear scale.</p>
 </dd>
 </dl>
 </dd>
@@ -350,13 +328,31 @@ The default is True.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations">
-<span class="sig-name descname"><span class="pre">get_number_of_function_evaluations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the number of function evaluations.</p>
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.find_step">
+<span class="sig-name descname"><span class="pre">find_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.find_step" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the optimal step suitable to approximate the fist derivative.</p>
+<p>This method computes the approximately optimal step for the second derivative.
+Then the approximate value of the second derivative can be computed using
+this step.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>number_of_function_evaluations</strong><span class="classifier">int</span></dt><dd><p>The number of function evaluations.</p>
+<dt><strong>kmin</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The minimum step k for the second derivative.</p>
+</dd>
+<dt><strong>kmax</strong><span class="classifier">float, &gt; kmin</span></dt><dd><p>The maximum step k for the second derivative.</p>
+</dd>
+<dt><strong>iteration_maximum</strong><span class="classifier">in, optional</span></dt><dd><p>The maximum number of iterations.</p>
+</dd>
+<dt><strong>logscale</strong><span class="classifier">bool, optional</span></dt><dd><p>Set to True to use a logarithmic scale to update k.
+Set to False to use a linear scale.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>step</strong><span class="classifier">float, &gt; 0</span></dt><dd><p>The optimum step for the first derivative.</p>
+</dd>
+<dt><strong>number_of_iterations</strong><span class="classifier">int</span></dt><dd><p>The number of iterations required to compute the step.</p>
 </dd>
 </dl>
 </dd>
@@ -364,13 +360,27 @@ The default is True.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_relative_precision">
-<span class="sig-name descname"><span class="pre">get_relative_precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_relative_precision" title="Link to this definition">¶</a></dt>
-<dd><p>Return the relative precision of the function evaluation</p>
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_absolute_precision">
+<span class="sig-name descname"><span class="pre">get_absolute_precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_absolute_precision" title="Link to this definition">¶</a></dt>
+<dd><p>Return the absolute precision of the function evaluation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>relative_precision</strong><span class="classifier">float</span></dt><dd><p>The relative precision of evaluation of f.</p>
+<dt><strong>absolute_precision</strong><span class="classifier">float</span></dt><dd><p>The absolute precision of evaluation of f.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations">
+<span class="sig-name descname"><span class="pre">get_number_of_function_evaluations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GillMurraySaundersWright.get_number_of_function_evaluations" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the number of function evaluations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>number_of_function_evaluations</strong><span class="classifier">int</span></dt><dd><p>The number of function evaluations.</p>
 </dd>
 </dl>
 </dd>
@@ -444,6 +454,7 @@ This is updated by <a class="reference internal" href="#numericalderivative.Gill
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.DumontetVignes.html">numericalderivative.DumontetVignes</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">numericalderivative.GillMurraySaundersWright</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.SteplemanWinarsky.html">numericalderivative.SteplemanWinarsky</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numericalderivative.SteplemanWinarskyInitialize.html">numericalderivative.SteplemanWinarskyInitialize</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numericalderivative.ShiXieXuanNocedalForward.html">numericalderivative.ShiXieXuanNocedalForward</a></li>
 </ul>
 </li>

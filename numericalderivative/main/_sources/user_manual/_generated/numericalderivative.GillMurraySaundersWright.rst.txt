@@ -16,10 +16,10 @@
       ~GillMurraySaundersWright.__init__
       ~GillMurraySaundersWright.compute_condition
       ~GillMurraySaundersWright.compute_first_derivative
-      ~GillMurraySaundersWright.compute_step
       ~GillMurraySaundersWright.compute_step_for_second_derivative
+      ~GillMurraySaundersWright.find_step
+      ~GillMurraySaundersWright.get_absolute_precision
       ~GillMurraySaundersWright.get_number_of_function_evaluations
-      ~GillMurraySaundersWright.get_relative_precision
       ~GillMurraySaundersWright.get_step_history
       ~GillMurraySaundersWright.get_threshold_min_max
    

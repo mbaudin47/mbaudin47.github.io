@@ -30,7 +30,7 @@ References
 ----------
 - Gill, P. E., Murray, W., Saunders, M. A., & Wright, M. H. (1983). Computing forward-difference intervals for numerical optimization. SIAM Journal on Scientific and Statistical Computing, 4(2), 310-321.
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-74
+.. GENERATED FROM PYTHON SOURCE LINES 19-24
 
 .. code-block:: Python
 
@@ -40,15 +40,62 @@ References
     import numericalderivative as nd
 
 
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 25-27
+
+The next function is an oracle which returns the absolute precision
+of the value of the function.
+
+.. GENERATED FROM PYTHON SOURCE LINES 30-116
+
+.. code-block:: Python
+
+    def absolute_precision_oracle(function, x, relative_precision):
+        """
+        Return the absolute precision of the function value
+
+        This oracle may fail if the function value is zero.
+
+        Parameters
+        ----------
+        function : function
+            The function
+        x : float
+            The test point
+        relative_precision : float, > 0, optional
+            The relative precision of evaluation of f.
+
+        Returns
+        -------
+        absolute_precision : float, >= 0
+            The absolute precision
+        """
+        function_value = function(x)
+        if function_value == 0.0:
+            raise ValueError(
+                "The function value is zero: " "cannot compute the absolute precision"
+            )
+        absolute_precision = relative_precision * abs(function_value)
+        return absolute_precision
+
+
     class GillMurraySaundersWrightMethod:
-        def __init__(self, relative_precision, kmin, kmax):
+        def __init__(self, kmin, kmax, relative_precision):
             """
             Create a GillMurraySaundersWright method to compute the approximate first derivative
 
+            Notice that the algorithm is parametrized here based on
+            the relative precision of the value of the function f.
+            Then an oracle computes the absolute precision depending on
+            the function, the point x and the relative precision.
+
             Parameters
             ----------
-            relative_precision : float, > 0, optional
-                The relative precision of evaluation of f.
             kmin : float, kmin > 0
                 A minimum bound for the finite difference step of the third derivative.
                 If no value is provided, the default is to compute the smallest
@@ -57,10 +104,12 @@ References
                 A maximum bound for the finite difference step of the third derivative.
                 If no value is provided, the default is to compute the largest
                 possible kmax using number_of_digits and x.
+            relative_precision : float, > 0, optional
+                The relative precision of evaluation of f.
             """
-            self.relative_precision = relative_precision
             self.kmin = kmin
             self.kmax = kmax
+            self.relative_precision = relative_precision
 
         def compute_first_derivative(self, function, x):
             """
@@ -80,10 +129,13 @@ References
             number_of_function_evaluations : int
                 The number of function evaluations.
             """
-            algorithm = nd.GillMurraySaundersWright(
-                function, x, relative_precision=self.relative_precision
+            absolute_precision = absolute_precision_oracle(
+                function, x, self.relative_precision
             )
-            step, _ = algorithm.compute_step(kmin, kmax)
+            algorithm = nd.GillMurraySaundersWright(
+                function, x, absolute_precision=absolute_precision
+            )
+            step, _ = algorithm.find_step(kmin, kmax)
             f_prime_approx = algorithm.compute_first_derivative(step)
             number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
             return f_prime_approx, number_of_function_evaluations
@@ -96,12 +148,12 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-77
+.. GENERATED FROM PYTHON SOURCE LINES 117-119
 
 The next example computes the approximate derivative on the
 :class:`~numericalderivative.ExponentialProblem`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-101
+.. GENERATED FROM PYTHON SOURCE LINES 121-143
 
 .. code-block:: Python
 
@@ -113,8 +165,8 @@ The next example computes the approximate derivative on the
     print(problem)
     interval = problem.get_interval()
     test_points = np.linspace(interval[0], interval[1], number_of_test_points)
-    relative_precision = 1.0e-16
-    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    relative_precision = 1.0e-15
+    method = GillMurraySaundersWrightMethod(kmin, kmax, relative_precision)
     average_relative_error, average_feval, data = nd.benchmark_method(
         problem.get_function(),
         problem.get_first_derivative(),
@@ -146,27 +198,27 @@ The next example computes the approximate derivative on the
     f^(4)(x) = 2.718281828459045
     f^(5)(x) = 2.718281828459045
 
-    x = 0.000, abs. error = 7.834e-09, rel. error = 7.834e-09, Func. eval. = 16
-    x = 0.632, abs. error = 1.490e-08, rel. error = 7.923e-09, Func. eval. = 16
-    x = 1.263, abs. error = 2.406e-08, rel. error = 6.803e-09, Func. eval. = 16
-    x = 1.895, abs. error = 7.543e-08, rel. error = 1.134e-08, Func. eval. = 16
-    x = 2.526, abs. error = 9.082e-08, rel. error = 7.262e-09, Func. eval. = 16
-    x = 3.158, abs. error = 3.543e-07, rel. error = 1.506e-08, Func. eval. = 16
-    x = 3.789, abs. error = 5.208e-07, rel. error = 1.177e-08, Func. eval. = 16
-    x = 4.421, abs. error = 9.058e-07, rel. error = 1.089e-08, Func. eval. = 16
-    x = 5.053, abs. error = 2.098e-06, rel. error = 1.341e-08, Func. eval. = 16
-    x = 5.684, abs. error = 3.223e-06, rel. error = 1.095e-08, Func. eval. = 16
-    x = 6.316, abs. error = 9.323e-06, rel. error = 1.685e-08, Func. eval. = 16
-    x = 6.947, abs. error = 7.871e-06, rel. error = 7.565e-09, Func. eval. = 16
-    x = 7.579, abs. error = 1.835e-05, rel. error = 9.377e-09, Func. eval. = 16
-    x = 8.211, abs. error = 3.103e-05, rel. error = 8.432e-09, Func. eval. = 16
-    x = 8.842, abs. error = 5.438e-05, rel. error = 7.858e-09, Func. eval. = 16
-    x = 9.474, abs. error = 8.491e-05, rel. error = 6.525e-09, Func. eval. = 16
-    x = 10.105, abs. error = 1.934e-04, rel. error = 7.901e-09, Func. eval. = 16
-    x = 10.737, abs. error = 3.913e-04, rel. error = 8.502e-09, Func. eval. = 16
-    x = 11.368, abs. error = 5.613e-04, rel. error = 6.486e-09, Func. eval. = 16
-    x = 12.000, abs. error = 2.590e-03, rel. error = 1.591e-08, Func. eval. = 16
-    Average relative error = 9.933156858517556e-09
+    x = 0.000, abs. error = 3.252e-08, rel. error = 3.252e-08, Func. eval. = 16
+    x = 0.632, abs. error = 5.986e-08, rel. error = 3.183e-08, Func. eval. = 16
+    x = 1.263, abs. error = 1.075e-07, rel. error = 3.040e-08, Func. eval. = 16
+    x = 1.895, abs. error = 2.074e-07, rel. error = 3.118e-08, Func. eval. = 16
+    x = 2.526, abs. error = 3.938e-07, rel. error = 3.148e-08, Func. eval. = 16
+    x = 3.158, abs. error = 7.683e-07, rel. error = 3.267e-08, Func. eval. = 16
+    x = 3.789, abs. error = 1.399e-06, rel. error = 3.163e-08, Func. eval. = 16
+    x = 4.421, abs. error = 2.819e-06, rel. error = 3.389e-08, Func. eval. = 16
+    x = 5.053, abs. error = 4.939e-06, rel. error = 3.157e-08, Func. eval. = 16
+    x = 5.684, abs. error = 9.331e-06, rel. error = 3.172e-08, Func. eval. = 16
+    x = 6.316, abs. error = 1.710e-05, rel. error = 3.090e-08, Func. eval. = 16
+    x = 6.947, abs. error = 3.371e-05, rel. error = 3.240e-08, Func. eval. = 16
+    x = 7.579, abs. error = 6.325e-05, rel. error = 3.233e-08, Func. eval. = 16
+    x = 8.211, abs. error = 1.126e-04, rel. error = 3.060e-08, Func. eval. = 16
+    x = 8.842, abs. error = 2.160e-04, rel. error = 3.122e-08, Func. eval. = 16
+    x = 9.474, abs. error = 4.027e-04, rel. error = 3.095e-08, Func. eval. = 16
+    x = 10.105, abs. error = 7.612e-04, rel. error = 3.111e-08, Func. eval. = 16
+    x = 10.737, abs. error = 1.391e-03, rel. error = 3.023e-08, Func. eval. = 16
+    x = 11.368, abs. error = 2.736e-03, rel. error = 3.161e-08, Func. eval. = 16
+    x = 12.000, abs. error = 5.389e-03, rel. error = 3.311e-08, Func. eval. = 16
+    Average relative error = 3.1666900098067314e-08
     Average number of function evaluations = 16.0
 
 
@@ -178,37 +230,37 @@ The next example computes the approximate derivative on the
     <tr><th style="text-align: right;">        x</th><th style="text-align: right;">  Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
     </thead>
     <tbody>
-    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">7.8336e-09 </td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">7.92349e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">6.8029e-09 </td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">1.13422e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">7.26172e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">1.50612e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">1.17732e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">1.08892e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">1.34107e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">1.09548e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">1.68514e-08</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">7.56484e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">9.37713e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">8.43229e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">7.85831e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">6.52532e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">7.9011e-09 </td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">8.50247e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">6.48593e-09</td><td style="text-align: right;">        16</td></tr>
-    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">1.59114e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">3.25181e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">3.18296e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">3.03995e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">3.11816e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">3.14818e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">3.26655e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">3.16328e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">3.38876e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">3.15726e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">3.17182e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">3.08999e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">3.24025e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">3.23281e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">3.06016e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">3.1215e-08 </td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">3.09499e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">3.11055e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">3.02255e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">3.16141e-08</td><td style="text-align: right;">        16</td></tr>
+    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">3.31086e-08</td><td style="text-align: right;">        16</td></tr>
     </tbody>
     </table>
     </div>
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-103
+.. GENERATED FROM PYTHON SOURCE LINES 144-145
 
 Map from the problem name to kmax
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-124
+.. GENERATED FROM PYTHON SOURCE LINES 147-166
 
 .. code-block:: Python
 
@@ -238,16 +290,16 @@ Map from the problem name to kmax
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-127
+.. GENERATED FROM PYTHON SOURCE LINES 167-169
 
 Benchmark the :class:`~numericalderivative.GillMurraySaundersWright` class
 on a collection of problems.
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-185
+.. GENERATED FROM PYTHON SOURCE LINES 171-227
 
 .. code-block:: Python
 
-    number_of_test_points = 100
+    number_of_test_points = 100  # This value can significantly change the results
     relative_precision = 1.0e-15
     delta_x = 1.0e-9
     data = []
@@ -270,7 +322,7 @@ on a collection of problems.
             upper_x_bound -= delta_x
         test_points = np.linspace(lower_x_bound, upper_x_bound, number_of_test_points)
         print(f"Function #{i}, {name}")
-        method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+        method = GillMurraySaundersWrightMethod(kmin, kmax, relative_precision)
         average_relative_error, average_feval, _ = nd.benchmark_method(
             function,
             first_derivative,
@@ -360,7 +412,7 @@ on a collection of problems.
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-196
+.. GENERATED FROM PYTHON SOURCE LINES 228-238
 
 Notice that the method cannot perform correctly for the sin function
 at the point
@@ -376,7 +428,7 @@ number of test points is odd.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.061 seconds)
+   **Total running time of the script:** (0 minutes 0.063 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright_benchmark.py:

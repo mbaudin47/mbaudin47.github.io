@@ -53,7 +53,7 @@ Use the method on a simple problem
 
 In the next example, we use the algorithm on the exponential function.
 We create the :class:`~numericalderivative.GillMurraySaundersWright` algorithm using the function and the point x.
-Then we use the :meth:`~numericalderivative.GillMurraySaundersWright.compute_step()` method to compute the step,
+Then we use the :meth:`~numericalderivative.GillMurraySaundersWright.find_step()` method to compute the step,
 using an upper bound of the step as an initial point of the algorithm.
 Finally, use the :meth:`~numericalderivative.GillMurraySaundersWright.compute_first_derivative()` method to compute
 an approximate value of the first derivative using finite differences.
@@ -68,7 +68,7 @@ can be used to get the number of function evaluations.
     algorithm = nd.GillMurraySaundersWright(np.exp, x, verbose=True)
     kmin = 1.0e-10
     kmax = 1.0e0
-    step, number_of_iterations = algorithm.compute_step(kmin, kmax)
+    step, number_of_iterations = algorithm.find_step(kmin, kmax)
     f_prime_approx = algorithm.compute_first_derivative(step)
     feval = algorithm.get_number_of_function_evaluations()
     f_prime_exact = np.exp(x)  # Since the derivative of exp is exp.
@@ -87,17 +87,17 @@ can be used to get the number of function evaluations.
 
  .. code-block:: none
 
-    kmin = 1.000e-10, c(kmin) = 2.448e+00
-    kmax = 1.000e+00, c(kmax) = 3.683e-16
-    Iter #0, kmin = 1.000e-10, kmax = 1.000e+00, k = 1.000e-05, c(k) = 4.000e-06
+    kmin = 1.000e-10, c(kmin) = 9.007e+00
+    kmax = 1.000e+00, c(kmax) = 1.355e-15
+    Iter #0, kmin = 1.000e-10, kmax = 1.000e+00, k = 1.000e-05, c(k) = 1.472e-05
       c(k) < c_threshold_min: reduce kmax.
-    Iter #1, kmin = 1.000e-10, kmax = 1.000e-05, k = 3.162e-08, c(k) = 3.498e-01
+    Iter #1, kmin = 1.000e-10, kmax = 1.000e-05, k = 3.162e-08, c(k) = 1.287e+00
       c(k) >= c_threshold_min: increase kmin.
-    Iter #2, kmin = 3.162e-08, kmax = 1.000e-05, k = 5.623e-07, c(k) = 1.264e-03
+    Iter #2, kmin = 3.162e-08, kmax = 1.000e-05, k = 5.623e-07, c(k) = 4.650e-03
       c in [0.001, 0.1]: stop!
-    Computed step = 1.999e-08
+    Computed step = 3.835e-08
     Number of iterations = 2
-    f_prime_approx = 2.718281861529766
+    f_prime_approx = 2.71828188987139
     f_prime_exact = 2.718281828459045
 
 
@@ -108,21 +108,62 @@ can be used to get the number of function evaluations.
 Test the method on the exponential problem
 ------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-106
+.. GENERATED FROM PYTHON SOURCE LINES 57-59
+
+The next function is an oracle which returns the absolute precision
+of the value of the function.
+
+.. GENERATED FROM PYTHON SOURCE LINES 62-91
 
 .. code-block:: Python
 
+    def absolute_precision_oracle(function, x, relative_precision):
+        """
+        Return the absolute precision of the function value
 
+        This oracle may fail if the function value is zero.
+
+        Parameters
+        ----------
+        function : function
+            The function
+        x : float
+            The test point
+        relative_precision : float, > 0, optional
+            The relative precision of evaluation of f.
+
+        Returns
+        -------
+        absolute_precision : float, >= 0
+            The absolute precision
+        """
+        function_value = function(x)
+        if function_value == 0.0:
+            raise ValueError(
+                "The function value is zero: " "cannot compute the absolute precision"
+            )
+        absolute_precision = relative_precision * abs(function_value)
+        return absolute_precision
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 92-144
+
+.. code-block:: Python
 
     class GillMurraySaundersWrightMethod:
-        def __init__(self, relative_precision, kmin, kmax):
+        def __init__(self, kmin, kmax, relative_precision):
             """
             Create a GillMurraySaundersWright method to compute the approximate first derivative
 
             Parameters
             ----------
-            relative_precision : float, > 0, optional
-                The relative precision of evaluation of f.
             kmin : float, kmin > 0
                 A minimum bound for the finite difference step of the third derivative.
                 If no value is provided, the default is to compute the smallest
@@ -131,10 +172,12 @@ Test the method on the exponential problem
                 A maximum bound for the finite difference step of the third derivative.
                 If no value is provided, the default is to compute the largest
                 possible kmax using number_of_digits and x.
+            relative_precision : float, > 0, optional
+                The relative precision of evaluation of f.
             """
-            self.relative_precision = relative_precision
             self.kmin = kmin
             self.kmax = kmax
+            self.relative_precision = relative_precision
 
         def compute_first_derivative(self, function, x):
             """
@@ -154,10 +197,13 @@ Test the method on the exponential problem
             number_of_function_evaluations : int
                 The number of function evaluations.
             """
-            algorithm = nd.GillMurraySaundersWright(
-                function, x, relative_precision=self.relative_precision
+            absolute_precision = absolute_precision_oracle(
+                function, x, self.relative_precision
             )
-            step, _ = algorithm.compute_step(kmin, kmax)
+            algorithm = nd.GillMurraySaundersWright(
+                function, x, absolute_precision=absolute_precision
+            )
+            step, _ = algorithm.find_step(kmin, kmax)
             f_prime_approx = algorithm.compute_first_derivative(step)
             number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
             return f_prime_approx, number_of_function_evaluations
@@ -170,7 +216,7 @@ Test the method on the exponential problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-158
+.. GENERATED FROM PYTHON SOURCE LINES 145-198
 
 .. code-block:: Python
 
@@ -198,6 +244,8 @@ Test the method on the exponential problem
             The minimum step k for the second derivative.
         kmax : float, > kmin
             The maximum step k for the second derivative.
+        relative_precision : float, > 0, optional
+            The relative precision of evaluation of f.
         verbose : bool, optional
             Set to True to print intermediate messages. The default is False.
 
@@ -211,7 +259,7 @@ Test the method on the exponential problem
             The number of function evaluations.
         """
 
-        method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+        method = GillMurraySaundersWrightMethod(kmin, kmax, relative_precision)
         f_prime_approx, number_of_function_evaluations = method.compute_first_derivative(
             function, x
         )
@@ -232,7 +280,7 @@ Test the method on the exponential problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-166
+.. GENERATED FROM PYTHON SOURCE LINES 199-206
 
 .. code-block:: Python
 
@@ -273,7 +321,7 @@ Test the method on the exponential problem
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-188
+.. GENERATED FROM PYTHON SOURCE LINES 207-228
 
 .. code-block:: Python
 
@@ -307,7 +355,7 @@ Test the method on the exponential problem
  .. code-block:: none
 
     Exact h* = 1.213e-08
-    Computed step = 1.999e-08
+    Computed step = 3.835e-08
     Number of iterations = 2
     f_prime_approx = 2.7182819133272096
     f_prime_exact = 2.718281828459045
@@ -316,7 +364,7 @@ Test the method on the exponential problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-216
+.. GENERATED FROM PYTHON SOURCE LINES 229-256
 
 .. code-block:: Python
 
@@ -357,7 +405,7 @@ Test the method on the exponential problem
 
     + Test on ScaledExponentialDerivativeBenchmark
     Exact h* = 2.000e-02
-    Computed step = 1.999e-08
+    Computed step = 3.835e-08
     Number of iterations = 2
     f_prime_approx = -9.999989687168326e-07
     f_prime_exact = -9.999990000004999e-07
@@ -366,12 +414,12 @@ Test the method on the exponential problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-219
+.. GENERATED FROM PYTHON SOURCE LINES 257-259
 
 Benchmark the method on a collection of test points
 ---------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 222-241
+.. GENERATED FROM PYTHON SOURCE LINES 262-281
 
 .. code-block:: Python
 
@@ -383,7 +431,7 @@ Benchmark the method on a collection of test points
     kmin = 1.0e-12
     kmax = 1.0e1
     relative_precision = 1.0e-15
-    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    method = GillMurraySaundersWrightMethod(kmin, kmax, relative_precision)
     average_error, average_feval, _ = nd.benchmark_method(
         problem.get_function(),
         problem.get_fifth_derivative(),
@@ -409,12 +457,12 @@ Benchmark the method on a collection of test points
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 242-244
+.. GENERATED FROM PYTHON SOURCE LINES 282-284
 
 Plot the condition error depending on the step
 ----------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 247-271
+.. GENERATED FROM PYTHON SOURCE LINES 287-311
 
 .. code-block:: Python
 
@@ -449,7 +497,7 @@ Plot the condition error depending on the step
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 272-278
+.. GENERATED FROM PYTHON SOURCE LINES 312-318
 
 The next plot presents the condition error :math:`c(h_\Phi)` depending
 on :math:`h_\Phi`.
@@ -458,7 +506,7 @@ values.
 We search for the value of :math:`h_\Phi` such that the condition
 error is between these two limits.
 
-.. GENERATED FROM PYTHON SOURCE LINES 280-289
+.. GENERATED FROM PYTHON SOURCE LINES 320-329
 
 .. code-block:: Python
 
@@ -483,18 +531,18 @@ error is between these two limits.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 290-292
+.. GENERATED FROM PYTHON SOURCE LINES 330-332
 
 The previous plot shows that the condition error is a decreasing function
 of :math:`h_\Phi`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 294-297
+.. GENERATED FROM PYTHON SOURCE LINES 334-337
 
 Remove the end points :math:`x = \pm \pi`, because sin has a zero
 second derivative at these points.
 This makes the algorithm fail.
 
-.. GENERATED FROM PYTHON SOURCE LINES 299-322
+.. GENERATED FROM PYTHON SOURCE LINES 339-362
 
 .. code-block:: Python
 
@@ -509,7 +557,7 @@ This makes the algorithm fail.
     kmin = 1.0e-12
     kmax = 1.0e1
     relative_precision = 1.0e-15
-    method = GillMurraySaundersWrightMethod(relative_precision, kmin, kmax)
+    method = GillMurraySaundersWrightMethod(kmin, kmax, relative_precision)
     average_error, average_feval, _ = nd.benchmark_method(
         problem.get_function(),
         problem.get_fifth_derivative(),
@@ -536,11 +584,11 @@ This makes the algorithm fail.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 323-324
+.. GENERATED FROM PYTHON SOURCE LINES 363-364
 
 Plot the condition error depending on k.
 
-.. GENERATED FROM PYTHON SOURCE LINES 324-333
+.. GENERATED FROM PYTHON SOURCE LINES 364-373
 
 .. code-block:: Python
 
@@ -565,28 +613,36 @@ Plot the condition error depending on k.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 334-337
+.. GENERATED FROM PYTHON SOURCE LINES 374-377
 
 In the previous plot, we see that there is no satisfactory
 value of :math:`h_\Phi` for the sin function
 at point :math:`x = -\pi`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 339-341
+.. GENERATED FROM PYTHON SOURCE LINES 379-381
 
 Plot the error depending on the step
 ------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 343-345
+.. GENERATED FROM PYTHON SOURCE LINES 383-385
 
 For each function, at point x = 1, plot the error vs the step computed
 by the method
 
-.. GENERATED FROM PYTHON SOURCE LINES 348-407
+.. GENERATED FROM PYTHON SOURCE LINES 388-466
 
 .. code-block:: Python
 
     def plot_error_vs_h_with_GMSW_steps(
-        name, function, first_derivative, x, step_array, kmin, kmax, verbose=False
+        name,
+        function,
+        first_derivative,
+        x,
+        step_array,
+        kmin,
+        kmax,
+        relative_precision=1.0e-15,
+        verbose=False,
     ):
         """
         Plot the computed error depending on the step for an array of F.D. steps
@@ -607,17 +663,28 @@ by the method
             The minimum step k for the second derivative.
         kmax : float, > kmin
             The maximum step k for the second derivative.
+        relative_precision : float, optional
+            The relative precision of the function f at the point x.
         verbose : bool, optional
             Set to True to print intermediate messages. The default is False.
         """
-        algorithm = nd.GillMurraySaundersWright(function, x)
+
+        function_value = function(x)
+        if function_value == 0.0:
+            raise ValueError(
+                "The function value is zero: cannot compute "
+                "the absolute precision from the relative precision. "
+                "Please set the absolute precision specifically."
+            )
+        absolute_precision = relative_precision * abs(function_value)
+        algorithm = nd.GillMurraySaundersWright(function, x, absolute_precision)
         number_of_points = len(step_array)
         error_array = np.zeros((number_of_points))
         for i in range(number_of_points):
             f_prime_approx = algorithm.compute_first_derivative(step_array[i])
             error_array[i] = abs(f_prime_approx - first_derivative(x))
 
-        step, number_of_iterations = algorithm.compute_step(kmin, kmax)
+        step, number_of_iterations = algorithm.find_step(kmin, kmax)
 
         if verbose:
             print(name)
@@ -651,11 +718,13 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 408-439
+.. GENERATED FROM PYTHON SOURCE LINES 467-503
 
 .. code-block:: Python
 
-    def plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, verbose=False):
+    def plot_error_vs_h_benchmark(
+        problem, x, step_array, kmin, kmax, relative_precision=1.0e-15, verbose=False
+    ):
         """
         Plot the computed error depending on the step for an array of F.D. steps
 
@@ -671,6 +740,8 @@ by the method
             The minimum step k for the second derivative.
         kmax : float, > kmin
             The maximum step k for the second derivative.
+        relative_precision : float, optional
+            The relative error of the function f at the point x.
         verbose : bool, optional
             Set to True to print intermediate messages. The default is False.
         """
@@ -682,6 +753,7 @@ by the method
             step_array,
             kmin,
             kmax,
+            relative_precision,
             verbose,
         )
 
@@ -693,7 +765,7 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 440-448
+.. GENERATED FROM PYTHON SOURCE LINES 504-513
 
 .. code-block:: Python
 
@@ -703,7 +775,8 @@ by the method
     step_array = np.logspace(-15.0, -1.0, number_of_points)
     kmin = 1.0e-15
     kmax = 1.0e-1
-    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
+    relative_precision = 1.0e-15
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, relative_precision, True)
 
 
 
@@ -719,12 +792,12 @@ by the method
  .. code-block:: none
 
     exp
-    Step h* = 1.999e-08 using 2 iterations
+    Step h* = 6.322e-08 using 2 iterations
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 449-453
+.. GENERATED FROM PYTHON SOURCE LINES 514-518
 
 .. code-block:: Python
 
@@ -744,7 +817,7 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 454-461
+.. GENERATED FROM PYTHON SOURCE LINES 519-526
 
 .. code-block:: Python
 
@@ -767,7 +840,7 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 462-469
+.. GENERATED FROM PYTHON SOURCE LINES 527-534
 
 .. code-block:: Python
 
@@ -776,7 +849,7 @@ by the method
     kmin = 1.0e-14
     kmax = 1.0e-1
     step_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, relative_precision, True)
 
 
 
@@ -792,12 +865,12 @@ by the method
  .. code-block:: none
 
     log
-    Step h* = 6.824e-09 using 0 iterations
+    Step h* = 2.148e-08 using 3 iterations
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 470-477
+.. GENERATED FROM PYTHON SOURCE LINES 535-542
 
 .. code-block:: Python
 
@@ -820,7 +893,7 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 478-485
+.. GENERATED FROM PYTHON SOURCE LINES 543-550
 
 .. code-block:: Python
 
@@ -829,7 +902,7 @@ by the method
     kmin = 1.0e-15
     kmax = 1.0e-1
     step_array = np.logspace(-15.0, -1.0, number_of_points)
-    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, True)
+    plot_error_vs_h_benchmark(problem, x, step_array, kmin, kmax, relative_precision, True)
 
 
 
@@ -845,12 +918,12 @@ by the method
  .. code-block:: none
 
     sqrt
-    Step h* = 3.997e-08 using 2 iterations
+    Step h* = 1.264e-07 using 2 iterations
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 486-493
+.. GENERATED FROM PYTHON SOURCE LINES 551-558
 
 .. code-block:: Python
 
@@ -873,12 +946,12 @@ by the method
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 494-496
+.. GENERATED FROM PYTHON SOURCE LINES 559-561
 
 See the history of steps during the bissection search
 -----------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 498-512
+.. GENERATED FROM PYTHON SOURCE LINES 563-577
 
 In G, M, S & W's method, the bisection algorithm
 produces a sequence of steps :math:`(k_i)_{1 \leq i \leq n_{iter}}`
@@ -895,7 +968,7 @@ to see how close the algorithm gets to the exact step.
 The list of intermediate steps during the algorithm can be obtained
 thanks to the :meth:`~numericalderivative.GillMurraySaundersWright.get_step_history` method.
 
-.. GENERATED FROM PYTHON SOURCE LINES 515-522
+.. GENERATED FROM PYTHON SOURCE LINES 580-587
 
 In the next example, we print the intermediate steps k during
 the bissection algorithm that searches for a step such
@@ -905,7 +978,7 @@ The algorithm has two different methods to update the step:
 - using the mean,
 - using the mean in the logarithm space (this is generally much faster).
 
-.. GENERATED FROM PYTHON SOURCE LINES 522-564
+.. GENERATED FROM PYTHON SOURCE LINES 587-629
 
 .. code-block:: Python
 
@@ -916,7 +989,7 @@ The algorithm has two different methods to update the step:
         name = problem.get_name()
         x = problem.get_x()
         algorithm = nd.GillMurraySaundersWright(function, x, verbose=True)
-        step, number_of_iterations = algorithm.compute_step(
+        step, number_of_iterations = algorithm.find_step(
             kmin=kmin, kmax=kmax, logscale=logscale
         )
         step_k_history = algorithm.get_step_history()
@@ -958,11 +1031,11 @@ The algorithm has two different methods to update the step:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 565-566
+.. GENERATED FROM PYTHON SOURCE LINES 630-631
 
 First, test the logarithmic log scale.
 
-.. GENERATED FROM PYTHON SOURCE LINES 566-572
+.. GENERATED FROM PYTHON SOURCE LINES 631-637
 
 .. code-block:: Python
 
@@ -986,35 +1059,29 @@ First, test the logarithmic log scale.
  .. code-block:: none
 
     kmin = 1.000e-15, c(kmin) = inf
-    kmax = 1.000e+03, c(kmax) = 4.570e-16
-    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 1.000e-06, c(k) = 4.000e-04
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #1, kmin = 1.000e-15, kmax = 1.000e-06, k = 3.162e-11, c(k) = 3.032e+00
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #2, kmin = 3.162e-11, kmax = 1.000e-06, k = 5.623e-09, c(k) = inf
-      c(k) >= c_threshold_min: increase kmin.
-    Iter #3, kmin = 5.623e-09, kmax = 1.000e-06, k = 7.499e-08, c(k) = 7.218e-02
+    kmax = 1.000e+03, c(kmax) = 5.431e-15
+    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 1.000e-06, c(k) = 4.753e-03
       c in [0.001, 0.1]: stop!
-    Number of iterations = 3
-    History of steps k : [np.float64(1.0000000000000004e-06), np.float64(3.162277660168382e-11), np.float64(5.623413251903494e-09), np.float64(7.498942093324563e-08)]
-    Last step k : 7.498942093324563e-08
+    Number of iterations = 0
+    History of steps k : [np.float64(1.0000000000000004e-06)]
+    Last step k : 1.0000000000000004e-06
     f^(4)(x) = 0.8414709848078965
     Optimal step k for f^(2)(x) = 0.0002748213843759035
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 573-576
+.. GENERATED FROM PYTHON SOURCE LINES 638-641
 
 The previous figure shows that the algorithm does not necessarily
 reduce the distance to the optimal step when we use the logarithmic scale.
 The algorithm quickly stops and gets an error approximately equal to :math:`10^{-4}`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 578-579
+.. GENERATED FROM PYTHON SOURCE LINES 643-644
 
 Secondly, test the ordinary scale, using the mean.
 
-.. GENERATED FROM PYTHON SOURCE LINES 579-585
+.. GENERATED FROM PYTHON SOURCE LINES 644-650
 
 .. code-block:: Python
 
@@ -1038,79 +1105,75 @@ Secondly, test the ordinary scale, using the mean.
  .. code-block:: none
 
     kmin = 1.000e-15, c(kmin) = inf
-    kmax = 1.000e+03, c(kmax) = 4.570e-16
-    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 5.000e+02, c(k) = 1.062e-16
+    kmax = 1.000e+03, c(kmax) = 5.431e-15
+    Iter #0, kmin = 1.000e-15, kmax = 1.000e+03, k = 5.000e+02, c(k) = 1.262e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #1, kmin = 1.000e-15, kmax = 5.000e+02, k = 2.500e+02, c(k) = 2.635e-16
+    Iter #1, kmin = 1.000e-15, kmax = 5.000e+02, k = 2.500e+02, c(k) = 3.131e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #2, kmin = 1.000e-15, kmax = 2.500e+02, k = 1.250e+02, c(k) = 9.421e-16
+    Iter #2, kmin = 1.000e-15, kmax = 2.500e+02, k = 1.250e+02, c(k) = 1.120e-14
       c(k) < c_threshold_min: reduce kmax.
-    Iter #3, kmin = 1.000e-15, kmax = 1.250e+02, k = 6.250e+01, c(k) = 3.666e-15
+    Iter #3, kmin = 1.000e-15, kmax = 1.250e+02, k = 6.250e+01, c(k) = 4.356e-14
       c(k) < c_threshold_min: reduce kmax.
-    Iter #4, kmin = 1.000e-15, kmax = 6.250e+01, k = 3.125e+01, c(k) = 1.456e-14
+    Iter #4, kmin = 1.000e-15, kmax = 6.250e+01, k = 3.125e+01, c(k) = 1.731e-13
       c(k) < c_threshold_min: reduce kmax.
-    Iter #5, kmin = 1.000e-15, kmax = 3.125e+01, k = 1.562e+01, c(k) = 1.002e-16
+    Iter #5, kmin = 1.000e-15, kmax = 3.125e+01, k = 1.562e+01, c(k) = 1.190e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #6, kmin = 1.000e-15, kmax = 1.562e+01, k = 7.813e+00, c(k) = 2.087e-16
+    Iter #6, kmin = 1.000e-15, kmax = 1.562e+01, k = 7.813e+00, c(k) = 2.480e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #7, kmin = 1.000e-15, kmax = 7.813e+00, k = 3.906e+00, c(k) = 1.162e-16
+    Iter #7, kmin = 1.000e-15, kmax = 7.813e+00, k = 3.906e+00, c(k) = 1.381e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #8, kmin = 1.000e-15, kmax = 3.906e+00, k = 1.953e+00, c(k) = 1.457e-16
+    Iter #8, kmin = 1.000e-15, kmax = 3.906e+00, k = 1.953e+00, c(k) = 1.731e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #9, kmin = 1.000e-15, kmax = 1.953e+00, k = 9.766e-01, c(k) = 4.544e-16
+    Iter #9, kmin = 1.000e-15, kmax = 1.953e+00, k = 9.766e-01, c(k) = 5.400e-15
       c(k) < c_threshold_min: reduce kmax.
-    Iter #10, kmin = 1.000e-15, kmax = 9.766e-01, k = 4.883e-01, c(k) = 1.711e-15
+    Iter #10, kmin = 1.000e-15, kmax = 9.766e-01, k = 4.883e-01, c(k) = 2.034e-14
       c(k) < c_threshold_min: reduce kmax.
-    Iter #11, kmin = 1.000e-15, kmax = 4.883e-01, k = 2.441e-01, c(k) = 6.744e-15
+    Iter #11, kmin = 1.000e-15, kmax = 4.883e-01, k = 2.441e-01, c(k) = 8.015e-14
       c(k) < c_threshold_min: reduce kmax.
-    Iter #12, kmin = 1.000e-15, kmax = 2.441e-01, k = 1.221e-01, c(k) = 2.688e-14
+    Iter #12, kmin = 1.000e-15, kmax = 2.441e-01, k = 1.221e-01, c(k) = 3.194e-13
       c(k) < c_threshold_min: reduce kmax.
-    Iter #13, kmin = 1.000e-15, kmax = 1.221e-01, k = 6.104e-02, c(k) = 1.074e-13
+    Iter #13, kmin = 1.000e-15, kmax = 1.221e-01, k = 6.104e-02, c(k) = 1.276e-12
       c(k) < c_threshold_min: reduce kmax.
-    Iter #14, kmin = 1.000e-15, kmax = 6.104e-02, k = 3.052e-02, c(k) = 4.295e-13
+    Iter #14, kmin = 1.000e-15, kmax = 6.104e-02, k = 3.052e-02, c(k) = 5.105e-12
       c(k) < c_threshold_min: reduce kmax.
-    Iter #15, kmin = 1.000e-15, kmax = 3.052e-02, k = 1.526e-02, c(k) = 1.718e-12
+    Iter #15, kmin = 1.000e-15, kmax = 3.052e-02, k = 1.526e-02, c(k) = 2.042e-11
       c(k) < c_threshold_min: reduce kmax.
-    Iter #16, kmin = 1.000e-15, kmax = 1.526e-02, k = 7.629e-03, c(k) = 6.872e-12
+    Iter #16, kmin = 1.000e-15, kmax = 1.526e-02, k = 7.629e-03, c(k) = 8.167e-11
       c(k) < c_threshold_min: reduce kmax.
-    Iter #17, kmin = 1.000e-15, kmax = 7.629e-03, k = 3.815e-03, c(k) = 2.749e-11
+    Iter #17, kmin = 1.000e-15, kmax = 7.629e-03, k = 3.815e-03, c(k) = 3.267e-10
       c(k) < c_threshold_min: reduce kmax.
-    Iter #18, kmin = 1.000e-15, kmax = 3.815e-03, k = 1.907e-03, c(k) = 1.100e-10
+    Iter #18, kmin = 1.000e-15, kmax = 3.815e-03, k = 1.907e-03, c(k) = 1.307e-09
       c(k) < c_threshold_min: reduce kmax.
-    Iter #19, kmin = 1.000e-15, kmax = 1.907e-03, k = 9.537e-04, c(k) = 4.398e-10
+    Iter #19, kmin = 1.000e-15, kmax = 1.907e-03, k = 9.537e-04, c(k) = 5.227e-09
       c(k) < c_threshold_min: reduce kmax.
-    Iter #20, kmin = 1.000e-15, kmax = 9.537e-04, k = 4.768e-04, c(k) = 1.759e-09
+    Iter #20, kmin = 1.000e-15, kmax = 9.537e-04, k = 4.768e-04, c(k) = 2.091e-08
       c(k) < c_threshold_min: reduce kmax.
-    Iter #21, kmin = 1.000e-15, kmax = 4.768e-04, k = 2.384e-04, c(k) = 7.037e-09
+    Iter #21, kmin = 1.000e-15, kmax = 4.768e-04, k = 2.384e-04, c(k) = 8.363e-08
       c(k) < c_threshold_min: reduce kmax.
-    Iter #22, kmin = 1.000e-15, kmax = 2.384e-04, k = 1.192e-04, c(k) = 2.815e-08
+    Iter #22, kmin = 1.000e-15, kmax = 2.384e-04, k = 1.192e-04, c(k) = 3.345e-07
       c(k) < c_threshold_min: reduce kmax.
-    Iter #23, kmin = 1.000e-15, kmax = 1.192e-04, k = 5.960e-05, c(k) = 1.126e-07
+    Iter #23, kmin = 1.000e-15, kmax = 1.192e-04, k = 5.960e-05, c(k) = 1.338e-06
       c(k) < c_threshold_min: reduce kmax.
-    Iter #24, kmin = 1.000e-15, kmax = 5.960e-05, k = 2.980e-05, c(k) = 4.504e-07
+    Iter #24, kmin = 1.000e-15, kmax = 5.960e-05, k = 2.980e-05, c(k) = 5.352e-06
       c(k) < c_threshold_min: reduce kmax.
-    Iter #25, kmin = 1.000e-15, kmax = 2.980e-05, k = 1.490e-05, c(k) = 1.801e-06
+    Iter #25, kmin = 1.000e-15, kmax = 2.980e-05, k = 1.490e-05, c(k) = 2.141e-05
       c(k) < c_threshold_min: reduce kmax.
-    Iter #26, kmin = 1.000e-15, kmax = 1.490e-05, k = 7.451e-06, c(k) = 7.206e-06
+    Iter #26, kmin = 1.000e-15, kmax = 1.490e-05, k = 7.451e-06, c(k) = 8.563e-05
       c(k) < c_threshold_min: reduce kmax.
-    Iter #27, kmin = 1.000e-15, kmax = 7.451e-06, k = 3.725e-06, c(k) = 2.882e-05
+    Iter #27, kmin = 1.000e-15, kmax = 7.451e-06, k = 3.725e-06, c(k) = 3.425e-04
       c(k) < c_threshold_min: reduce kmax.
-    Iter #28, kmin = 1.000e-15, kmax = 3.725e-06, k = 1.863e-06, c(k) = 1.153e-04
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #29, kmin = 1.000e-15, kmax = 1.863e-06, k = 9.313e-07, c(k) = 4.612e-04
-      c(k) < c_threshold_min: reduce kmax.
-    Iter #30, kmin = 1.000e-15, kmax = 9.313e-07, k = 4.657e-07, c(k) = 1.845e-03
+    Iter #28, kmin = 1.000e-15, kmax = 3.725e-06, k = 1.863e-06, c(k) = 1.370e-03
       c in [0.001, 0.1]: stop!
-    Number of iterations = 30
-    History of steps k : [500.0, 250.0, 125.0, 62.5, 31.25, 15.625, 7.812500000000001, 3.906250000000001, 1.9531250000000009, 0.976562500000001, 0.488281250000001, 0.244140625000001, 0.122070312500001, 0.061035156250001, 0.030517578125001, 0.015258789062501, 0.007629394531250999, 0.0038146972656259996, 0.0019073486328134999, 0.00095367431640725, 0.00047683715820412496, 0.0002384185791025625, 0.00011920928955178124, 5.960464477639062e-05, 2.980232238869531e-05, 1.4901161194847655e-05, 7.450580597923828e-06, 3.725290299461914e-06, 1.862645150230957e-06, 9.313225756154784e-07, 4.656612883077392e-07]
-    Last step k : 4.656612883077392e-07
+    Number of iterations = 28
+    History of steps k : [500.0, 250.0, 125.0, 62.5, 31.25, 15.625, 7.812500000000001, 3.906250000000001, 1.9531250000000009, 0.976562500000001, 0.488281250000001, 0.244140625000001, 0.122070312500001, 0.061035156250001, 0.030517578125001, 0.015258789062501, 0.007629394531250999, 0.0038146972656259996, 0.0019073486328134999, 0.00095367431640725, 0.00047683715820412496, 0.0002384185791025625, 0.00011920928955178124, 5.960464477639062e-05, 2.980232238869531e-05, 1.4901161194847655e-05, 7.450580597923828e-06, 3.725290299461914e-06, 1.862645150230957e-06]
+    Last step k : 1.862645150230957e-06
     f^(4)(x) = 0.8414709848078965
     Optimal step k for f^(2)(x) = 0.0002748213843759035
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 586-589
+.. GENERATED FROM PYTHON SOURCE LINES 651-654
 
 In the previous plot, we see that the error first decreases
 down to an error approximately equal to :math:`10^{-4}`.
@@ -1119,7 +1182,7 @@ Then the error slightly increases before the algorithm stops.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.780 seconds)
+   **Total running time of the script:** (0 minutes 2.633 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright.py:

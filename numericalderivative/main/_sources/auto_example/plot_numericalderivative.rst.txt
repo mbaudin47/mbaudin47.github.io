@@ -151,11 +151,11 @@ SteplemanWinarsky
 In order to compute the first derivative, we use the :class:`~numericalderivative.SteplemanWinarsky`.
 This class uses the central finite difference formula.
 In order to compute a step which is approximately optimal,
-we use the :meth:`~numericalderivative.SteplemanWinarsky.compute_step` method.
+we use the :meth:`~numericalderivative.SteplemanWinarsky.find_step` method.
 Then we use the :meth:`~numericalderivative.SteplemanWinarsky.compute_first_derivative` method
 to compute the approximate first derivative and use the approximately optimal
 step as input argument.
-The input argument of :meth:`~numericalderivative.SteplemanWinarsky.compute_step` is
+The input argument of :meth:`~numericalderivative.SteplemanWinarsky.find_step` is
 an upper bound of the optimal step (but this is not the case for all
 algorithms).
 
@@ -166,7 +166,7 @@ algorithms).
     h0 = 1.0e5  # An upper bound of the truly optimal step
     x = 1.0e0
     algorithm = nd.SteplemanWinarsky(scaled_exp, x)
-    h_optimal, iterations = algorithm.compute_step(h0)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h =", h_optimal)
     print("iterations =", iterations)
@@ -217,7 +217,7 @@ optimal step for the approximation of the third derivative.
 
     x = 1.0e0
     algorithm = nd.DumontetVignes(scaled_exp, x)
-    h_optimal, _ = algorithm.compute_step(
+    h_optimal, _ = algorithm.find_step(
         kmin=1.0e-2,
         kmax=1.0e2,
     )
@@ -242,13 +242,13 @@ optimal step for the approximation of the third derivative.
 
  .. code-block:: none
 
-    Optimum h = 31.05547598808822
+    Optimum h = 14.378359910724852
     iterations = 8
-    Function evaluations = 21
-    f_prime_approx =  -9.99999000162036e-07
+    Function evaluations = 24
+    f_prime_approx =  -9.999990000345462e-07
     exact_f_prime_value =  -9.999990000005e-07
-    Absolute error = 1.615e-16
-    Relative error = 1.615e-10
+    Absolute error = 3.405e-17
+    Relative error = 3.405e-11
 
 
 
@@ -274,7 +274,7 @@ optimal step for the approximation of the second derivative.
     algorithm = nd.GillMurraySaundersWright(scaled_exp, x, absolute_precision)
     kmin = 1.0e-2
     kmax = 1.0e7
-    step, number_of_iterations = algorithm.compute_step(kmin, kmax)
+    step, number_of_iterations = algorithm.find_step(kmin, kmax)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h for f'=", step)
     print("Function evaluations =", number_of_function_evaluations)
@@ -296,12 +296,12 @@ optimal step for the approximation of the second derivative.
 
  .. code-block:: none
 
-    Optimum h for f'= 0.06324692604098761
+    Optimum h for f'= 0.06324695766445854
     Function evaluations = 12
-    f_prime_approx =  -9.999989694153764e-07
+    f_prime_approx =  -9.999989679432984e-07
     exact_f_prime_value =  -9.999990000005e-07
-    Absolute error = 3.059e-14
-    Relative error = 3.059e-08
+    Absolute error = 3.206e-14
+    Relative error = 3.206e-08
 
 
 
@@ -348,7 +348,7 @@ Compute the derivative of a function with extra input arguments.
     x = 1.0e0
     scaling = 1.0e6
     algorithm = nd.SteplemanWinarsky(my_exp_with_args, x, args=[scaling])
-    h_optimal, iterations = algorithm.compute_step(h0)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h for f''=", h_optimal)
     print("iterations =", iterations)

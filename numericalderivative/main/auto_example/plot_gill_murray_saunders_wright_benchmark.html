@@ -59,17 +59,51 @@ static method, which returns a list of problems.</p>
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
 <span class="kn">import</span> <span class="nn">tabulate</span>
 <span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+</pre></div>
+</div>
+<p>The next function is an oracle which returns the absolute precision
+of the value of the function.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">absolute_precision_oracle</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the absolute precision of the function value</span>
+
+<span class="sd">    This oracle may fail if the function value is zero.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    function : function</span>
+<span class="sd">        The function</span>
+<span class="sd">    x : float</span>
+<span class="sd">        The test point</span>
+<span class="sd">    relative_precision : float, &gt; 0, optional</span>
+<span class="sd">        The relative precision of evaluation of f.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    absolute_precision : float, &gt;= 0</span>
+<span class="sd">        The absolute precision</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">function_value</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">function_value</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The function value is zero: &quot;</span> <span class="s2">&quot;cannot compute the absolute precision&quot;</span>
+        <span class="p">)</span>
+    <span class="n">absolute_precision</span> <span class="o">=</span> <span class="n">relative_precision</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">function_value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">absolute_precision</span>
 
 
 <span class="k">class</span> <span class="nc">GillMurraySaundersWrightMethod</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a GillMurraySaundersWright method to compute the approximate first derivative</span>
 
+<span class="sd">        Notice that the algorithm is parametrized here based on</span>
+<span class="sd">        the relative precision of the value of the function f.</span>
+<span class="sd">        Then an oracle computes the absolute precision depending on</span>
+<span class="sd">        the function, the point x and the relative precision.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        relative_precision : float, &gt; 0, optional</span>
-<span class="sd">            The relative precision of evaluation of f.</span>
 <span class="sd">        kmin : float, kmin &gt; 0</span>
 <span class="sd">            A minimum bound for the finite difference step of the third derivative.</span>
 <span class="sd">            If no value is provided, the default is to compute the smallest</span>
@@ -78,10 +112,12 @@ static method, which returns a list of problems.</p>
 <span class="sd">            A maximum bound for the finite difference step of the third derivative.</span>
 <span class="sd">            If no value is provided, the default is to compute the largest</span>
 <span class="sd">            possible kmax using number_of_digits and x.</span>
+<span class="sd">        relative_precision : float, &gt; 0, optional</span>
+<span class="sd">            The relative precision of evaluation of f.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span> <span class="o">=</span> <span class="n">relative_precision</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kmin</span> <span class="o">=</span> <span class="n">kmin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kmax</span> <span class="o">=</span> <span class="n">kmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span> <span class="o">=</span> <span class="n">relative_precision</span>
 
     <span class="k">def</span> <span class="nf">compute_first_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -101,10 +137,13 @@ static method, which returns a list of problems.</p>
 <span class="sd">        number_of_function_evaluations : int</span>
 <span class="sd">            The number of function evaluations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span>
-            <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relative_precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span>
+        <span class="n">absolute_precision</span> <span class="o">=</span> <span class="n">absolute_precision_oracle</span><span class="p">(</span>
+            <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_precision</span>
         <span class="p">)</span>
-        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GillMurraySaundersWright</span><span class="p">(</span>
+            <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">absolute_precision</span><span class="o">=</span><span class="n">absolute_precision</span>
+        <span class="p">)</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">find_step</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
         <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
         <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">f_prime_approx</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span>
@@ -120,8 +159,8 @@ static method, which returns a list of problems.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
 <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
 <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
-<span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-16</span>
-<span class="n">method</span> <span class="o">=</span> <span class="n">GillMurraySaundersWrightMethod</span><span class="p">(</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+<span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">GillMurraySaundersWrightMethod</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">)</span>
 <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">benchmark_method</span><span class="p">(</span>
     <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">(),</span>
     <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">(),</span>
@@ -145,27 +184,27 @@ f^(3)(x) = 2.718281828459045
 f^(4)(x) = 2.718281828459045
 f^(5)(x) = 2.718281828459045
 
-x = 0.000, abs. error = 7.834e-09, rel. error = 7.834e-09, Func. eval. = 16
-x = 0.632, abs. error = 1.490e-08, rel. error = 7.923e-09, Func. eval. = 16
-x = 1.263, abs. error = 2.406e-08, rel. error = 6.803e-09, Func. eval. = 16
-x = 1.895, abs. error = 7.543e-08, rel. error = 1.134e-08, Func. eval. = 16
-x = 2.526, abs. error = 9.082e-08, rel. error = 7.262e-09, Func. eval. = 16
-x = 3.158, abs. error = 3.543e-07, rel. error = 1.506e-08, Func. eval. = 16
-x = 3.789, abs. error = 5.208e-07, rel. error = 1.177e-08, Func. eval. = 16
-x = 4.421, abs. error = 9.058e-07, rel. error = 1.089e-08, Func. eval. = 16
-x = 5.053, abs. error = 2.098e-06, rel. error = 1.341e-08, Func. eval. = 16
-x = 5.684, abs. error = 3.223e-06, rel. error = 1.095e-08, Func. eval. = 16
-x = 6.316, abs. error = 9.323e-06, rel. error = 1.685e-08, Func. eval. = 16
-x = 6.947, abs. error = 7.871e-06, rel. error = 7.565e-09, Func. eval. = 16
-x = 7.579, abs. error = 1.835e-05, rel. error = 9.377e-09, Func. eval. = 16
-x = 8.211, abs. error = 3.103e-05, rel. error = 8.432e-09, Func. eval. = 16
-x = 8.842, abs. error = 5.438e-05, rel. error = 7.858e-09, Func. eval. = 16
-x = 9.474, abs. error = 8.491e-05, rel. error = 6.525e-09, Func. eval. = 16
-x = 10.105, abs. error = 1.934e-04, rel. error = 7.901e-09, Func. eval. = 16
-x = 10.737, abs. error = 3.913e-04, rel. error = 8.502e-09, Func. eval. = 16
-x = 11.368, abs. error = 5.613e-04, rel. error = 6.486e-09, Func. eval. = 16
-x = 12.000, abs. error = 2.590e-03, rel. error = 1.591e-08, Func. eval. = 16
-Average relative error = 9.933156858517556e-09
+x = 0.000, abs. error = 3.252e-08, rel. error = 3.252e-08, Func. eval. = 16
+x = 0.632, abs. error = 5.986e-08, rel. error = 3.183e-08, Func. eval. = 16
+x = 1.263, abs. error = 1.075e-07, rel. error = 3.040e-08, Func. eval. = 16
+x = 1.895, abs. error = 2.074e-07, rel. error = 3.118e-08, Func. eval. = 16
+x = 2.526, abs. error = 3.938e-07, rel. error = 3.148e-08, Func. eval. = 16
+x = 3.158, abs. error = 7.683e-07, rel. error = 3.267e-08, Func. eval. = 16
+x = 3.789, abs. error = 1.399e-06, rel. error = 3.163e-08, Func. eval. = 16
+x = 4.421, abs. error = 2.819e-06, rel. error = 3.389e-08, Func. eval. = 16
+x = 5.053, abs. error = 4.939e-06, rel. error = 3.157e-08, Func. eval. = 16
+x = 5.684, abs. error = 9.331e-06, rel. error = 3.172e-08, Func. eval. = 16
+x = 6.316, abs. error = 1.710e-05, rel. error = 3.090e-08, Func. eval. = 16
+x = 6.947, abs. error = 3.371e-05, rel. error = 3.240e-08, Func. eval. = 16
+x = 7.579, abs. error = 6.325e-05, rel. error = 3.233e-08, Func. eval. = 16
+x = 8.211, abs. error = 1.126e-04, rel. error = 3.060e-08, Func. eval. = 16
+x = 8.842, abs. error = 2.160e-04, rel. error = 3.122e-08, Func. eval. = 16
+x = 9.474, abs. error = 4.027e-04, rel. error = 3.095e-08, Func. eval. = 16
+x = 10.105, abs. error = 7.612e-04, rel. error = 3.111e-08, Func. eval. = 16
+x = 10.737, abs. error = 1.391e-03, rel. error = 3.023e-08, Func. eval. = 16
+x = 11.368, abs. error = 2.736e-03, rel. error = 3.161e-08, Func. eval. = 16
+x = 12.000, abs. error = 5.389e-03, rel. error = 3.311e-08, Func. eval. = 16
+Average relative error = 3.1666900098067314e-08
 Average number of function evaluations = 16.0
 </pre></div>
 </div>
@@ -175,26 +214,26 @@ Average number of function evaluations = 16.0
 <tr><th style="text-align: right;">        x</th><th style="text-align: right;">  Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">7.8336e-09 </td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">7.92349e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">6.8029e-09 </td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">1.13422e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">7.26172e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">1.50612e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">1.17732e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">1.08892e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">1.34107e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">1.09548e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">1.68514e-08</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">7.56484e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">9.37713e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">8.43229e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">7.85831e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">6.52532e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">7.9011e-09 </td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">8.50247e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">6.48593e-09</td><td style="text-align: right;">        16</td></tr>
-<tr><td style="text-align: right;">12       </td><td style="text-align: right;">1.59114e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">3.25181e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">3.18296e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">3.03995e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">3.11816e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">3.14818e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">3.26655e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">3.16328e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">3.38876e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">3.15726e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">3.17182e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">3.08999e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">3.24025e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">3.23281e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">3.06016e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">3.1215e-08 </td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">3.09499e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">3.11055e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">3.02255e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">3.16141e-08</td><td style="text-align: right;">        16</td></tr>
+<tr><td style="text-align: right;">12       </td><td style="text-align: right;">3.31086e-08</td><td style="text-align: right;">        16</td></tr>
 </tbody>
 </table>
 </div>
@@ -222,7 +261,7 @@ Average number of function evaluations = 16.0
 </div>
 <p>Benchmark the <a class="reference internal" href="../user_manual/_generated/numericalderivative.GillMurraySaundersWright.html#numericalderivative.GillMurraySaundersWright" title="numericalderivative.GillMurraySaundersWright"><code class="xref py py-class docutils literal notranslate"><span class="pre">GillMurraySaundersWright</span></code></a> class
 on a collection of problems.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># This value can significantly change the results</span>
 <span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
 <span class="n">delta_x</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
@@ -245,7 +284,7 @@ on a collection of problems.</p>
         <span class="n">upper_x_bound</span> <span class="o">-=</span> <span class="n">delta_x</span>
     <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lower_x_bound</span><span class="p">,</span> <span class="n">upper_x_bound</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">method</span> <span class="o">=</span> <span class="n">GillMurraySaundersWrightMethod</span><span class="p">(</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">)</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">GillMurraySaundersWrightMethod</span><span class="p">(</span><span class="n">kmin</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">)</span>
     <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">benchmark_method</span><span class="p">(</span>
         <span class="n">function</span><span class="p">,</span>
         <span class="n">first_derivative</span><span class="p">,</span>
@@ -334,7 +373,7 @@ The same problem appears at the point <span class="math notranslate nohighlight"
 This point is not included in the test set if the number of points is even
 (e.g. with <cite>number_of_test_points = 100</cite>), but it might appear if the
 number of test points is odd.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.061 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.063 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-gill-murray-saunders-wright-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/429b76c1b8dff6c25a13057506f2adfd/plot_gill_murray_saunders_wright_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_gill_murray_saunders_wright_benchmark.ipynb</span></code></a></p>

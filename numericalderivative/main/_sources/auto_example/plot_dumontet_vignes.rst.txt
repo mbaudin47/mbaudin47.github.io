@@ -52,7 +52,7 @@ Use the method on a simple problem
 
 In the next example, we use the algorithm on the exponential function.
 We create the :class:`~numericalderivative.DumontetVignes` algorithm using the function and the point x.
-Then we use the :meth:`~numericalderivative.DumontetVignes.compute_step()` method to compute the step,
+Then we use the :meth:`~numericalderivative.DumontetVignes.find_step()` method to compute the step,
 using an upper bound of the step as an initial point of the algorithm.
 Finally, use the :meth:`~numericalderivative.DumontetVignes.compute_first_derivative()` method to compute
 an approximate value of the first derivative using finite differences.
@@ -67,7 +67,7 @@ can be used to get the number of function evaluations.
     kmin = 1.0e-10
     kmax = 1.0e0
     algorithm = nd.DumontetVignes(np.exp, x, verbose=True)
-    step, number_of_iterations = algorithm.compute_step(kmin=kmin, kmax=kmax)
+    step, number_of_iterations = algorithm.find_step(kmin=kmin, kmax=kmax)
     f_prime_approx = algorithm.compute_first_derivative(step)
     feval = algorithm.get_number_of_function_evaluations()
     f_prime_exact = np.exp(x)  # Since the derivative of exp is exp.
@@ -86,11 +86,11 @@ can be used to get the number of function evaluations.
  .. code-block:: none
 
     x = 1.000e+00
-    iteration_maximum = 50
+    iteration_maximum = 53
     kmin =  1e-10
     kmax =  1.0
     L(kmin) =  -1.0
-    L(kmax) =  1.000000000000107
+    L(kmax) =  1.0000000000000113
     + Iteration = 0, kmin = 1.000e-10, kmax = 1.000e+00
       k = 5.000e-01, f3inf = 2.892e+00, f3sup = 2.892e+00, ell = 1.000e+00
       k is too large : reduce kmax
@@ -122,29 +122,33 @@ can be used to get the number of function evaluations.
       k = 9.766e-04, f3inf = 2.718e+00, f3sup = 2.718e+00, ell = 1.000e+00
       k is too large : reduce kmax
     + Iteration = 10, kmin = 1.000e-10, kmax = 9.766e-04
-      k = 4.883e-04, f3inf = 2.718e+00, f3sup = 2.719e+00, ell = 1.001e+00
+      k = 4.883e-04, f3inf = 2.718e+00, f3sup = 2.718e+00, ell = 1.000e+00
       k is too large : reduce kmax
     + Iteration = 11, kmin = 1.000e-10, kmax = 4.883e-04
-      k = 2.441e-04, f3inf = 2.713e+00, f3sup = 2.724e+00, ell = 1.004e+00
+      k = 2.441e-04, f3inf = 2.718e+00, f3sup = 2.719e+00, ell = 1.000e+00
       k is too large : reduce kmax
     + Iteration = 12, kmin = 1.000e-10, kmax = 2.441e-04
-      k = 1.221e-04, f3inf = 2.673e+00, f3sup = 2.763e+00, ell = 1.034e+00
+      k = 1.221e-04, f3inf = 2.713e+00, f3sup = 2.723e+00, ell = 1.004e+00
       k is too large : reduce kmax
     + Iteration = 13, kmin = 1.000e-10, kmax = 1.221e-04
-      k = 6.104e-05, f3inf = 2.359e+00, f3sup = 3.078e+00, ell = 1.305e+00
+      k = 6.104e-05, f3inf = 2.680e+00, f3sup = 2.758e+00, ell = 1.029e+00
       k is too large : reduce kmax
     + Iteration = 14, kmin = 1.000e-10, kmax = 6.104e-05
-      k = 3.052e-05, f3inf = -1.562e-01, f3sup = 5.594e+00, ell = -3.580e+01
-      k is too small : increase kmin
-    + Iteration = 15, kmin = 3.052e-05, kmax = 6.104e-05
-      k = 4.578e-05, f3inf = 1.870e+00, f3sup = 3.574e+00, ell = 1.911e+00
+      k = 3.052e-05, f3inf = 2.406e+00, f3sup = 3.031e+00, ell = 1.260e+00
       k is too large : reduce kmax
-    + Iteration = 16, kmin = 3.052e-05, kmax = 4.578e-05
-      k = 3.815e-05, f3inf = 1.232e+00, f3sup = 4.176e+00, ell = 3.390e+00
+    + Iteration = 15, kmin = 1.000e-10, kmax = 3.052e-05
+    Warning: f3inf is zero!
+      k = 1.526e-05, f3inf = 0.000e+00, f3sup = 5.000e+00, ell = inf
+      k is too small : increase kmin
+    + Iteration = 16, kmin = 1.526e-05, kmax = 3.052e-05
+      k = 2.289e-05, f3inf = 1.926e+00, f3sup = 3.407e+00, ell = 1.769e+00
+      k is too large : reduce kmax
+    + Iteration = 17, kmin = 1.526e-05, kmax = 2.289e-05
+      k = 1.907e-05, f3inf = 1.536e+00, f3sup = 4.096e+00, ell = 2.667e+00
       k is OK : stop
-    Computed step = 3.113e-05
-    Number of iterations = 16
-    f_prime_approx = 2.7182818288957686
+    Computed step = 1.021e-05
+    Number of iterations = 17
+    f_prime_approx = 2.7182818285157593
     f_prime_exact = 2.718281828459045
 
 
@@ -159,7 +163,7 @@ Useful functions
 
 These functions will be used later in this example.
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-179
+.. GENERATED FROM PYTHON SOURCE LINES 59-178
 
 .. code-block:: Python
 
@@ -238,9 +242,8 @@ These functions will be used later in this example.
         # 2. Algorithm to detect h*
         algorithm = nd.DumontetVignes(function, x, relative_precision=relative_precision)
         print("Exact f'''(x) = %.3e" % (function_third_derivative(x)))
-        estim_step, _ = algorithm.compute_step(
+        estim_step, _ = algorithm.find_step(
             iteration_maximum=iteration_maximum,
-            markdown=False,
             kmin=kmin,
             kmax=kmax,
         )
@@ -290,7 +293,7 @@ These functions will be used later in this example.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-235
+.. GENERATED FROM PYTHON SOURCE LINES 179-249
 
 .. code-block:: Python
 
@@ -304,7 +307,8 @@ These functions will be used later in this example.
         kmin=None,
         kmax=None,
         y_logscale=False,
-        plot_L_constants=False,
+        plot_L_constants=True,
+        epsilon_ell=1.0e-5,
     ):
         """Plot the ell ratio depending on the step size.
 
@@ -325,18 +329,32 @@ These functions will be used later in this example.
         for i in range(number_of_points):
             ell_array[i], _, _ = compute_ell(function, x, k_array[i], relative_precision)
 
-        pl.figure()
+        fig = pl.figure()
         pl.plot(k_array, ell_array, label="L")
         if plot_L_constants:
             indices = np.isfinite(ell_array)
             maximum_finite_ell = np.max(ell_array[indices])
-            print("Maximum L = %.3e" % (maximum_finite_ell))
-            if maximum_finite_ell < 1.0:
-                pl.plot(k_array, [ell_1] * number_of_points, "--", label="$L_1$")
-                pl.plot(k_array, [ell_2] * number_of_points, ":", label="$L_2$")
+            print(
+                f"maximum_finite_ell = {maximum_finite_ell}, "
+                f"maximum_finite_ell - 1 = {maximum_finite_ell - 1}"
+            )
+
+            if maximum_finite_ell <= 1.0 + epsilon_ell:
+                print("maximum L is lower or equal to 1")
+                pl.plot(
+                    k_array, [ell_1] * number_of_points, "--", label=f"$L_1$ = {ell_1:.3f}"
+                )
+                pl.plot(
+                    k_array, [ell_2] * number_of_points, ":", label=f"$L_2$ = {ell_2:.3f}"
+                )
             else:
-                pl.plot(k_array, [ell_3] * number_of_points, ":", label="$L_3$")
-                pl.plot(k_array, [ell_4] * number_of_points, "--", label="$L_4$")
+                print("maximum L is greater than 1")
+                pl.plot(
+                    k_array, [ell_3] * number_of_points, ":", label=f"$L_3$ = {ell_3:.3f}"
+                )
+                pl.plot(
+                    k_array, [ell_4] * number_of_points, "--", label=f"$L_4$ = {ell_4:.3f}"
+                )
             pl.legend(bbox_to_anchor=(1.0, 1.0))
         pl.title(f"{name}, x = {x:.2e}, p = {relative_precision:.2e}")
         pl.xlabel("k")
@@ -356,12 +374,12 @@ These functions will be used later in this example.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 236-238
+.. GENERATED FROM PYTHON SOURCE LINES 250-252
 
 Plot the L ratio for various problems
 -------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 240-248
+.. GENERATED FROM PYTHON SOURCE LINES 254-262
 
 The L ratio is the criterion used in (Dumontet & Vignes, 1977) algorithm
 to find a satisfactory step k.
@@ -372,19 +390,17 @@ method.
 In the next examples, we plot the L ratio depending on k
 for different functions.
 
-.. GENERATED FROM PYTHON SOURCE LINES 250-251
+.. GENERATED FROM PYTHON SOURCE LINES 264-265
 
 1. Consider the :class:`~numericalderivative.ExponentialProblem` function.
 
-.. GENERATED FROM PYTHON SOURCE LINES 251-258
+.. GENERATED FROM PYTHON SOURCE LINES 265-270
 
 .. code-block:: Python
 
 
-    number_of_points = 200
-    relative_precision = 1.0e-15
-    x = 1.0
     problem = nd.ExponentialProblem()
+    x = problem.get_x()
     problem
 
 
@@ -411,10 +427,12 @@ for different functions.
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 259-272
+.. GENERATED FROM PYTHON SOURCE LINES 271-287
 
 .. code-block:: Python
 
+    number_of_points = 200
+    relative_precision = 1.0e-15
     number_of_digits = 53
     plot_ell_ratio(
         problem.get_name(),
@@ -423,10 +441,11 @@ for different functions.
         number_of_points,
         number_of_digits,
         relative_precision,
-        kmin=1.55e-5,
-        kmax=1.0e-4,
+        kmin=1.0e-7,
+        kmax=1.0e-3,
         plot_L_constants=True,
     )
+    _ = pl.ylim(-20.0, 20.0)
 
 
 
@@ -441,22 +460,22 @@ for different functions.
 
  .. code-block:: none
 
-    Maximum L = 2.100e+01
+    maximum_finite_ell = 20.999999999999996, maximum_finite_ell - 1 = 19.999999999999996
+    maximum L is greater than 1
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 273-274
+.. GENERATED FROM PYTHON SOURCE LINES 288-290
 
-Consider a larger interval of K.
+See how the figure changes when the relative precision is
+increased: use 1.e-14 (instead of 1.e-15 in the previous example).
 
-.. GENERATED FROM PYTHON SOURCE LINES 276-294
+.. GENERATED FROM PYTHON SOURCE LINES 292-307
 
 .. code-block:: Python
 
-    relative_precision = 1.0e-10
-    x = 1.0
-    problem = nd.ExponentialProblem()
+    relative_precision = 1.0e-14
     number_of_digits = 53
     plot_ell_ratio(
         problem.get_name(),
@@ -465,18 +484,17 @@ Consider a larger interval of K.
         number_of_points,
         number_of_digits,
         relative_precision,
-        kmin=5.0e-5,
-        kmax=1.0e-2,
-        y_logscale=False,
+        kmin=1.0e-7,
+        kmax=1.0e-3,
         plot_L_constants=True,
     )
-    pl.ylim(-20.0, 20.0)
+    _ = pl.ylim(-20.0, 20.0)
 
 
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_002.png
-   :alt: exp, x = 1.00e+00, p = 1.00e-10
+   :alt: exp, x = 1.00e+00, p = 1.00e-14
    :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_002.png
    :class: sphx-glr-single-img
 
@@ -485,24 +503,22 @@ Consider a larger interval of K.
 
  .. code-block:: none
 
-    Maximum L = 4.501e+01
-
-    (-20.0, 20.0)
-
+    maximum_finite_ell = 15.153846153846153, maximum_finite_ell - 1 = 14.153846153846153
+    maximum L is greater than 1
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 295-297
 
-See how the figure changes when the relative precision is
-decreased: use 1.e-14 (instead of 1.e-10 in the previous example).
 
-.. GENERATED FROM PYTHON SOURCE LINES 299-314
+.. GENERATED FROM PYTHON SOURCE LINES 308-310
+
+See what happens when the relative precision is reduced:
+here 1.e-16 instead of 1.e-14 in the previous example.
+
+.. GENERATED FROM PYTHON SOURCE LINES 312-327
 
 .. code-block:: Python
 
-    relative_precision = 1.0e-14
-    x = 1.0
-    problem = nd.ExponentialProblem()
+    relative_precision = 1.0e-16
     number_of_digits = 53
     plot_ell_ratio(
         problem.get_name(),
@@ -511,89 +527,18 @@ decreased: use 1.e-14 (instead of 1.e-10 in the previous example).
         number_of_points,
         number_of_digits,
         relative_precision,
-        kmin=4.0e-5,
-        kmax=1.0e-2,
+        kmin=1.0e-7,
+        kmax=1.0e-3,
     )
+    _ = pl.ylim(-20.0, 20.0)
+
 
 
 
 
 .. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_003.png
-   :alt: exp, x = 1.00e+00, p = 1.00e-14
+   :alt: exp, x = 1.00e+00, p = 1.00e-16
    :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_003.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 315-316
-
-See what happens at x = 4 (instead of x = 1 in the previous example).
-
-.. GENERATED FROM PYTHON SOURCE LINES 318-333
-
-.. code-block:: Python
-
-    relative_precision = 1.0e-16
-    x = 4.0  # A carefully chosen point
-    problem = nd.ExponentialProblem()
-    number_of_digits = 53
-    plot_ell_ratio(
-        problem.get_name(),
-        problem.get_function(),
-        x,
-        number_of_points,
-        number_of_digits,
-        relative_precision,
-        kmin=1.0e-5,
-        kmax=1.0e-2,
-    )
-
-
-
-
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_004.png
-   :alt: exp, x = 4.00e+00, p = 1.00e-16
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_004.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 334-335
-
-Consider a larger interval of k.
-
-.. GENERATED FROM PYTHON SOURCE LINES 337-355
-
-.. code-block:: Python
-
-    relative_precision = 1.0e-14
-    x = 4.0  # A carefully chosen point
-    problem = nd.ExponentialProblem()
-    number_of_digits = 53
-    plot_ell_ratio(
-        problem.get_name(),
-        problem.get_function(),
-        x,
-        number_of_points,
-        number_of_digits,
-        relative_precision,
-        kmin=3.2e-5,
-        kmax=1.0e-2,
-        y_logscale=False,
-        plot_L_constants=True,
-    )
-    pl.ylim(-20.0, 20.0)
-
-
-
-
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_005.png
-   :alt: exp, x = 4.00e+00, p = 1.00e-14
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_005.png
    :class: sphx-glr-single-img
 
 
@@ -601,24 +546,30 @@ Consider a larger interval of k.
 
  .. code-block:: none
 
-    Maximum L = 2.420e+01
-
-    (-20.0, 20.0)
-
+    maximum_finite_ell = 3.0, maximum_finite_ell - 1 = 2.0
+    maximum L is greater than 1
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 356-358
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 328-331
+
+We see that it is difficult to find a value of k such that
+L(k) is in the required interval when the relative precision is too
+close to zero.
+
+.. GENERATED FROM PYTHON SOURCE LINES 333-335
 
 Plot the error depending on the step
 ------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 360-363
+.. GENERATED FROM PYTHON SOURCE LINES 337-340
 
 In the next examples, we plot the error of the approximation of the
 first derivative by the finite difference formula depending
 on the step size.
 
-.. GENERATED FROM PYTHON SOURCE LINES 365-371
+.. GENERATED FROM PYTHON SOURCE LINES 342-348
 
 .. code-block:: Python
 
@@ -641,7 +592,7 @@ on the step size.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 372-391
+.. GENERATED FROM PYTHON SOURCE LINES 349-368
 
 .. code-block:: Python
 
@@ -667,9 +618,9 @@ on the step size.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_006.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_004.png
    :alt: Finite difference for exp
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_006.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_004.png
    :class: sphx-glr-single-img
 
 
@@ -679,33 +630,33 @@ on the step size.
 
     +  exp
     Exact f'''(x) = 6.034e+01
-    Function evaluations = 51
+    Function evaluations = 50
     Estim. derivative = 6.034e+01
     Exact. derivative = 6.034e+01
-    Exact abs. error  = 2.298e-09
-    Exact rel. error  = 3.808e-11
+    Exact abs. error  = 2.184e-10
+    Exact rel. error  = 3.619e-12
     Exact step     = 1.442e-05
-    Estimated step = 1.453e-05
+    Estimated step = 3.705e-06
     Optimal abs. error = 6.276e-09
     Optimal rel. error = 1.040e-10
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 392-397
+.. GENERATED FROM PYTHON SOURCE LINES 369-374
 
 In the previous figure, we see that the error reaches
 a minimum, which is indicated by the green point labeled :math:`h^\star`.
 The vertical dotted line represents the approximately optimal step :math:`\widetilde{h}`
-returned by the :meth:`~numericalderivative.DumontetVignes.compute_step` method.
+returned by the :meth:`~numericalderivative.DumontetVignes.find_step` method.
 We see that the method correctly computes an approximation of the the optimal step.
 
-.. GENERATED FROM PYTHON SOURCE LINES 400-402
+.. GENERATED FROM PYTHON SOURCE LINES 377-379
 
 Consider the :class:`~numericalderivative.ScaledExponentialProblem`.
 First, we plot the L ratio.
 
-.. GENERATED FROM PYTHON SOURCE LINES 402-418
+.. GENERATED FROM PYTHON SOURCE LINES 379-395
 
 .. code-block:: Python
 
@@ -728,9 +679,9 @@ First, we plot the L ratio.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_007.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_005.png
    :alt: scaled exp, x = 1.00e+00, p = 1.00e-14
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_007.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_005.png
    :class: sphx-glr-single-img
 
 
@@ -738,16 +689,17 @@ First, we plot the L ratio.
 
  .. code-block:: none
 
-    Maximum L = 9.422e-01
+    maximum_finite_ell = 0.9422164726175075, maximum_finite_ell - 1 = -0.05778352738249248
+    maximum L is lower or equal to 1
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 419-420
+.. GENERATED FROM PYTHON SOURCE LINES 396-397
 
 Then plot the error depending on the step size.
 
-.. GENERATED FROM PYTHON SOURCE LINES 422-436
+.. GENERATED FROM PYTHON SOURCE LINES 399-413
 
 .. code-block:: Python
 
@@ -768,9 +720,9 @@ Then plot the error depending on the step size.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_008.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_006.png
    :alt: Finite difference for scaled exp
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_008.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_006.png
    :class: sphx-glr-single-img
 
 
@@ -780,11 +732,11 @@ Then plot the error depending on the step size.
 
     +  scaled exp
     Exact f'''(x) = -1.000e-18
-    Function evaluations = 27
+    Function evaluations = 26
     Estim. derivative = -1.000e-06
     Exact. derivative = -1.000e-06
-    Exact abs. error  = 3.431e-17
-    Exact rel. error  = 3.431e-11
+    Exact abs. error  = 3.405e-17
+    Exact rel. error  = 3.405e-11
     Exact step     = 1.442e+01
     Estimated step = 1.438e+01
     Optimal abs. error = 1.040e-16
@@ -793,61 +745,18 @@ Then plot the error depending on the step size.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 437-440
+.. GENERATED FROM PYTHON SOURCE LINES 414-417
 
 The previous figure shows that the optimal step is close to
 :math:`10^1`, which may be larger than what we may typically expect
 as a step size for a finite difference formula.
 
-.. GENERATED FROM PYTHON SOURCE LINES 442-443
-
-Consider the :class:`~numericalderivative.SquareRootProblem`.
-
-.. GENERATED FROM PYTHON SOURCE LINES 445-461
-
-.. code-block:: Python
-
-    relative_precision = 1.0e-14
-    problem = nd.SquareRootProblem()
-    number_of_digits = 53
-    plot_ell_ratio(
-        problem.get_name(),
-        problem.get_function(),
-        problem.get_x(),
-        number_of_points,
-        number_of_digits,
-        relative_precision,
-        kmin=4.3e-5,
-        kmax=1.0e-4,
-        plot_L_constants=True,
-    )
-    pl.ylim(-20.0, 20.0)
-
-
-
-
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_009.png
-   :alt: sqrt, x = 1.00e+00, p = 1.00e-14
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_009.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Maximum L = 2.690e+02
-
-    (-20.0, 20.0)
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 462-464
+.. GENERATED FROM PYTHON SOURCE LINES 420-422
 
 Compute the lower and upper bounds of the third derivative
 ----------------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 466-479
+.. GENERATED FROM PYTHON SOURCE LINES 424-437
 
 The algorithm is based on bounds of the third derivative, which is
 computed by the :meth:`~numericalderivative.DumontetVignes.compute_ell` method.
@@ -863,7 +772,7 @@ we use two different methods:
 - a finite difference formula, using :class:`~numericalderivative.ThirdDerivativeCentral`,
 - the exact third derivative, using :meth:`~numericalderivative.SquareRootProblem.get_third_derivative`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 481-494
+.. GENERATED FROM PYTHON SOURCE LINES 439-452
 
 .. code-block:: Python
 
@@ -896,7 +805,7 @@ we use two different methods:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 495-502
+.. GENERATED FROM PYTHON SOURCE LINES 453-460
 
 .. code-block:: Python
 
@@ -922,20 +831,20 @@ we use two different methods:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 503-506
+.. GENERATED FROM PYTHON SOURCE LINES 461-464
 
 The previous outputs shows that the lower and upper bounds
 computed by the algorithm contain, indeed, the true value of the
 third derivative in this case.
 
-.. GENERATED FROM PYTHON SOURCE LINES 508-512
+.. GENERATED FROM PYTHON SOURCE LINES 466-470
 
 The algorithm is based on finding an approximatly optimal
 step k to compute the third derivative.
 The next script computes the error of the central formula for the
 finite difference formula depending on the step k.
 
-.. GENERATED FROM PYTHON SOURCE LINES 514-524
+.. GENERATED FROM PYTHON SOURCE LINES 472-482
 
 .. code-block:: Python
 
@@ -956,7 +865,7 @@ finite difference formula depending on the step k.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 525-535
+.. GENERATED FROM PYTHON SOURCE LINES 483-493
 
 .. code-block:: Python
 
@@ -973,21 +882,21 @@ finite difference formula depending on the step k.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_010.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_007.png
    :alt: F. D. of 3de derivative for sqrt
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_010.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_007.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 536-538
+.. GENERATED FROM PYTHON SOURCE LINES 494-496
 
 Plot the lower and upper bounds of the third derivative
 -------------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 540-546
+.. GENERATED FROM PYTHON SOURCE LINES 498-504
 
 The next figure presents the sensitivity of the
 lower and upper bounds of the third derivative to the step k.
@@ -996,7 +905,7 @@ using the central finite difference formula.
 This makes it possible to check that the lower and upper bounds
 actually contain the approximation produced by the F.D. formula.
 
-.. GENERATED FROM PYTHON SOURCE LINES 548-560
+.. GENERATED FROM PYTHON SOURCE LINES 506-518
 
 .. code-block:: Python
 
@@ -1019,7 +928,7 @@ actually contain the approximation produced by the F.D. formula.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 561-572
+.. GENERATED FROM PYTHON SOURCE LINES 519-530
 
 .. code-block:: Python
 
@@ -1037,16 +946,16 @@ actually contain the approximation produced by the F.D. formula.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_011.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_008.png
    :alt: F.D. of 3de derivative for sqrt at x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_011.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_008.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 573-589
+.. GENERATED FROM PYTHON SOURCE LINES 531-547
 
 .. code-block:: Python
 
@@ -1064,14 +973,14 @@ actually contain the approximation produced by the F.D. formula.
         kmax=1.0e-5,
         plot_L_constants=True,
     )
-    pl.ylim(-20.0, 20.0)
+    _ = pl.ylim(-20.0, 20.0)
 
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_012.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_009.png
    :alt: sqrt, x = 1.00e-02, p = 1.00e-14
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_012.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_009.png
    :class: sphx-glr-single-img
 
 
@@ -1079,17 +988,17 @@ actually contain the approximation produced by the F.D. formula.
 
  .. code-block:: none
 
-    Maximum L = 3.186e+01
-
-    (-20.0, 20.0)
-
+    maximum_finite_ell = 31.85714285714286, maximum_finite_ell - 1 = 30.85714285714286
+    maximum L is greater than 1
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 590-591
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 548-549
 
 The next example searches the optimal step for the square root function.
 
-.. GENERATED FROM PYTHON SOURCE LINES 593-618
+.. GENERATED FROM PYTHON SOURCE LINES 551-576
 
 .. code-block:: Python
 
@@ -1102,7 +1011,7 @@ The next example searches the optimal step for the square root function.
     algorithm = nd.DumontetVignes(
         function, x, relative_precision=relative_precision, verbose=verbose
     )
-    h_optimal, _ = algorithm.compute_step(kmax=kmax)
+    h_optimal, _ = algorithm.find_step(kmax=kmax)
     print("h optimal = %.3e" % (h_optimal))
     number_of_feval = algorithm.get_number_of_function_evaluations()
     print(f"number_of_feval = {number_of_feval}")
@@ -1127,7 +1036,7 @@ The next example searches the optimal step for the square root function.
  .. code-block:: none
 
     x = 1.000e-02
-    iteration_maximum = 50
+    iteration_maximum = 53
     kmin =  2.220446049250313e-18
     kmax =  0.001
     L(kmin) =  -1.0186915887850467
@@ -1166,7 +1075,7 @@ The next example searches the optimal step for the square root function.
       k = 4.883e-07, f3inf = 1.168e+04, f3sup = 6.318e+04, ell = 5.408e+00
       k is OK : stop
     h optimal = 4.311e-07
-    number_of_feval = 53
+    number_of_feval = 52
     Abs. error = 1.151e-09
     L(kmin) =  -1.0
     L(kmax) =  1.0000000001563647
@@ -1174,11 +1083,11 @@ The next example searches the optimal step for the square root function.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 619-620
+.. GENERATED FROM PYTHON SOURCE LINES 577-578
 
 Consider the :class:`~numericalderivative.SinProblem`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 622-643
+.. GENERATED FROM PYTHON SOURCE LINES 580-601
 
 .. code-block:: Python
 
@@ -1206,9 +1115,9 @@ Consider the :class:`~numericalderivative.SinProblem`.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_013.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_010.png
    :alt: sin, x = 1.00e+00, p = 1.00e-14
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_013.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_010.png
    :class: sphx-glr-single-img
 
 
@@ -1216,12 +1125,13 @@ Consider the :class:`~numericalderivative.SinProblem`.
 
  .. code-block:: none
 
-    Maximum L = 9.999e-01
+    maximum_finite_ell = 0.9999063046299485, maximum_finite_ell - 1 = -9.369537005154971e-05
+    maximum L is lower or equal to 1
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 644-662
+.. GENERATED FROM PYTHON SOURCE LINES 602-620
 
 .. code-block:: Python
 
@@ -1262,12 +1172,12 @@ Consider the :class:`~numericalderivative.SinProblem`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 663-665
+.. GENERATED FROM PYTHON SOURCE LINES 621-623
 
 See the history of steps during the bissection search
 -----------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 667-681
+.. GENERATED FROM PYTHON SOURCE LINES 625-639
 
 In Dumontet & Vignes's method, the bisection algorithm
 produces a sequence of steps :math:`(k_i)_{1 \leq i \leq n_{iter}}`
@@ -1284,13 +1194,13 @@ to see how close the algorithm gets to the exact step.
 The list of intermediate steps during the algorithm can be obtained
 thanks to the :meth:`~numericalderivative.DumontetVignes.get_step_history` method.
 
-.. GENERATED FROM PYTHON SOURCE LINES 684-687
+.. GENERATED FROM PYTHON SOURCE LINES 642-645
 
 In the next example, we print the intermediate steps k during
 the bissection algorithm that searches for a step such
 that the L ratio is satisfactory.
 
-.. GENERATED FROM PYTHON SOURCE LINES 689-703
+.. GENERATED FROM PYTHON SOURCE LINES 647-661
 
 .. code-block:: Python
 
@@ -1301,7 +1211,7 @@ that the L ratio is satisfactory.
     algorithm = nd.DumontetVignes(function, x, verbose=True)
     kmin = 1.0e-10
     kmax = 1.0e0
-    step, number_of_iterations = algorithm.compute_step(kmin=kmin, kmax=kmax)
+    step, number_of_iterations = algorithm.find_step(kmin=kmin, kmax=kmax)
     step_k_history = algorithm.get_step_history()
     print(f"Number of iterations = {number_of_iterations}")
     print(f"History of steps k : {step_k_history}")
@@ -1317,11 +1227,11 @@ that the L ratio is satisfactory.
  .. code-block:: none
 
     x = 1.000e+00
-    iteration_maximum = 50
+    iteration_maximum = 53
     kmin =  1e-10
     kmax =  1.0
     L(kmin) =  -1.0
-    L(kmax) =  0.999999999999933
+    L(kmax) =  0.999999999999993
     + Iteration = 0, kmin = 1.000e-10, kmax = 1.000e+00
       k = 5.000e-01, f3inf = -5.074e-01, f3sup = -5.074e-01, ell = 1.000e+00
       k is too large : reduce kmax
@@ -1350,38 +1260,41 @@ that the L ratio is satisfactory.
       k = 1.953e-03, f3inf = -5.403e-01, f3sup = -5.403e-01, ell = 1.000e+00
       k is too large : reduce kmax
     + Iteration = 9, kmin = 1.000e-10, kmax = 1.953e-03
-      k = 9.766e-04, f3inf = -5.403e-01, f3sup = -5.403e-01, ell = 9.999e-01
+      k = 9.766e-04, f3inf = -5.403e-01, f3sup = -5.403e-01, ell = 1.000e+00
       k is too large : reduce kmax
     + Iteration = 10, kmin = 1.000e-10, kmax = 9.766e-04
-      k = 4.883e-04, f3inf = -5.405e-01, f3sup = -5.401e-01, ell = 9.992e-01
+      k = 4.883e-04, f3inf = -5.403e-01, f3sup = -5.403e-01, ell = 9.999e-01
       k is too large : reduce kmax
     + Iteration = 11, kmin = 1.000e-10, kmax = 4.883e-04
-      k = 2.441e-04, f3inf = -5.420e-01, f3sup = -5.386e-01, ell = 9.936e-01
+      k = 2.441e-04, f3inf = -5.405e-01, f3sup = -5.401e-01, ell = 9.993e-01
       k is too large : reduce kmax
     + Iteration = 12, kmin = 1.000e-10, kmax = 2.441e-04
-      k = 1.221e-04, f3inf = -5.542e-01, f3sup = -5.264e-01, ell = 9.498e-01
+      k = 1.221e-04, f3inf = -5.417e-01, f3sup = -5.388e-01, ell = 9.946e-01
       k is too large : reduce kmax
     + Iteration = 13, kmin = 1.000e-10, kmax = 1.221e-04
-      k = 6.104e-05, f3inf = -6.514e-01, f3sup = -4.287e-01, ell = 6.582e-01
+      k = 6.104e-05, f3inf = -5.518e-01, f3sup = -5.283e-01, ell = 9.575e-01
       k is too large : reduce kmax
     + Iteration = 14, kmin = 1.000e-10, kmax = 6.104e-05
-      k = 3.052e-05, f3inf = -1.430e+00, f3sup = 3.516e-01, ell = -2.459e-01
+      k = 3.052e-05, f3inf = -6.328e-01, f3sup = -4.453e-01, ell = 7.037e-01
+      k is too large : reduce kmax
+    + Iteration = 15, kmin = 1.000e-10, kmax = 3.052e-05
+      k = 1.526e-05, f3inf = -1.312e+00, f3sup = 1.875e-01, ell = -1.429e-01
       k is too small : increase kmin
-    + Iteration = 15, kmin = 3.052e-05, kmax = 6.104e-05
-      k = 4.578e-05, f3inf = -8.032e-01, f3sup = -2.755e-01, ell = 3.429e-01
+    + Iteration = 16, kmin = 1.526e-05, kmax = 3.052e-05
+      k = 2.289e-05, f3inf = -7.778e-01, f3sup = -3.333e-01, ell = 4.286e-01
       k is OK : stop
-    Number of iterations = 15
-    History of steps k : [0.50000000005, 0.250000000075, 0.1250000000875, 0.06250000009375001, 0.031250000096875, 0.0156250000984375, 0.007812500099218751, 0.0039062500996093754, 0.0019531250998046875, 0.0009765625999023438, 0.0004882813499511719, 0.00024414072497558597, 0.00012207041248779297, 6.103525624389649e-05, 3.051767812194824e-05, 4.577646718292237e-05]
-    Last step k : 4.577646718292237e-05
+    Number of iterations = 16
+    History of steps k : [0.50000000005, 0.250000000075, 0.1250000000875, 0.06250000009375001, 0.031250000096875, 0.0156250000984375, 0.007812500099218751, 0.0039062500996093754, 0.0019531250998046875, 0.0009765625999023438, 0.0004882813499511719, 0.00024414072497558597, 0.00012207041248779297, 6.103525624389649e-05, 3.051767812194824e-05, 1.525888906097412e-05, 2.288828359146118e-05]
+    Last step k : 2.288828359146118e-05
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 704-705
+.. GENERATED FROM PYTHON SOURCE LINES 662-663
 
 Then we compute the exact step, using :meth:`~numericalderivative.ThirdDerivativeCentral.compute_step`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 707-716
+.. GENERATED FROM PYTHON SOURCE LINES 665-674
 
 .. code-block:: Python
 
@@ -1408,12 +1321,12 @@ Then we compute the exact step, using :meth:`~numericalderivative.ThirdDerivativ
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 717-719
+.. GENERATED FROM PYTHON SOURCE LINES 675-677
 
 Plot the absolute error between the exact step k and the intermediate k
 of the algorithm.
 
-.. GENERATED FROM PYTHON SOURCE LINES 721-734
+.. GENERATED FROM PYTHON SOURCE LINES 679-692
 
 .. code-block:: Python
 
@@ -1433,16 +1346,16 @@ of the algorithm.
 
 
 
-.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_014.png
+.. image-sg:: /auto_example/images/sphx_glr_plot_dumontet_vignes_011.png
    :alt: Dumontet & Vignes on sin at x = 1.0
-   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_014.png
+   :srcset: /auto_example/images/sphx_glr_plot_dumontet_vignes_011.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 735-740
+.. GENERATED FROM PYTHON SOURCE LINES 693-698
 
 The previous figure shows that the algorithm gets closer to the optimal
 value of the step k in the early iterations.
@@ -1453,7 +1366,7 @@ error close to :math:`10^{-3}`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.253 seconds)
+   **Total running time of the script:** (0 minutes 1.907 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_dumontet_vignes.py:

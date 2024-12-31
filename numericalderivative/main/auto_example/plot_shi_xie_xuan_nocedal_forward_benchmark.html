@@ -16,6 +16,7 @@
     <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="icon" href="../_static/Icon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -95,7 +96,7 @@ static method, which returns a list of problems.</p>
             <span class="n">x</span><span class="p">,</span>
             <span class="n">absolute_precision</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_step</span><span class="p">)</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">find_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_step</span><span class="p">)</span>
         <span class="n">f_prime_approx</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">compute_first_derivative</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
         <span class="n">number_of_function_evaluations</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">get_number_of_function_evaluations</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">f_prime_approx</span><span class="p">,</span> <span class="n">number_of_function_evaluations</span>
@@ -155,7 +156,7 @@ x = 1.000, error = 1.633e-07, Func. eval. = 19
 <section id="perform-the-benchmark">
 <h2>Perform the benchmark<a class="headerlink" href="#perform-the-benchmark" title="Link to this heading">¶</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;+ Benchmark on several points&quot;</span><span class="p">)</span>
-<span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">21</span>  <span class="c1"># This number of test points is odd</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">PolynomialProblem</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
 <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
@@ -245,7 +246,20 @@ Average number of function evaluations = 19.285714285714285
 </table>
 </div>
 <br />
-<br /><p>Map from the problem name to the initial step.</p>
+<br /><p>Notice that the method does not perform correctly for the point
+<span class="math notranslate nohighlight">\(x = 0\)</span> for the polynomial problem.
+This test point appears only if the number of test points is odd,
+because the test interval is symmetric with respect to <span class="math notranslate nohighlight">\(x = 0\)</span>.
+For this problem, the method does not perform correctly
+because the value of the function is zero at <span class="math notranslate nohighlight">\(x = 0\)</span>.
+The method can perform correctly in this case, if it is
+provided a consistent value of the absolute error of the function
+value.
+Here, we compute the absolute error depending on the relative
+error and the absolute value of the value of the function.
+If the value of the function is zero, then the computed
+absolute error is zero, which produces a failure of the method.</p>
+<p>Map from the problem name to the initial step.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_step_map</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;polynomial&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
@@ -257,7 +271,7 @@ Average number of function evaluations = 19.285714285714285
     <span class="s2">&quot;scaled exp&quot;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
     <span class="s2">&quot;GMSW&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
     <span class="s2">&quot;SXXN1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
-    <span class="s2">&quot;SXXN2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>  <span class="c1"># Fails</span>
+    <span class="s2">&quot;SXXN2&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
     <span class="s2">&quot;SXXN3&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
     <span class="s2">&quot;SXXN4&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
     <span class="s2">&quot;Oliver1&quot;</span><span class="p">:</span> <span class="mf">1.0e0</span><span class="p">,</span>
@@ -268,13 +282,14 @@ Average number of function evaluations = 19.285714285714285
 </div>
 <p>The next script evaluates a collection of benchmark problems
 using the <a class="reference internal" href="../user_manual/_generated/numericalderivative.ShiXieXuanNocedalForward.html#numericalderivative.ShiXieXuanNocedalForward" title="numericalderivative.ShiXieXuanNocedalForward"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShiXieXuanNocedalForward</span></code></a> class.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">number_of_test_points</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># This value can significantly change the results</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">function_list</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">build_benchmark</span><span class="p">()</span>
 <span class="n">number_of_functions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">function_list</span><span class="p">)</span>
 <span class="n">average_absolute_error_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">average_feval_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">relative_precision</span> <span class="o">=</span> <span class="mf">1.0e-15</span>
+<span class="n">delta_x</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_functions</span><span class="p">):</span>
     <span class="n">problem</span> <span class="o">=</span> <span class="n">function_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
@@ -282,8 +297,14 @@ using the <a class="reference internal" href="../user_manual/_generated/numerica
     <span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
     <span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
     <span class="n">interval</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
-    <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">number_of_test_points</span><span class="p">)</span>
+    <span class="n">lower_x_bound</span><span class="p">,</span> <span class="n">upper_x_bound</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_interval</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function #</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;sin&quot;</span><span class="p">:</span>
+        <span class="c1"># Change the lower and upper bound so that the points +/-pi</span>
+        <span class="c1"># are excluded (see below for details).</span>
+        <span class="n">lower_x_bound</span> <span class="o">+=</span> <span class="n">delta_x</span>
+        <span class="n">upper_x_bound</span> <span class="o">-=</span> <span class="n">delta_x</span>
+    <span class="n">test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lower_x_bound</span><span class="p">,</span> <span class="n">upper_x_bound</span><span class="p">,</span> <span class="n">number_of_test_points</span><span class="p">)</span>
     <span class="n">method</span> <span class="o">=</span> <span class="n">ShiXieXuanNocedalForwardMethod</span><span class="p">(</span><span class="n">relative_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">)</span>
     <span class="n">average_relative_error</span><span class="p">,</span> <span class="n">average_feval</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">benchmark_method</span><span class="p">(</span>
         <span class="n">function</span><span class="p">,</span> <span class="n">first_derivative</span><span class="p">,</span> <span class="n">test_points</span><span class="p">,</span> <span class="n">method</span><span class="o">.</span><span class="n">compute_first_derivative</span>
@@ -335,28 +356,37 @@ Function #15, Oliver3
 <tr><th>Name      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
 </thead>
 <tbody>
-<tr><td>polynomial</td><td style="text-align: right;">         2.26555e-08</td><td style="text-align: right;">              17.6  </td></tr>
-<tr><td>inverse   </td><td style="text-align: right;">         4.6337e-08 </td><td style="text-align: right;">              17.62 </td></tr>
-<tr><td>exp       </td><td style="text-align: right;">         2.72409e-08</td><td style="text-align: right;">              18.68 </td></tr>
-<tr><td>log       </td><td style="text-align: right;">         4.03016e-08</td><td style="text-align: right;">              11.89 </td></tr>
-<tr><td>sqrt      </td><td style="text-align: right;">         3.193e-08  </td><td style="text-align: right;">              11.49 </td></tr>
-<tr><td>atan      </td><td style="text-align: right;">         1.24809e-07</td><td style="text-align: right;">              16.68 </td></tr>
-<tr><td>sin       </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">              16.64 </td></tr>
-<tr><td>scaled exp</td><td style="text-align: right;">         2.38187e-08</td><td style="text-align: right;">              18    </td></tr>
-<tr><td>GMSW      </td><td style="text-align: right;">         2.98893e-08</td><td style="text-align: right;">              19.92 </td></tr>
-<tr><td>SXXN1     </td><td style="text-align: right;">         8.16797e-07</td><td style="text-align: right;">              18.12 </td></tr>
-<tr><td>SXXN2     </td><td style="text-align: right;">         2.32017e-08</td><td style="text-align: right;">              23    </td></tr>
-<tr><td>SXXN3     </td><td style="text-align: right;">         2.98696e-08</td><td style="text-align: right;">              17.84 </td></tr>
-<tr><td>SXXN4     </td><td style="text-align: right;">         2.61695e-08</td><td style="text-align: right;">              17.54 </td></tr>
-<tr><td>Oliver1   </td><td style="text-align: right;">         2.97327e-08</td><td style="text-align: right;">              18    </td></tr>
-<tr><td>Oliver2   </td><td style="text-align: right;">         7.13647e-08</td><td style="text-align: right;">              20.67 </td></tr>
-<tr><td>Oliver3   </td><td style="text-align: right;">         3.26823e-08</td><td style="text-align: right;">              12.39 </td></tr>
-<tr><td>Average   </td><td style="text-align: right;">         9.17866e-08</td><td style="text-align: right;">              17.255</td></tr>
+<tr><td>polynomial</td><td style="text-align: right;">         2.26555e-08</td><td style="text-align: right;">             17.6   </td></tr>
+<tr><td>inverse   </td><td style="text-align: right;">         4.6337e-08 </td><td style="text-align: right;">             17.62  </td></tr>
+<tr><td>exp       </td><td style="text-align: right;">         2.72409e-08</td><td style="text-align: right;">             18.68  </td></tr>
+<tr><td>log       </td><td style="text-align: right;">         4.03016e-08</td><td style="text-align: right;">             11.89  </td></tr>
+<tr><td>sqrt      </td><td style="text-align: right;">         3.193e-08  </td><td style="text-align: right;">             11.49  </td></tr>
+<tr><td>atan      </td><td style="text-align: right;">         1.24809e-07</td><td style="text-align: right;">             16.68  </td></tr>
+<tr><td>sin       </td><td style="text-align: right;">         1.02845e-07</td><td style="text-align: right;">             17.02  </td></tr>
+<tr><td>scaled exp</td><td style="text-align: right;">         2.38187e-08</td><td style="text-align: right;">             18     </td></tr>
+<tr><td>GMSW      </td><td style="text-align: right;">         2.98893e-08</td><td style="text-align: right;">             19.92  </td></tr>
+<tr><td>SXXN1     </td><td style="text-align: right;">         8.16797e-07</td><td style="text-align: right;">             18.12  </td></tr>
+<tr><td>SXXN2     </td><td style="text-align: right;">         2.32017e-08</td><td style="text-align: right;">             23     </td></tr>
+<tr><td>SXXN3     </td><td style="text-align: right;">         2.98696e-08</td><td style="text-align: right;">             17.84  </td></tr>
+<tr><td>SXXN4     </td><td style="text-align: right;">         2.61695e-08</td><td style="text-align: right;">             17.54  </td></tr>
+<tr><td>Oliver1   </td><td style="text-align: right;">         2.97327e-08</td><td style="text-align: right;">             18     </td></tr>
+<tr><td>Oliver2   </td><td style="text-align: right;">         7.13647e-08</td><td style="text-align: right;">             20.67  </td></tr>
+<tr><td>Oliver3   </td><td style="text-align: right;">         3.26823e-08</td><td style="text-align: right;">             12.39  </td></tr>
+<tr><td>Average   </td><td style="text-align: right;">         9.24778e-08</td><td style="text-align: right;">             17.2788</td></tr>
 </tbody>
 </table>
 </div>
 <br />
-<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.058 seconds)</p>
+<br /><p>Notice that the method cannot perform correctly for the sin function
+at the point
+Indeed, this function is such that <span class="math notranslate nohighlight">\(f''(x) = 0\)</span> if <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
+In this case, the test ratio and the method cannot work.
+Therefore, we make so that the points <span class="math notranslate nohighlight">\(\pm \pi\)</span> are excluded from the benchmark.
+The same problem appears at the point <span class="math notranslate nohighlight">\(x = 0\)</span>.
+This point is not included in the test set if the number of points is even
+(e.g. with <cite>number_of_test_points = 100</cite>), but it might appear if the
+number of test points is odd.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.059 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-shi-xie-xuan-nocedal-forward-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e3ee58894328b57c6e5c99d3709b940c/plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb</span></code></a></p>

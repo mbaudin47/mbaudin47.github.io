@@ -96,18 +96,18 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The goal of this example is to benchmark the GillMurraySaundersWright on a collection of test problems. These problems are created by the build_benchmark()  static method, which returns a list of problems.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use finite difference (F.D.) formulas.">
 
 .. only:: html
 
-  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_benchmark_thumb.png
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_finite_differences_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py`
+  :ref:`sphx_glr_auto_example_plot_finite_differences.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Benchmark Gill, Murray, Saunders and Wright method</div>
+      <div class="sphx-glr-thumbnail-title">Use the finite differences formulas</div>
     </div>
 
 
@@ -130,35 +130,18 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use finite difference (F.D.) formulas.">
+    <div class="sphx-glr-thumbcontainer" tooltip="The goal of this example is to benchmark the GillMurraySaundersWright on a collection of test problems. These problems are created by the build_benchmark()  static method, which returns a list of problems.">
 
 .. only:: html
 
-  .. image:: /auto_example/images/thumb/sphx_glr_plot_finite_differences_thumb.png
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_benchmark_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_example_plot_finite_differences.py`
+  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Use the finite differences formulas</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a central finite difference  formula.">
-
-.. only:: html
-
-  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_plots_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Plot Stepleman & Winarsky's method</div>
+      <div class="sphx-glr-thumbnail-title">Benchmark Gill, Murray, Saunders and Wright method</div>
     </div>
 
 
@@ -185,14 +168,14 @@
 
 .. only:: html
 
-  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_thumb.png
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_plots_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py`
+  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Experiment with Stepleman & Winarsky method</div>
+      <div class="sphx-glr-thumbnail-title">Plot Stepleman & Winarsky's method</div>
     </div>
 
 
@@ -219,14 +202,14 @@
 
 .. only:: html
 
-  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_thumb.png
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_stepleman_winarsky_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py`
+  :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Experiment with Gill, Murray, Saunders and Wright method</div>
+      <div class="sphx-glr-thumbnail-title">Experiment with Stepleman & Winarsky method</div>
     </div>
 
 
@@ -247,6 +230,23 @@
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Find a step which is near to optimal for a central finite difference  formula.">
+
+.. only:: html
+
+  .. image:: /auto_example/images/thumb/sphx_glr_plot_gill_murray_saunders_wright_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Experiment with Gill, Murray, Saunders and Wright method</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -262,15 +262,15 @@
    /auto_example/plot_dumontet_vignes_benchmark
    /auto_example/plot_shi_xie_xuan_nocedal_forward
    /auto_example/plot_stepleman_winarsky_benchmark
-   /auto_example/plot_gill_murray_saunders_wright_benchmark
-   /auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark
    /auto_example/plot_finite_differences
-   /auto_example/plot_stepleman_winarsky_plots
+   /auto_example/plot_shi_xie_xuan_nocedal_forward_benchmark
+   /auto_example/plot_gill_murray_saunders_wright_benchmark
    /auto_example/plot_general_fd
-   /auto_example/plot_stepleman_winarsky
+   /auto_example/plot_stepleman_winarsky_plots
    /auto_example/plot_openturns
-   /auto_example/plot_gill_murray_saunders_wright
+   /auto_example/plot_stepleman_winarsky
    /auto_example/plot_dumontet_vignes
+   /auto_example/plot_gill_murray_saunders_wright
 
 
 .. only:: html

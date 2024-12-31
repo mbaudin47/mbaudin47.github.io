@@ -92,7 +92,7 @@ Compute the first derivative
                 x,
                 absolute_precision,
             )
-            step, _ = algorithm.compute_step(self.initial_step)
+            step, _ = algorithm.find_step(self.initial_step)
             f_prime_approx = algorithm.compute_first_derivative(step)
             number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
             return f_prime_approx, number_of_function_evaluations
@@ -181,7 +181,7 @@ Perform the benchmark
 .. code-block:: Python
 
     print("+ Benchmark on several points")
-    number_of_test_points = 21
+    number_of_test_points = 21  # This number of test points is odd
     problem = nd.PolynomialProblem()
     print(problem)
     interval = problem.get_interval()
@@ -282,11 +282,27 @@ Perform the benchmark
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-140
+.. GENERATED FROM PYTHON SOURCE LINES 139-152
+
+Notice that the method does not perform correctly for the point
+:math:`x = 0` for the polynomial problem.
+This test point appears only if the number of test points is odd,
+because the test interval is symmetric with respect to :math:`x = 0`.
+For this problem, the method does not perform correctly
+because the value of the function is zero at :math:`x = 0`.
+The method can perform correctly in this case, if it is
+provided a consistent value of the absolute error of the function
+value.
+Here, we compute the absolute error depending on the relative
+error and the absolute value of the value of the function.
+If the value of the function is zero, then the computed
+absolute error is zero, which produces a failure of the method.
+
+.. GENERATED FROM PYTHON SOURCE LINES 154-155
 
 Map from the problem name to the initial step.
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-161
+.. GENERATED FROM PYTHON SOURCE LINES 157-176
 
 .. code-block:: Python
 
@@ -301,7 +317,7 @@ Map from the problem name to the initial step.
         "scaled exp": 1.0e5,
         "GMSW": 1.0e0,
         "SXXN1": 1.0e0,
-        "SXXN2": 1.0e0,  # Fails
+        "SXXN2": 1.0e0,
         "SXXN3": 1.0e0,
         "SXXN4": 1.0e0,
         "Oliver1": 1.0e0,
@@ -316,22 +332,23 @@ Map from the problem name to the initial step.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 162-164
+.. GENERATED FROM PYTHON SOURCE LINES 177-179
 
 The next script evaluates a collection of benchmark problems
 using the :class:`~numericalderivative.ShiXieXuanNocedalForward` class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-208
+.. GENERATED FROM PYTHON SOURCE LINES 181-230
 
 .. code-block:: Python
 
-    number_of_test_points = 100
+    number_of_test_points = 100  # This value can significantly change the results
     data = []
     function_list = nd.build_benchmark()
     number_of_functions = len(function_list)
     average_absolute_error_list = []
     average_feval_list = []
     relative_precision = 1.0e-15
+    delta_x = 1.0e-9
     for i in range(number_of_functions):
         problem = function_list[i]
         name = problem.get_name()
@@ -339,8 +356,14 @@ using the :class:`~numericalderivative.ShiXieXuanNocedalForward` class.
         function = problem.get_function()
         first_derivative = problem.get_first_derivative()
         interval = problem.get_interval()
-        test_points = np.linspace(interval[0], interval[1], number_of_test_points)
+        lower_x_bound, upper_x_bound = problem.get_interval()
         print(f"Function #{i}, {name}")
+        if name == "sin":
+            # Change the lower and upper bound so that the points +/-pi
+            # are excluded (see below for details).
+            lower_x_bound += delta_x
+            upper_x_bound -= delta_x
+        test_points = np.linspace(lower_x_bound, upper_x_bound, number_of_test_points)
         method = ShiXieXuanNocedalForwardMethod(relative_precision, initial_step)
         average_relative_error, average_feval, _ = nd.benchmark_method(
             function, first_derivative, test_points, method.compute_first_derivative
@@ -401,33 +424,45 @@ using the :class:`~numericalderivative.ShiXieXuanNocedalForward` class.
     <tr><th>Name      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
-    <tr><td>polynomial</td><td style="text-align: right;">         2.26555e-08</td><td style="text-align: right;">              17.6  </td></tr>
-    <tr><td>inverse   </td><td style="text-align: right;">         4.6337e-08 </td><td style="text-align: right;">              17.62 </td></tr>
-    <tr><td>exp       </td><td style="text-align: right;">         2.72409e-08</td><td style="text-align: right;">              18.68 </td></tr>
-    <tr><td>log       </td><td style="text-align: right;">         4.03016e-08</td><td style="text-align: right;">              11.89 </td></tr>
-    <tr><td>sqrt      </td><td style="text-align: right;">         3.193e-08  </td><td style="text-align: right;">              11.49 </td></tr>
-    <tr><td>atan      </td><td style="text-align: right;">         1.24809e-07</td><td style="text-align: right;">              16.68 </td></tr>
-    <tr><td>sin       </td><td style="text-align: right;">       nan          </td><td style="text-align: right;">              16.64 </td></tr>
-    <tr><td>scaled exp</td><td style="text-align: right;">         2.38187e-08</td><td style="text-align: right;">              18    </td></tr>
-    <tr><td>GMSW      </td><td style="text-align: right;">         2.98893e-08</td><td style="text-align: right;">              19.92 </td></tr>
-    <tr><td>SXXN1     </td><td style="text-align: right;">         8.16797e-07</td><td style="text-align: right;">              18.12 </td></tr>
-    <tr><td>SXXN2     </td><td style="text-align: right;">         2.32017e-08</td><td style="text-align: right;">              23    </td></tr>
-    <tr><td>SXXN3     </td><td style="text-align: right;">         2.98696e-08</td><td style="text-align: right;">              17.84 </td></tr>
-    <tr><td>SXXN4     </td><td style="text-align: right;">         2.61695e-08</td><td style="text-align: right;">              17.54 </td></tr>
-    <tr><td>Oliver1   </td><td style="text-align: right;">         2.97327e-08</td><td style="text-align: right;">              18    </td></tr>
-    <tr><td>Oliver2   </td><td style="text-align: right;">         7.13647e-08</td><td style="text-align: right;">              20.67 </td></tr>
-    <tr><td>Oliver3   </td><td style="text-align: right;">         3.26823e-08</td><td style="text-align: right;">              12.39 </td></tr>
-    <tr><td>Average   </td><td style="text-align: right;">         9.17866e-08</td><td style="text-align: right;">              17.255</td></tr>
+    <tr><td>polynomial</td><td style="text-align: right;">         2.26555e-08</td><td style="text-align: right;">             17.6   </td></tr>
+    <tr><td>inverse   </td><td style="text-align: right;">         4.6337e-08 </td><td style="text-align: right;">             17.62  </td></tr>
+    <tr><td>exp       </td><td style="text-align: right;">         2.72409e-08</td><td style="text-align: right;">             18.68  </td></tr>
+    <tr><td>log       </td><td style="text-align: right;">         4.03016e-08</td><td style="text-align: right;">             11.89  </td></tr>
+    <tr><td>sqrt      </td><td style="text-align: right;">         3.193e-08  </td><td style="text-align: right;">             11.49  </td></tr>
+    <tr><td>atan      </td><td style="text-align: right;">         1.24809e-07</td><td style="text-align: right;">             16.68  </td></tr>
+    <tr><td>sin       </td><td style="text-align: right;">         1.02845e-07</td><td style="text-align: right;">             17.02  </td></tr>
+    <tr><td>scaled exp</td><td style="text-align: right;">         2.38187e-08</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>GMSW      </td><td style="text-align: right;">         2.98893e-08</td><td style="text-align: right;">             19.92  </td></tr>
+    <tr><td>SXXN1     </td><td style="text-align: right;">         8.16797e-07</td><td style="text-align: right;">             18.12  </td></tr>
+    <tr><td>SXXN2     </td><td style="text-align: right;">         2.32017e-08</td><td style="text-align: right;">             23     </td></tr>
+    <tr><td>SXXN3     </td><td style="text-align: right;">         2.98696e-08</td><td style="text-align: right;">             17.84  </td></tr>
+    <tr><td>SXXN4     </td><td style="text-align: right;">         2.61695e-08</td><td style="text-align: right;">             17.54  </td></tr>
+    <tr><td>Oliver1   </td><td style="text-align: right;">         2.97327e-08</td><td style="text-align: right;">             18     </td></tr>
+    <tr><td>Oliver2   </td><td style="text-align: right;">         7.13647e-08</td><td style="text-align: right;">             20.67  </td></tr>
+    <tr><td>Oliver3   </td><td style="text-align: right;">         3.26823e-08</td><td style="text-align: right;">             12.39  </td></tr>
+    <tr><td>Average   </td><td style="text-align: right;">         9.24778e-08</td><td style="text-align: right;">             17.2788</td></tr>
     </tbody>
     </table>
     </div>
     <br />
     <br />
 
+.. GENERATED FROM PYTHON SOURCE LINES 231-240
+
+Notice that the method cannot perform correctly for the sin function
+at the point
+Indeed, this function is such that :math:`f''(x) = 0` if :math:`x = \pm \pi`.
+In this case, the test ratio and the method cannot work.
+Therefore, we make so that the points :math:`\pm \pi` are excluded from the benchmark.
+The same problem appears at the point :math:`x = 0`.
+This point is not included in the test set if the number of points is even
+(e.g. with `number_of_test_points = 100`), but it might appear if the
+number of test points is odd.
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.058 seconds)
+   **Total running time of the script:** (0 minutes 0.059 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_shi_xie_xuan_nocedal_forward_benchmark.py:

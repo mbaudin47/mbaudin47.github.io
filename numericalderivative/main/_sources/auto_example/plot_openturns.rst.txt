@@ -172,7 +172,7 @@ Algorithm to detect h* for Strain
     h0 = 1.0e0
     args = [meanR, meanC, meanGamma]
     algorithm = nd.SteplemanWinarsky(functionStrain, meanStrain, args=args, verbose=True)
-    h_optimal, iterations = algorithm.compute_step(h0)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h =", h_optimal)
     print("iterations =", iterations)
@@ -189,7 +189,7 @@ Algorithm to detect h* for Strain
 
  .. code-block:: none
 
-    + compute_step()
+    + find_step()
     initial_step=1.000e+00
       number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
       number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
@@ -237,16 +237,14 @@ Define a function which takes only R as input and returns a float
 
 Algorithm to detect h* for R
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-98
+.. GENERATED FROM PYTHON SOURCE LINES 84-96
 
 .. code-block:: Python
 
     h0 = 1.0e9
     args = [meanStrain, meanC, meanGamma]
-    algorithm = nd.SteplemanWinarsky(
-        functionR, meanR, args=args, relative_precision=1.0e-14, verbose=True
-    )
-    h_optimal, iterations = algorithm.compute_step(h0)
+    algorithm = nd.SteplemanWinarsky(functionR, meanR, args=args, verbose=True)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print(f"Optimum h = {h_optimal:e}")
     print("iterations =", iterations)
@@ -263,7 +261,7 @@ Algorithm to detect h* for R
 
  .. code-block:: none
 
-    + compute_step()
+    + find_step()
     initial_step=1.000e+09
       number_of_iterations=0, h=2.5000e+08, |FD(h_current) - FD(h_previous)|=2.2204e-16
       number_of_iterations=1, h=6.2500e+07, |FD(h_current) - FD(h_previous)|=2.2204e-16
@@ -277,12 +275,12 @@ Algorithm to detect h* for R
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-101
+.. GENERATED FROM PYTHON SOURCE LINES 97-99
 
 Derivative with respect to C
 Define a function which takes only C as input and returns a float
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-107
+.. GENERATED FROM PYTHON SOURCE LINES 99-105
 
 .. code-block:: Python
 
@@ -299,20 +297,18 @@ Define a function which takes only C as input and returns a float
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-109
+.. GENERATED FROM PYTHON SOURCE LINES 106-107
 
 Algorithm to detect h* for C
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-123
+.. GENERATED FROM PYTHON SOURCE LINES 107-119
 
 .. code-block:: Python
 
     h0 = 1.0e15
     args = [meanStrain, meanR, meanGamma]
-    algorithm = nd.SteplemanWinarsky(
-        functionR, meanC, args=args, relative_precision=1.0e-14, verbose=True
-    )
-    h_optimal, iterations = algorithm.compute_step(h0)
+    algorithm = nd.SteplemanWinarsky(functionR, meanC, args=args, verbose=True)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print(f"Optimum h = {h_optimal:e}")
     print("iterations =", iterations)
@@ -329,7 +325,7 @@ Algorithm to detect h* for C
 
  .. code-block:: none
 
-    + compute_step()
+    + find_step()
     initial_step=1.000e+15
       number_of_iterations=0, h=2.5000e+14, |FD(h_current) - FD(h_previous)|=3.4694e-18
       number_of_iterations=1, h=6.2500e+13, |FD(h_current) - FD(h_previous)|=3.4694e-18
@@ -343,12 +339,12 @@ Algorithm to detect h* for C
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-126
+.. GENERATED FROM PYTHON SOURCE LINES 120-122
 
 Derivative with respect to Gamma
 Define a function which takes only C as input and returns a float
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-132
+.. GENERATED FROM PYTHON SOURCE LINES 122-128
 
 .. code-block:: Python
 
@@ -365,20 +361,18 @@ Define a function which takes only C as input and returns a float
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-134
+.. GENERATED FROM PYTHON SOURCE LINES 129-130
 
 Algorithm to detect h* for Gamma
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-148
+.. GENERATED FROM PYTHON SOURCE LINES 130-142
 
 .. code-block:: Python
 
     h0 = 1.0e0
     args = [meanStrain, meanR, meanC]
-    algorithm = nd.SteplemanWinarsky(
-        functionGamma, meanGamma, args=args, relative_precision=1.0e-14, verbose=True
-    )
-    h_optimal, iterations = algorithm.compute_step(h0)
+    algorithm = nd.SteplemanWinarsky(functionGamma, meanGamma, args=args, verbose=True)
+    h_optimal, iterations = algorithm.find_step(h0)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print(f"Optimum h = {h_optimal:e}")
     print("iterations =", iterations)
@@ -395,7 +389,7 @@ Algorithm to detect h* for Gamma
 
  .. code-block:: none
 
-    + compute_step()
+    + find_step()
     initial_step=1.000e+00
       number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
       number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
@@ -413,11 +407,11 @@ Algorithm to detect h* for Gamma
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-150
+.. GENERATED FROM PYTHON SOURCE LINES 143-144
 
 Derivative with respect to [strain, r, c, gamma]
 
-.. GENERATED FROM PYTHON SOURCE LINES 150-162
+.. GENERATED FROM PYTHON SOURCE LINES 144-156
 
 .. code-block:: Python
 
@@ -440,11 +434,11 @@ Derivative with respect to [strain, r, c, gamma]
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-164
+.. GENERATED FROM PYTHON SOURCE LINES 157-158
 
 Default step size for all components
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-193
+.. GENERATED FROM PYTHON SOURCE LINES 158-186
 
 .. code-block:: Python
 
@@ -464,10 +458,9 @@ Default step size for all components
             genericFunction,
             inputMarginal,
             args=args,
-            relative_precision=1.0e-12,
             verbose=True,
         )
-        h_optimal, iterations = algorithm.compute_step(initialStep[xIndex])
+        h_optimal, iterations = algorithm.find_step(initialStep[xIndex])
         number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
         print(f"    Optimum h = {h_optimal:e}")
         print("    Iterations =", iterations)
@@ -486,7 +479,7 @@ Default step size for all components
  .. code-block:: none
 
     + Derivative with respect to Strain at point 0.035
-    + compute_step()
+    + find_step()
     initial_step=1.000e+00
       number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.1296e+12
       number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=2.6233e+09
@@ -505,7 +498,7 @@ Default step size for all components
         Function evaluations = 24
         Derivative wrt Strain= 1.93789224675000000e+09
     + Derivative with respect to R at point 750000000.0000002
-    + compute_step()
+    + find_step()
     initial_step=1.000e+08
       number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=0.0000e+00
       Stop because zero difference.
@@ -514,7 +507,7 @@ Default step size for all components
         Function evaluations = 4
         Derivative wrt R= 1.00000000000000000e+00
     + Derivative with respect to C at point 2750000000.0
-    + compute_step()
+    + find_step()
     initial_step=1.000e+08
       number_of_iterations=0, h=2.5000e+07, |FD(h_current) - FD(h_previous)|=1.1935e-15
       number_of_iterations=1, h=6.2500e+06, |FD(h_current) - FD(h_previous)|=2.3870e-15
@@ -524,7 +517,7 @@ Default step size for all components
         Function evaluations = 6
         Derivative wrt C= 2.95311910281300556e-02
     + Derivative with respect to Gamma at point 10.0
-    + compute_step()
+    + find_step()
     initial_step=1.000e+00
       number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=1.2204e+02
       number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.6272e+00
@@ -542,7 +535,7 @@ Default step size for all components
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 194-197
+.. GENERATED FROM PYTHON SOURCE LINES 187-190
 
 .. code-block:: Python
 
@@ -563,12 +556,12 @@ Default step size for all components
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 198-200
+.. GENERATED FROM PYTHON SOURCE LINES 191-193
 
 Configure the model with the optimal step computed
 from SteplemanWinarsky
 
-.. GENERATED FROM PYTHON SOURCE LINES 200-207
+.. GENERATED FROM PYTHON SOURCE LINES 193-200
 
 .. code-block:: Python
 
@@ -596,7 +589,7 @@ from SteplemanWinarsky
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 208-217
+.. GENERATED FROM PYTHON SOURCE LINES 201-210
 
 Derivative with step size computed from SteplemanWinarsky :
 
@@ -608,7 +601,7 @@ Derivative with step size computed from SteplemanWinarsky :
      [  0.0295312   ]  # <- This is a change in the 3d decimal
      [ -1.33845e+06 ]]
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-224
+.. GENERATED FROM PYTHON SOURCE LINES 212-217
 
 Compute the step of a ot.Function using Stepleman & Winarsky
 ------------------------------------------------------------
@@ -616,7 +609,7 @@ Compute the step of a ot.Function using Stepleman & Winarsky
 The function below computes the step of a finite difference formula
 applied to an OpenTURNS function using Stepleman & Winarsky's method.
 
-.. GENERATED FROM PYTHON SOURCE LINES 227-315
+.. GENERATED FROM PYTHON SOURCE LINES 220-304
 
 .. code-block:: Python
 
@@ -624,7 +617,6 @@ applied to an OpenTURNS function using Stepleman & Winarsky's method.
         model,
         initial_step,
         referenceInput,
-        relative_precision=1.0e-16,
         beta=4.0,
         verbose=False,
     ):
@@ -643,8 +635,6 @@ applied to an OpenTURNS function using Stepleman & Winarsky's method.
             The initial step size.
         referenceInput : ot.Point(inputDimension)
             The point X where the derivative is to be computed.
-        relative_precision : float, > 0, optional
-            The absolute relative_precision of evaluation of f. The default is 1.0e-16.
         verbose : bool, optional
             Set to True to print intermediate messages. The default is False.
 
@@ -686,13 +676,12 @@ applied to an OpenTURNS function using Stepleman & Winarsky's method.
             algorithm = nd.SteplemanWinarsky(
                 genericFunction,
                 inputMarginal,
+                beta=beta,
                 args=args,
-                relative_precision=relative_precision,
                 verbose=verbose,
             )
-            h_optimal, iterations = algorithm.compute_step(
+            h_optimal, iterations = algorithm.find_step(
                 initial_step[xIndex],
-                beta=beta,
             )
             number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
             f_prime_approx = algorithm.compute_first_derivative(h_optimal)
@@ -715,7 +704,7 @@ applied to an OpenTURNS function using Stepleman & Winarsky's method.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 316-321
+.. GENERATED FROM PYTHON SOURCE LINES 305-310
 
 Cantilever beam model
 ---------------------
@@ -723,7 +712,7 @@ Cantilever beam model
 Apply the same method to the cantilever beam model
 Load the cantilever beam model
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-326
+.. GENERATED FROM PYTHON SOURCE LINES 310-315
 
 .. code-block:: Python
 
@@ -745,11 +734,11 @@ Load the cantilever beam model
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 327-328
+.. GENERATED FROM PYTHON SOURCE LINES 316-317
 
 Print the derivative from OpenTURNS
 
-.. GENERATED FROM PYTHON SOURCE LINES 328-332
+.. GENERATED FROM PYTHON SOURCE LINES 317-321
 
 .. code-block:: Python
 
@@ -774,7 +763,7 @@ Print the derivative from OpenTURNS
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 333-342
+.. GENERATED FROM PYTHON SOURCE LINES 322-331
 
 Derivative with OpenTURNS's default step size :
 
@@ -786,17 +775,17 @@ Derivative with OpenTURNS's default step size :
     [  0.200131    ]
     [ -1.17008e+06 ]]
 
-.. GENERATED FROM PYTHON SOURCE LINES 344-347
+.. GENERATED FROM PYTHON SOURCE LINES 333-336
 
 Notice that the CantileverBeam model has an exact gradient in OpenTURNS,
 because it is symbolic.
 Hence, using the optimal step should not make any difference.
 
-.. GENERATED FROM PYTHON SOURCE LINES 349-350
+.. GENERATED FROM PYTHON SOURCE LINES 338-339
 
 Compute step from SteplemanWinarsky
 
-.. GENERATED FROM PYTHON SOURCE LINES 350-362
+.. GENERATED FROM PYTHON SOURCE LINES 339-351
 
 .. code-block:: Python
 
@@ -831,7 +820,7 @@ Compute step from SteplemanWinarsky
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 363-374
+.. GENERATED FROM PYTHON SOURCE LINES 352-363
 
 Derivative with SteplemanWinarskyStep
 
@@ -845,7 +834,7 @@ Derivative with SteplemanWinarskyStep
 
 We see that this is the correct step size.
 
-.. GENERATED FROM PYTHON SOURCE LINES 377-382
+.. GENERATED FROM PYTHON SOURCE LINES 366-371
 
 Fire satellite model
 --------------------
@@ -853,7 +842,7 @@ Fire satellite model
 Load the Fire satellite use case with total torque as output
 Print the derivative from OpenTURNS
 
-.. GENERATED FROM PYTHON SOURCE LINES 382-393
+.. GENERATED FROM PYTHON SOURCE LINES 371-382
 
 .. code-block:: Python
 
@@ -891,7 +880,7 @@ Print the derivative from OpenTURNS
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 394-409
+.. GENERATED FROM PYTHON SOURCE LINES 383-398
 
 From OpenTURNS with default settings:
 
@@ -909,7 +898,7 @@ From OpenTURNS with default settings:
      [  0.00582819  ]
      [  0.0116564   ]]
 
-.. GENERATED FROM PYTHON SOURCE LINES 411-424
+.. GENERATED FROM PYTHON SOURCE LINES 400-413
 
 There is a specific difficulty with FireSatellite model for the derivative
 with respect to Pother.
@@ -925,11 +914,11 @@ algorithm.
 To solve this issue the interval which defines the set of
 possible values of x should be introduced.
 
-.. GENERATED FROM PYTHON SOURCE LINES 426-427
+.. GENERATED FROM PYTHON SOURCE LINES 415-416
 
 Compute step from SteplemanWinarsky
 
-.. GENERATED FROM PYTHON SOURCE LINES 427-438
+.. GENERATED FROM PYTHON SOURCE LINES 416-426
 
 .. code-block:: Python
 
@@ -938,8 +927,7 @@ Compute step from SteplemanWinarsky
         model,
         initialStep,
         inputMean,
-        verbose=True,
-        relative_precision=1.0e-16,
+        verbose=False,
     )
     print("The optimal step for central finite difference is")
     print(f"optimalStep = {optimalStep}")
@@ -952,444 +940,13 @@ Compute step from SteplemanWinarsky
 
  .. code-block:: none
 
-    Input dimension = 9
-    Input description = [H,Pother,Fs,theta,Lsp,q,RD,Lalpha,Cd]
-    + Derivative with respect to H at point 18000000.0
-    + compute_step()
-    initial_step=9.000e+06
-    x =  27000000.0
-    y =  [0.00851681]
-    x =  9000000.0
-    y =  [0.0184821]
-    x =  20250000.0
-    y =  [0.0106748]
-    x =  15750000.0
-    y =  [0.0128449]
-      number_of_iterations=0, h=2.2500e+06, |FD(h_current) - FD(h_previous)|=7.1361e-11
-    x =  18562500.0
-    y =  [0.0113968]
-    x =  17437500.0
-    y =  [0.011935]
-      number_of_iterations=1, h=5.6250e+05, |FD(h_current) - FD(h_previous)|=3.8542e-12
-    x =  18140625.0
-    y =  [0.0115928]
-    x =  17859375.0
-    y =  [0.0117273]
-      number_of_iterations=2, h=1.4062e+05, |FD(h_current) - FD(h_previous)|=2.3884e-13
-    x =  18035156.25
-    y =  [0.0116429]
-    x =  17964843.75
-    y =  [0.0116765]
-      number_of_iterations=3, h=3.5156e+04, |FD(h_current) - FD(h_previous)|=1.4920e-14
-    x =  18008789.0625
-    y =  [0.0116555]
-    x =  17991210.9375
-    y =  [0.0116639]
-      number_of_iterations=4, h=8.7891e+03, |FD(h_current) - FD(h_previous)|=9.3245e-16
-    x =  18002197.265625
-    y =  [0.0116586]
-    x =  17997802.734375
-    y =  [0.0116607]
-      number_of_iterations=5, h=2.1973e+03, |FD(h_current) - FD(h_previous)|=5.8278e-17
-    x =  18000549.31640625
-    y =  [0.0116594]
-    x =  17999450.68359375
-    y =  [0.0116599]
-      number_of_iterations=6, h=5.4932e+02, |FD(h_current) - FD(h_previous)|=3.6411e-18
-    x =  18000137.329101562
-    y =  [0.0116596]
-    x =  17999862.670898438
-    y =  [0.0116597]
-      number_of_iterations=7, h=1.3733e+02, |FD(h_current) - FD(h_previous)|=2.2737e-19
-    x =  18000034.33227539
-    y =  [0.0116597]
-    x =  17999965.66772461
-    y =  [0.0116597]
-      number_of_iterations=8, h=3.4332e+01, |FD(h_current) - FD(h_previous)|=1.2632e-20
-    x =  18000008.583068848
-    y =  [0.0116597]
-    x =  17999991.416931152
-    y =  [0.0116597]
-      number_of_iterations=9, h=8.5831e+00, |FD(h_current) - FD(h_previous)|=0.0000e+00
-      Stop because zero difference.
-    x =  18000034.33227539
-    y =  [0.0116597]
-    x =  17999965.66772461
-    y =  [0.0116597]
-        Optimum h = 3.433228e+01
-        Iterations = 9
-        Function evaluations = 22
-        Derivative wrt H = -4.78156698894357113e-10
-    + Derivative with respect to Pother at point 1000.0
-    + compute_step()
-    initial_step=5.000e+02
-    x =  1500.0
-    y =  [0.0116597]
-    x =  500.0
-    y =  [0.0116597]
-    x =  1125.0
-    y =  [0.0116597]
-    x =  875.0
-    y =  [0.0116597]
-      number_of_iterations=0, h=1.2500e+02, |FD(h_current) - FD(h_previous)|=1.0877e-16
-    x =  1031.25
-    y =  [0.0116597]
-    x =  968.75
-    y =  [0.0116597]
-      number_of_iterations=1, h=3.1250e+01, |FD(h_current) - FD(h_previous)|=6.8140e-18
-    x =  1007.8125
-    y =  [0.0116597]
-    x =  992.1875
-    y =  [0.0116597]
-      number_of_iterations=2, h=7.8125e+00, |FD(h_current) - FD(h_previous)|=3.3307e-19
-    x =  1001.953125
-    y =  [0.0116597]
-    x =  998.046875
-    y =  [0.0116597]
-      number_of_iterations=3, h=1.9531e+00, |FD(h_current) - FD(h_previous)|=1.1102e-19
-    x =  1000.48828125
-    y =  [0.0116597]
-    x =  999.51171875
-    y =  [0.0116597]
-      number_of_iterations=4, h=4.8828e-01, |FD(h_current) - FD(h_previous)|=8.8818e-19
-      Stop because no monotony anymore.
-    x =  1001.953125
-    y =  [0.0116597]
-    x =  998.046875
-    y =  [0.0116597]
-        Optimum h = 1.953125e+00
-        Iterations = 4
-        Function evaluations = 12
-        Derivative wrt Pother = -2.91776380834107862e-13
-    + Derivative with respect to Fs at point 1400.0
-    + compute_step()
-    initial_step=7.000e+02
-    x =  2100.0
-    y =  [0.0116617]
-    x =  700.0
-    y =  [0.0116585]
-    x =  1575.0
-    y =  [0.0116601]
-    x =  1225.0
-    y =  [0.0116593]
-      number_of_iterations=0, h=1.7500e+02, |FD(h_current) - FD(h_previous)|=9.9805e-14
-    x =  1443.75
-    y =  [0.0116598]
-    x =  1356.25
-    y =  [0.0116596]
-      number_of_iterations=1, h=4.3750e+01, |FD(h_current) - FD(h_previous)|=2.3762e-15
-    x =  1410.9375
-    y =  [0.0116597]
-    x =  1389.0625
-    y =  [0.0116597]
-      number_of_iterations=2, h=1.0938e+01, |FD(h_current) - FD(h_previous)|=1.3822e-16
-    x =  1402.734375
-    y =  [0.0116597]
-    x =  1397.265625
-    y =  [0.0116597]
-      number_of_iterations=3, h=2.7344e+00, |FD(h_current) - FD(h_previous)|=8.5646e-18
-    x =  1400.68359375
-    y =  [0.0116597]
-    x =  1399.31640625
-    y =  [0.0116597]
-      number_of_iterations=4, h=6.8359e-01, |FD(h_current) - FD(h_previous)|=6.3441e-19
-    x =  1400.1708984375
-    y =  [0.0116597]
-    x =  1399.8291015625
-    y =  [0.0116597]
-      number_of_iterations=5, h=1.7090e-01, |FD(h_current) - FD(h_previous)|=0.0000e+00
-      Stop because zero difference.
-    x =  1400.68359375
-    y =  [0.0116597]
-    x =  1399.31640625
-    y =  [0.0116597]
-        Optimum h = 6.835938e-01
-        Iterations = 5
-        Function evaluations = 14
-        Derivative wrt Fs = 2.30671214446991674e-09
-    + Derivative with respect to theta at point 15.0
-    + compute_step()
-    initial_step=7.500e+00
-    x =  22.5
-    y =  [0.0116597]
-    x =  7.5
-    y =  [0.0116597]
-    x =  16.875
-    y =  [0.0116597]
-    x =  13.125
-    y =  [0.0116597]
-      number_of_iterations=0, h=1.8750e+00, |FD(h_current) - FD(h_previous)|=2.0718e-10
-    x =  15.46875
-    y =  [0.0116597]
-    x =  14.53125
-    y =  [0.0116597]
-      number_of_iterations=1, h=4.6875e-01, |FD(h_current) - FD(h_previous)|=1.3127e-11
-    x =  15.1171875
-    y =  [0.0116597]
-    x =  14.8828125
-    y =  [0.0116597]
-      number_of_iterations=2, h=1.1719e-01, |FD(h_current) - FD(h_previous)|=8.2113e-13
-    x =  15.029296875
-    y =  [0.0116597]
-    x =  14.970703125
-    y =  [0.0116597]
-      number_of_iterations=3, h=2.9297e-02, |FD(h_current) - FD(h_previous)|=5.1300e-14
-    x =  15.00732421875
-    y =  [0.0116597]
-    x =  14.99267578125
-    y =  [0.0116597]
-      number_of_iterations=4, h=7.3242e-03, |FD(h_current) - FD(h_previous)|=3.1086e-15
-    x =  15.0018310546875
-    y =  [0.0116597]
-    x =  14.9981689453125
-    y =  [0.0116597]
-      number_of_iterations=5, h=1.8311e-03, |FD(h_current) - FD(h_previous)|=0.0000e+00
-      Stop because zero difference.
-    x =  15.00732421875
-    y =  [0.0116597]
-    x =  14.99267578125
-    y =  [0.0116597]
-        Optimum h = 7.324219e-03
-        Iterations = 5
-        Function evaluations = 14
-        Derivative wrt theta = 4.90744866965542315e-09
-    + Derivative with respect to Lsp at point 2.0
-    + compute_step()
-    initial_step=1.000e+00
-    x =  3.0
-    y =  [0.0116617]
-    x =  1.0
-    y =  [0.0116585]
-    x =  2.25
-    y =  [0.0116601]
-    x =  1.75
-    y =  [0.0116593]
-      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=5.2381e-11
-    x =  2.0625
-    y =  [0.0116598]
-    x =  1.9375
-    y =  [0.0116596]
-      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=3.2740e-12
-    x =  2.015625
-    y =  [0.0116597]
-    x =  1.984375
-    y =  [0.0116597]
-      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=2.0461e-13
-    x =  2.00390625
-    y =  [0.0116597]
-    x =  1.99609375
-    y =  [0.0116597]
-      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=1.2546e-14
-    x =  2.0009765625
-    y =  [0.0116597]
-    x =  1.9990234375
-    y =  [0.0116597]
-      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=1.1102e-15
-    x =  2.000244140625
-    y =  [0.0116597]
-    x =  1.999755859375
-    y =  [0.0116597]
-      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
-    x =  2.00006103515625
-    y =  [0.0116597]
-    x =  1.99993896484375
-    y =  [0.0116597]
-      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
-      Stop because no monotony anymore.
-    x =  2.000244140625
-    y =  [0.0116597]
-    x =  1.999755859375
-    y =  [0.0116597]
-        Optimum h = 2.441406e-04
-        Iterations = 6
-        Function evaluations = 16
-        Derivative wrt Lsp = 1.61453365166153162e-06
-    + Derivative with respect to q at point 0.5
-    + compute_step()
-    initial_step=2.500e-01
-    x =  0.75
-    y =  [0.0116603]
-    x =  0.25
-    y =  [0.0116592]
-    x =  0.5625
-    y =  [0.0116598]
-    x =  0.4375
-    y =  [0.0116596]
-      number_of_iterations=0, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=7.7605e-12
-    x =  0.515625
-    y =  [0.0116597]
-    x =  0.484375
-    y =  [0.0116596]
-      number_of_iterations=1, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=4.8504e-13
-    x =  0.50390625
-    y =  [0.0116597]
-    x =  0.49609375
-    y =  [0.0116597]
-      number_of_iterations=2, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=3.0420e-14
-    x =  0.5009765625
-    y =  [0.0116597]
-    x =  0.4990234375
-    y =  [0.0116597]
-      number_of_iterations=3, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.2204e-15
-    x =  0.500244140625
-    y =  [0.0116597]
-    x =  0.499755859375
-    y =  [0.0116597]
-      number_of_iterations=4, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=8.8818e-16
-    x =  0.50006103515625
-    y =  [0.0116597]
-    x =  0.49993896484375
-    y =  [0.0116597]
-      number_of_iterations=5, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=7.1054e-15
-      Stop because no monotony anymore.
-    x =  0.500244140625
-    y =  [0.0116597]
-    x =  0.499755859375
-    y =  [0.0116597]
-        Optimum h = 2.441406e-04
-        Iterations = 5
-        Function evaluations = 14
-        Derivative wrt q = 2.15271153791718461e-06
-    + Derivative with respect to RD at point 5.0
-    + compute_step()
-    initial_step=2.500e+00
-    x =  7.5
-    y =  [0.0116597]
-    x =  2.5
-    y =  [0.0116597]
-    x =  5.625
-    y =  [0.0116597]
-    x =  4.375
-    y =  [0.0116597]
-      number_of_iterations=0, h=6.2500e-01, |FD(h_current) - FD(h_previous)|=1.3878e-17
-    x =  5.15625
-    y =  [0.0116597]
-    x =  4.84375
-    y =  [0.0116597]
-      number_of_iterations=1, h=1.5625e-01, |FD(h_current) - FD(h_previous)|=4.1633e-18
-    x =  5.0390625
-    y =  [0.0116597]
-    x =  4.9609375
-    y =  [0.0116597]
-      number_of_iterations=2, h=3.9062e-02, |FD(h_current) - FD(h_previous)|=1.1102e-17
-      Stop because no monotony anymore.
-    x =  5.15625
-    y =  [0.0116597]
-    x =  4.84375
-    y =  [0.0116597]
-        Optimum h = 1.562500e-01
-        Iterations = 2
-        Function evaluations = 8
-        Derivative wrt RD = 5.17804699118329340e-10
-    + Derivative with respect to Lalpha at point 2.0
-    + compute_step()
-    initial_step=1.000e+00
-    x =  3.0
-    y =  [0.0174881]
-    x =  1.0
-    y =  [0.00583233]
-    x =  2.25
-    y =  [0.0131168]
-    x =  1.75
-    y =  [0.0102027]
-      number_of_iterations=0, h=2.5000e-01, |FD(h_current) - FD(h_previous)|=2.6270e-07
-    x =  2.0625
-    y =  [0.0120239]
-    x =  1.9375
-    y =  [0.0112954]
-      number_of_iterations=1, h=6.2500e-02, |FD(h_current) - FD(h_previous)|=1.2330e-08
-    x =  2.015625
-    y =  [0.0117507]
-    x =  1.984375
-    y =  [0.0115686]
-      number_of_iterations=2, h=1.5625e-02, |FD(h_current) - FD(h_previous)|=7.5861e-10
-    x =  2.00390625
-    y =  [0.0116824]
-    x =  1.99609375
-    y =  [0.0116369]
-      number_of_iterations=3, h=3.9062e-03, |FD(h_current) - FD(h_previous)|=4.7367e-11
-    x =  2.0009765625
-    y =  [0.0116654]
-    x =  1.9990234375
-    y =  [0.011654]
-      number_of_iterations=4, h=9.7656e-04, |FD(h_current) - FD(h_previous)|=2.9607e-12
-    x =  2.000244140625
-    y =  [0.0116611]
-    x =  1.999755859375
-    y =  [0.0116583]
-      number_of_iterations=5, h=2.4414e-04, |FD(h_current) - FD(h_previous)|=1.8918e-13
-    x =  2.00006103515625
-    y =  [0.01166]
-    x =  1.99993896484375
-    y =  [0.0116593]
-      number_of_iterations=6, h=6.1035e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
-      Stop because zero difference.
-    x =  2.000244140625
-    y =  [0.0116611]
-    x =  1.999755859375
-    y =  [0.0116583]
-        Optimum h = 2.441406e-04
-        Iterations = 6
-        Function evaluations = 16
-        Derivative wrt Lalpha = 5.82818510592630901e-03
-    + Derivative with respect to Cd at point 1.0
-    + compute_step()
-    initial_step=5.000e-01
-    x =  1.5
-    y =  [0.0174881]
-    x =  0.5
-    y =  [0.00583233]
-    x =  1.125
-    y =  [0.0131168]
-    x =  0.875
-    y =  [0.0102027]
-      number_of_iterations=0, h=1.2500e-01, |FD(h_current) - FD(h_previous)|=5.2539e-07
-    x =  1.03125
-    y =  [0.0120239]
-    x =  0.96875
-    y =  [0.0112954]
-      number_of_iterations=1, h=3.1250e-02, |FD(h_current) - FD(h_previous)|=2.4659e-08
-    x =  1.0078125
-    y =  [0.0117507]
-    x =  0.9921875
-    y =  [0.0115686]
-      number_of_iterations=2, h=7.8125e-03, |FD(h_current) - FD(h_previous)|=1.5172e-09
-    x =  1.001953125
-    y =  [0.0116824]
-    x =  0.998046875
-    y =  [0.0116369]
-      number_of_iterations=3, h=1.9531e-03, |FD(h_current) - FD(h_previous)|=9.4733e-11
-    x =  1.00048828125
-    y =  [0.0116654]
-    x =  0.99951171875
-    y =  [0.011654]
-      number_of_iterations=4, h=4.8828e-04, |FD(h_current) - FD(h_previous)|=5.9215e-12
-    x =  1.0001220703125
-    y =  [0.0116611]
-    x =  0.9998779296875
-    y =  [0.0116583]
-      number_of_iterations=5, h=1.2207e-04, |FD(h_current) - FD(h_previous)|=3.7836e-13
-    x =  1.000030517578125
-    y =  [0.01166]
-    x =  0.999969482421875
-    y =  [0.0116593]
-      number_of_iterations=6, h=3.0518e-05, |FD(h_current) - FD(h_previous)|=0.0000e+00
-      Stop because zero difference.
-    x =  1.0001220703125
-    y =  [0.0116611]
-    x =  0.9998779296875
-    y =  [0.0116583]
-        Optimum h = 1.220703e-04
-        Iterations = 6
-        Function evaluations = 16
-        Derivative wrt Cd = 1.16563702118526180e-02
     The optimal step for central finite difference is
     optimalStep = [34.3323,1.95312,0.683594,0.00732422,0.000244141,0.000244141,0.15625,0.000244141,0.00012207]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 439-446
+.. GENERATED FROM PYTHON SOURCE LINES 427-434
 
 .. code-block:: Python
 
@@ -1423,7 +980,7 @@ Compute step from SteplemanWinarsky
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 447-462
+.. GENERATED FROM PYTHON SOURCE LINES 435-450
 
 From SteplemanWinarsky
 
@@ -1444,7 +1001,7 @@ From SteplemanWinarsky
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.233 seconds)
+   **Total running time of the script:** (0 minutes 0.211 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_openturns.py:

@@ -95,7 +95,7 @@ differences using Stepleman & Winarsky's method.
                 The number of function evaluations.
             """
             algorithm = nd.SteplemanWinarsky(function, x)
-            step, _ = algorithm.compute_step(
+            step, _ = algorithm.find_step(
                 self.initial_step,
             )
             f_prime_approx = algorithm.compute_first_derivative(step)
@@ -114,7 +114,7 @@ differences using Stepleman & Winarsky's method.
 
 The next script is a simple use of the :class:`~numericalderivative.SteplemanWinarsky` class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-116
+.. GENERATED FROM PYTHON SOURCE LINES 78-117
 
 .. code-block:: Python
 
@@ -134,12 +134,13 @@ The next script is a simple use of the :class:`~numericalderivative.SteplemanWin
     )
     print("Exact h* = %.3e" % (optimal_step))
 
-    h0, iterations = algorithm.search_step_with_bisection(
+    initialize = nd.SteplemanWinarskyInitialize(algorithm)
+    initial_step, iterations = initialize.find_initial_step(
         1.0e-7,
         1.0e1,
     )
-    print("Pas initial = ", h0, ", iterations = ", iterations)
-    lost_digits = algorithm.number_of_lost_digits(h0)
+    print("Pas initial = ", initial_step, ", iterations = ", iterations)
+    lost_digits = initialize.number_of_lost_digits(initial_step)
     print("lost_digits = ", lost_digits)
     initial_step = 1.0e1
     function = problem.get_function()
@@ -175,13 +176,6 @@ The next script is a simple use of the :class:`~numericalderivative.SteplemanWin
     f^(5)(x) = 2.718281828459045
 
     Exact h* = 4.797e-06
-    + search_step_with_bisection()
-    + h_min = 1.000e-07, h_max = 1.000e+01
-    + relative_precision = 1.000e-16
-    n_min = 6.699, n_treshold = 4.731, n_max = -4.343
-    + Iter 0 / 53, h_min = 1.000e-07, h_max = 1.000e+01
-      h = 1.000e-03,   Number of lost digits = 2.699
-      h is just right : stop !
     Pas initial =  0.001 , iterations =  0
     lost_digits =  2.6989699319536102
     x = 1.000, error = 5.991e-11, Func. eval. = 28
@@ -189,17 +183,17 @@ The next script is a simple use of the :class:`~numericalderivative.SteplemanWin
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-119
+.. GENERATED FROM PYTHON SOURCE LINES 118-120
 
 Perform the benchmark
 ---------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-124
+.. GENERATED FROM PYTHON SOURCE LINES 123-125
 
 The next example computes the approximate derivative on the
 :class:`~numericalderivative.ExponentialProblem` on a set of points.
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-142
+.. GENERATED FROM PYTHON SOURCE LINES 127-143
 
 .. code-block:: Python
 
@@ -285,11 +279,11 @@ The next example computes the approximate derivative on the
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-144
+.. GENERATED FROM PYTHON SOURCE LINES 144-145
 
 Map from the problem name to the initial step.
 
-.. GENERATED FROM PYTHON SOURCE LINES 146-165
+.. GENERATED FROM PYTHON SOURCE LINES 147-166
 
 .. code-block:: Python
 
@@ -319,12 +313,12 @@ Map from the problem name to the initial step.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-168
+.. GENERATED FROM PYTHON SOURCE LINES 167-169
 
 The next script evaluates a collection of benchmark problems
 using the :class:`~numericalderivative.SteplemanWinarsky` class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-213
+.. GENERATED FROM PYTHON SOURCE LINES 171-214
 
 .. code-block:: Python
 
@@ -367,7 +361,7 @@ using the :class:`~numericalderivative.SteplemanWinarsky` class.
     )
     tabulate.tabulate(
         data,
-        headers=["Name", "h0", "Average rel. error", "Average func. eval"],
+        headers=["Name", "initial_step", "Average rel. error", "Average func. eval"],
         tablefmt="html",
     )
 
@@ -402,26 +396,26 @@ using the :class:`~numericalderivative.SteplemanWinarsky` class.
     <div class="output_subarea output_html rendered_html output_result">
     <table>
     <thead>
-    <tr><th>Name      </th><th>h0      </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
+    <tr><th>Name      </th><th>initial_step  </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
-    <tr><td>polynomial</td><td>1.0     </td><td style="text-align: right;">         2.7803e-16 </td><td style="text-align: right;">              7.28  </td></tr>
-    <tr><td>inverse   </td><td>0.001   </td><td style="text-align: right;">         2.60826e-11</td><td style="text-align: right;">             13.8   </td></tr>
-    <tr><td>exp       </td><td>0.1     </td><td style="text-align: right;">         1.81258e-11</td><td style="text-align: right;">             22.34  </td></tr>
-    <tr><td>log       </td><td>0.001   </td><td style="text-align: right;">         2.73807e-11</td><td style="text-align: right;">             13.24  </td></tr>
-    <tr><td>sqrt      </td><td>0.001   </td><td style="text-align: right;">         2.43901e-11</td><td style="text-align: right;">             12.86  </td></tr>
-    <tr><td>atan      </td><td>1.0     </td><td style="text-align: right;">         1.02142e-10</td><td style="text-align: right;">             22.28  </td></tr>
-    <tr><td>sin       </td><td>1.0     </td><td style="text-align: right;">         3.09318e-11</td><td style="text-align: right;">             25.02  </td></tr>
-    <tr><td>scaled exp</td><td>100000.0</td><td style="text-align: right;">         1.32527e-11</td><td style="text-align: right;">             21.88  </td></tr>
-    <tr><td>GMSW      </td><td>1.0     </td><td style="text-align: right;">         3.33368e-11</td><td style="text-align: right;">             26.22  </td></tr>
-    <tr><td>SXXN1     </td><td>1.0     </td><td style="text-align: right;">         2.67332e-09</td><td style="text-align: right;">             24.3   </td></tr>
-    <tr><td>SXXN2     </td><td>1.0     </td><td style="text-align: right;">         1.90792e-11</td><td style="text-align: right;">             31.64  </td></tr>
-    <tr><td>SXXN3     </td><td>1.0     </td><td style="text-align: right;">         1.46924e-11</td><td style="text-align: right;">             23.88  </td></tr>
-    <tr><td>SXXN4     </td><td>1.0     </td><td style="text-align: right;">         1.18405e-11</td><td style="text-align: right;">             23.48  </td></tr>
-    <tr><td>Oliver1   </td><td>1.0     </td><td style="text-align: right;">         1.63577e-11</td><td style="text-align: right;">             27     </td></tr>
-    <tr><td>Oliver2   </td><td>1.0     </td><td style="text-align: right;">         1.8908e-10 </td><td style="text-align: right;">             27.04  </td></tr>
-    <tr><td>Oliver3   </td><td>0.001   </td><td style="text-align: right;">         1.04484e-11</td><td style="text-align: right;">             13.2   </td></tr>
-    <tr><td>Average   </td><td>-       </td><td style="text-align: right;">         2.00654e-10</td><td style="text-align: right;">             20.9662</td></tr>
+    <tr><td>polynomial</td><td>1.0           </td><td style="text-align: right;">         2.7803e-16 </td><td style="text-align: right;">              7.28  </td></tr>
+    <tr><td>inverse   </td><td>0.001         </td><td style="text-align: right;">         2.60826e-11</td><td style="text-align: right;">             13.8   </td></tr>
+    <tr><td>exp       </td><td>0.1           </td><td style="text-align: right;">         1.81258e-11</td><td style="text-align: right;">             22.34  </td></tr>
+    <tr><td>log       </td><td>0.001         </td><td style="text-align: right;">         2.73807e-11</td><td style="text-align: right;">             13.24  </td></tr>
+    <tr><td>sqrt      </td><td>0.001         </td><td style="text-align: right;">         2.43901e-11</td><td style="text-align: right;">             12.86  </td></tr>
+    <tr><td>atan      </td><td>1.0           </td><td style="text-align: right;">         1.02142e-10</td><td style="text-align: right;">             22.28  </td></tr>
+    <tr><td>sin       </td><td>1.0           </td><td style="text-align: right;">         3.09318e-11</td><td style="text-align: right;">             25.02  </td></tr>
+    <tr><td>scaled exp</td><td>100000.0      </td><td style="text-align: right;">         1.32527e-11</td><td style="text-align: right;">             21.88  </td></tr>
+    <tr><td>GMSW      </td><td>1.0           </td><td style="text-align: right;">         3.33368e-11</td><td style="text-align: right;">             26.22  </td></tr>
+    <tr><td>SXXN1     </td><td>1.0           </td><td style="text-align: right;">         2.67332e-09</td><td style="text-align: right;">             24.3   </td></tr>
+    <tr><td>SXXN2     </td><td>1.0           </td><td style="text-align: right;">         1.90792e-11</td><td style="text-align: right;">             31.64  </td></tr>
+    <tr><td>SXXN3     </td><td>1.0           </td><td style="text-align: right;">         1.46924e-11</td><td style="text-align: right;">             23.88  </td></tr>
+    <tr><td>SXXN4     </td><td>1.0           </td><td style="text-align: right;">         1.18405e-11</td><td style="text-align: right;">             23.48  </td></tr>
+    <tr><td>Oliver1   </td><td>1.0           </td><td style="text-align: right;">         1.63577e-11</td><td style="text-align: right;">             27     </td></tr>
+    <tr><td>Oliver2   </td><td>1.0           </td><td style="text-align: right;">         1.8908e-10 </td><td style="text-align: right;">             27.04  </td></tr>
+    <tr><td>Oliver3   </td><td>0.001         </td><td style="text-align: right;">         1.04484e-11</td><td style="text-align: right;">             13.2   </td></tr>
+    <tr><td>Average   </td><td>-             </td><td style="text-align: right;">         2.00654e-10</td><td style="text-align: right;">             20.9662</td></tr>
     </tbody>
     </table>
     </div>

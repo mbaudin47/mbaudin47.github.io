@@ -69,7 +69,7 @@
 <dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiation_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula_accuracy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'central'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Create a general finite difference formula</p>
-<p>Let <span class="math notranslate nohighlight">\(d \in \mathbb{N}\)</span> be the order of differentation with <span class="math notranslate nohighlight">\(d \geq 1\)</span> and
+<p>Let <span class="math notranslate nohighlight">\(d \in \mathbb{N}\)</span> be the order of differentiation with <span class="math notranslate nohighlight">\(d \geq 1\)</span> and
 <span class="math notranslate nohighlight">\(p \in \mathbb{N}\)</span> be the order of precision with <span class="math notranslate nohighlight">\(p \geq 1\)</span>. 
 The indices are:</p>
 <ul class="simple">
@@ -101,7 +101,7 @@ The coefficient <span class="math notranslate nohighlight">\(b_{d + p}\)</span> 
 \[f^{(d)}(x) = \frac{d!}{h^d} \sum_{i = i_{\min}}^{i_\max} c_i f(x + h i)
              + O(h^p)\]</div>
 <p>when <span class="math notranslate nohighlight">\(h \rightarrow 0\)</span>.</p>
-<p>If direction is &quot;central&quot;, if <span class="math notranslate nohighlight">\(p\)</span> is odd,
+<p>If direction is &quot;central&quot; and if <span class="math notranslate nohighlight">\(p\)</span> is odd,
 then the order of precision is actually <span class="math notranslate nohighlight">\(p + 1\)</span>.
 This implies that any central F.D. formula has an even order of precision.</p>
 <p>The number of coefficients in the system of equations is:</p>
@@ -175,8 +175,7 @@ then the formula accuracy is necessarily even.
 If required, increase the formula accuracy by 1 unit.</p>
 </dd>
 <dt><strong>direction</strong><span class="classifier">str, optional</span></dt><dd><p>The direction of the formula.
-The direction can be &quot;forward&quot;, &quot;backward&quot; or &quot;central&quot;.
-The default is &quot;central&quot;.</p>
+The direction can be &quot;forward&quot;, &quot;backward&quot; or &quot;central&quot;.</p>
 </dd>
 <dt><strong>args</strong><span class="classifier">list</span></dt><dd><p>A list of optional arguments that the function takes as inputs.
 By default, there is no extra argument and calling sequence of
@@ -313,7 +312,7 @@ error in the Taylor expansion (see Baudin, 2023) eq. (9.16) page 224 and
 \[e(h) = \frac{d! \|\boldsymbol{c}\|_1 \epsilon_f}{h^d}
        + \frac{d!}{(d + p)!} \left|b_{d + p} f^{(d + p)}(x) \right| h^p\]</div>
 <p>where <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step, <span class="math notranslate nohighlight">\(d \in \mathbb{N}\)</span> is the
-order of differentation, <span class="math notranslate nohighlight">\(p \in \mathbb{N}\)</span> is the order
+order of differentiation, <span class="math notranslate nohighlight">\(p \in \mathbb{N}\)</span> is the order
 of precision, <span class="math notranslate nohighlight">\(\boldsymbol{c} \in \mathbb{R}^{d + p}\)</span> is the vector of weights and
 <span class="math notranslate nohighlight">\(\epsilon_f &gt; 0\)</span> is the absolute precision of the
 function evaluation and <span class="math notranslate nohighlight">\(b_{d + p}\)</span> is equal to:</p>

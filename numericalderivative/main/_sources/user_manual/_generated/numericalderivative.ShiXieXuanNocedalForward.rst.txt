@@ -15,8 +15,8 @@
    
       ~ShiXieXuanNocedalForward.__init__
       ~ShiXieXuanNocedalForward.compute_first_derivative
-      ~ShiXieXuanNocedalForward.compute_step
       ~ShiXieXuanNocedalForward.compute_test_ratio
+      ~ShiXieXuanNocedalForward.find_step
       ~ShiXieXuanNocedalForward.get_absolute_precision
       ~ShiXieXuanNocedalForward.get_number_of_function_evaluations
       ~ShiXieXuanNocedalForward.get_ratio_min_max

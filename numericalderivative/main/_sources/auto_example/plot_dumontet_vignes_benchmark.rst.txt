@@ -150,8 +150,8 @@ The next example computes the approximate derivative on the
 
  .. code-block:: none
 
-    Average rel. error = 1.5969358861225037e-10
-    Average number of function evaluations = 79.0
+    Average rel. error = nan
+    Average number of function evaluations = -1.0
 
 
 .. raw:: html
@@ -162,26 +162,26 @@ The next example computes the approximate derivative on the
     <tr><th style="text-align: right;">        x</th><th style="text-align: right;">  Rel. err.</th><th style="text-align: right;">  F. Eval.</th></tr>
     </thead>
     <tbody>
-    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">1.61527e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">1.60234e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">1.59545e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">1.60987e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">1.59693e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">1.61137e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">1.63038e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">1.61623e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">1.59493e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">1.62518e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">1.61635e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">1.60672e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">1.60882e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">1.56856e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">1.56961e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">1.57521e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">1.58586e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">1.58525e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">1.57334e-10</td><td style="text-align: right;">        79</td></tr>
-    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">1.55104e-10</td><td style="text-align: right;">        79</td></tr>
+    <tr><td style="text-align: right;"> 0       </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 0.631579</td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 1.26316 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 1.89474 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 2.52632 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 3.15789 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 3.78947 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 4.42105 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 5.05263 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 5.68421 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 6.31579 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 6.94737 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 7.57895 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 8.21053 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 8.84211 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;"> 9.47368 </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;">10.1053  </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;">10.7368  </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;">11.3684  </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
+    <tr><td style="text-align: right;">12       </td><td style="text-align: right;">        nan</td><td style="text-align: right;">        -1</td></tr>
     </tbody>
     </table>
     </div>
@@ -310,6 +310,8 @@ on a collection of problems.
     Function #13, Oliver1
     Function #14, Oliver2
     Function #15, Oliver3
+    /home/runner/work/numericalderivative/numericalderivative/doc/examples/plot_dumontet_vignes_benchmark.py:175: RuntimeWarning: Mean of empty slice
+      np.nanmean(average_relative_error_list),
 
 
 .. raw:: html
@@ -320,22 +322,22 @@ on a collection of problems.
     <tr><th>Name      </th><th>kmin  </th><th>kmax    </th><th style="text-align: right;">  Average rel. error</th><th style="text-align: right;">  Average func. eval</th></tr>
     </thead>
     <tbody>
-    <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.92323e-10</td><td style="text-align: right;">             68.16  </td></tr>
-    <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">         1.61537e-10</td><td style="text-align: right;">             63     </td></tr>
-    <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.77694e-10</td><td style="text-align: right;">             25.4   </td></tr>
-    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         2.32082e-10</td><td style="text-align: right;">             23.2   </td></tr>
-    <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.14667e-09</td><td style="text-align: right;">             63.88  </td></tr>
-    <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.72551e-10</td><td style="text-align: right;">             73.96  </td></tr>
-    <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">         1.6088e-10 </td><td style="text-align: right;">             63     </td></tr>
-    <tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.53806e-10</td><td style="text-align: right;">             82.2   </td></tr>
-    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         2.03436e-08</td><td style="text-align: right;">             73     </td></tr>
-    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.66078e-10</td><td style="text-align: right;">            103     </td></tr>
-    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.28154e-10</td><td style="text-align: right;">             69.56  </td></tr>
-    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         9.73696e-11</td><td style="text-align: right;">             67.88  </td></tr>
-    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.60721e-10</td><td style="text-align: right;">             87     </td></tr>
-    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">         1.97439e-10</td><td style="text-align: right;">             86.36  </td></tr>
-    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">         1.12381e-10</td><td style="text-align: right;">             25.56  </td></tr>
-    <tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">         1.59355e-09</td><td style="text-align: right;">             65.0107</td></tr>
+    <tr><td>inverse   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>exp       </td><td>1e-17 </td><td>0.1     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>log       </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>sqrt      </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>atan      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>sin       </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>scaled exp</td><td>1e-11 </td><td>100000.0</td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>GMSW      </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>SXXN1     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>SXXN2     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>SXXN3     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>SXXN4     </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>Oliver1   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>Oliver2   </td><td>1e-16 </td><td>1.0     </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>Oliver3   </td><td>1e-19 </td><td>0.001   </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
+    <tr><td>Average   </td><td>-     </td><td>-       </td><td style="text-align: right;">                 nan</td><td style="text-align: right;">                  -1</td></tr>
     </tbody>
     </table>
     </div>
@@ -352,7 +354,7 @@ step :math:`k` such that the condition is satisfied.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.186 seconds)
+   **Total running time of the script:** (0 minutes 0.008 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_dumontet_vignes_benchmark.py:
