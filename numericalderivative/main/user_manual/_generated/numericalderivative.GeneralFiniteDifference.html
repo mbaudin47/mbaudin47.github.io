@@ -51,17 +51,32 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute" title="numericalderivative.GeneralFiniteDifference.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(step)</p></td>
 <td><p>Computes the degree d approximate derivative of f at point x.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_b_constant" title="numericalderivative.GeneralFiniteDifference.compute_b_constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_b_constant</span></code></a>()</p></td>
+<td><p>Compute the constant b involved in the finite difference formula.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
 <td><p>Computes the total error</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
 <td><p>Computes the optimal step</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
 <td><p>Return the coefficients of the finite difference formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_differentiation_order" title="numericalderivative.GeneralFiniteDifference.get_differentiation_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_differentiation_order</span></code></a>()</p></td>
+<td><p>Return the differentiation order</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_formula_accuracy" title="numericalderivative.GeneralFiniteDifference.get_formula_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_formula_accuracy</span></code></a>()</p></td>
+<td><p>Return the formula accuracy</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_function" title="numericalderivative.GeneralFiniteDifference.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Returns the function which derivative is to be approximated</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="numericalderivative.GeneralFiniteDifference.get_indices_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indices_min_max</span></code></a>()</p></td>
 <td><p>Return the indices of the finite difference formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_x" title="numericalderivative.GeneralFiniteDifference.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
+<td><p>Returns the point x where the derivative is to be approximated</p></td>
 </tr>
 </tbody>
 </table>
@@ -209,17 +224,32 @@ arg1, arg2, ..., are the items in the args list.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute" title="numericalderivative.GeneralFiniteDifference.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(step)</p></td>
 <td><p>Computes the degree d approximate derivative of f at point x.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_b_constant" title="numericalderivative.GeneralFiniteDifference.compute_b_constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_b_constant</span></code></a>()</p></td>
+<td><p>Compute the constant b involved in the finite difference formula.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_error" title="numericalderivative.GeneralFiniteDifference.compute_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_error</span></code></a>(step[, ...])</p></td>
 <td><p>Computes the total error</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.compute_step" title="numericalderivative.GeneralFiniteDifference.compute_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_step</span></code></a>([...])</p></td>
 <td><p>Computes the optimal step</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_coefficients" title="numericalderivative.GeneralFiniteDifference.get_coefficients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coefficients</span></code></a>()</p></td>
 <td><p>Return the coefficients of the finite difference formula</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_differentiation_order" title="numericalderivative.GeneralFiniteDifference.get_differentiation_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_differentiation_order</span></code></a>()</p></td>
+<td><p>Return the differentiation order</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_formula_accuracy" title="numericalderivative.GeneralFiniteDifference.get_formula_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_formula_accuracy</span></code></a>()</p></td>
+<td><p>Return the formula accuracy</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_function" title="numericalderivative.GeneralFiniteDifference.get_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_function</span></code></a>()</p></td>
+<td><p>Returns the function which derivative is to be approximated</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="numericalderivative.GeneralFiniteDifference.get_indices_min_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indices_min_max</span></code></a>()</p></td>
 <td><p>Return the indices of the finite difference formula</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#numericalderivative.GeneralFiniteDifference.get_x" title="numericalderivative.GeneralFiniteDifference.get_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_x</span></code></a>()</p></td>
+<td><p>Returns the point x where the derivative is to be approximated</p></td>
 </tr>
 </tbody>
 </table>
@@ -298,6 +328,23 @@ Then the step can be used to compute the derivative.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">absolute_error</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.compute_b_constant">
+<span class="sig-name descname"><span class="pre">compute_b_constant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.compute_b_constant" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the constant b involved in the finite difference formula.</p>
+<p>The coefficient <span class="math notranslate nohighlight">\(b_{d + p}\)</span> is (see (Shi, Xie, Xuan &amp; Nocedal, 2022) eq. page 7):</p>
+<div class="math notranslate nohighlight">
+\[b_{d + p} = \sum_{i = i_{\min}}^{i_\max} i^{d + p} c_i.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>b_constant</strong><span class="classifier">float</span></dt><dd><p>The b parameter</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -426,6 +473,45 @@ this must be the derivative of order 3 + 2 = 5.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_differentiation_order">
+<span class="sig-name descname"><span class="pre">get_differentiation_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_differentiation_order" title="Link to this definition">¶</a></dt>
+<dd><p>Return the differentiation order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>differentiation_order</strong><span class="classifier">int</span></dt><dd><p>The differentiation order</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_formula_accuracy">
+<span class="sig-name descname"><span class="pre">get_formula_accuracy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_formula_accuracy" title="Link to this definition">¶</a></dt>
+<dd><p>Return the formula accuracy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>formula_accuracy</strong><span class="classifier">int</span></dt><dd><p>The accuracy of the formula</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_function">
+<span class="sig-name descname"><span class="pre">get_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_function" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the function which derivative is to be approximated</p>
+<p>Returns
+function : function</p>
+<blockquote>
+<div><p>The function</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_indices_min_max">
 <span class="sig-name descname"><span class="pre">get_indices_min_max</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_indices_min_max" title="Link to this definition">¶</a></dt>
 <dd><p>Return the indices of the finite difference formula</p>
@@ -455,6 +541,17 @@ this must be the derivative of order 3 + 2 = 5.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">differentiation_order</span><span class="p">,</span> <span class="n">formula_accuracy</span><span class="p">,</span> <span class="s2">&quot;central&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_indices_min_max</span><span class="p">()</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="numericalderivative.GeneralFiniteDifference.get_x">
+<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.GeneralFiniteDifference.get_x" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the point x where the derivative is to be approximated</p>
+<p>Returns
+x : float</p>
+<blockquote>
+<div><p>The input point</p>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>

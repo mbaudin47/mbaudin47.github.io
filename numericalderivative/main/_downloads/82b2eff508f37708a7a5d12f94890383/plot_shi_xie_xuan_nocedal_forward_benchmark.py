@@ -26,7 +26,7 @@ import numericalderivative as nd
 class ShiXieXuanNocedalForwardMethod:
     def __init__(self, relative_precision, initial_step):
         """
-        Create a ShiXieXuanNocedal method to compute the approximate first derivative
+        Create a ShiXieXuanNocedalForward method to compute the approximate first derivative
 
         Parameters
         ----------
@@ -229,9 +229,9 @@ tabulate.tabulate(
 
 # %%
 # Notice that the method cannot perform correctly for the sin function
-# at the point
+# at the point :math:`x = \pm \pi`.
 # Indeed, this function is such that :math:`f''(x) = 0` if :math:`x = \pm \pi`.
-# In this case, the test ratio and the method cannot work.
+# In this case, the test ratio is zero and the method cannot work.
 # Therefore, we make so that the points :math:`\pm \pi` are excluded from the benchmark.
 # The same problem appears at the point :math:`x = 0`.
 # This point is not included in the test set if the number of points is even

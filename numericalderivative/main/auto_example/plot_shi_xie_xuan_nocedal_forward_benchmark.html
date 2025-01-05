@@ -20,6 +20,7 @@
     <link rel="icon" href="../_static/Icon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Experiment with Shi, Xie, Xuan &amp; Nocedal general method" href="plot_shi_xie_xuan_nocedal_general.html" />
     <link rel="prev" title="Experiment with Shi, Xie, Xuan &amp; Nocedal forward method" href="plot_shi_xie_xuan_nocedal_forward.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -60,7 +61,7 @@ static method, which returns a list of problems.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ShiXieXuanNocedalForwardMethod</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">,</span> <span class="n">initial_step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a ShiXieXuanNocedal method to compute the approximate first derivative</span>
+<span class="sd">        Create a ShiXieXuanNocedalForward method to compute the approximate first derivative</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -378,15 +379,15 @@ Function #15, Oliver3
 </div>
 <br />
 <br /><p>Notice that the method cannot perform correctly for the sin function
-at the point
+at the point <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
 Indeed, this function is such that <span class="math notranslate nohighlight">\(f''(x) = 0\)</span> if <span class="math notranslate nohighlight">\(x = \pm \pi\)</span>.
-In this case, the test ratio and the method cannot work.
+In this case, the test ratio is zero and the method cannot work.
 Therefore, we make so that the points <span class="math notranslate nohighlight">\(\pm \pi\)</span> are excluded from the benchmark.
 The same problem appears at the point <span class="math notranslate nohighlight">\(x = 0\)</span>.
 This point is not included in the test set if the number of points is even
 (e.g. with <cite>number_of_test_points = 100</cite>), but it might appear if the
 number of test points is odd.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.059 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.057 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-shi-xie-xuan-nocedal-forward-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e3ee58894328b57c6e5c99d3709b940c/plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_shi_xie_xuan_nocedal_forward_benchmark.ipynb</span></code></a></p>
@@ -437,12 +438,15 @@ number of test points is odd.</p>
 <li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd_convergence.html">Convergence of the generalized finite differences formulas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="plot_shi_xie_xuan_nocedal_forward.html">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Benchmark Shi, Xie, Xuan &amp; Nocedal's forward method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_shi_xie_xuan_nocedal_general.html">Experiment with Shi, Xie, Xuan &amp; Nocedal general method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_shi_xie_xuan_nocedal_general_benchmark.html">Benchmark Shi, Xie, Xuan &amp; Nocedal's general method</a></li>
 </ul>
 </li>
 </ul>
@@ -455,6 +459,7 @@ number of test points is odd.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../examples/examples.html">Examples</a><ul>
       <li>Previous: <a href="plot_shi_xie_xuan_nocedal_forward.html" title="previous chapter">Experiment with Shi, Xie, Xuan &amp; Nocedal forward method</a></li>
+      <li>Next: <a href="plot_shi_xie_xuan_nocedal_general.html" title="next chapter">Experiment with Shi, Xie, Xuan &amp; Nocedal general method</a></li>
   </ul></li>
   </ul></li>
 </ul>

@@ -15,10 +15,15 @@
    
       ~GeneralFiniteDifference.__init__
       ~GeneralFiniteDifference.compute
+      ~GeneralFiniteDifference.compute_b_constant
       ~GeneralFiniteDifference.compute_error
       ~GeneralFiniteDifference.compute_step
       ~GeneralFiniteDifference.get_coefficients
+      ~GeneralFiniteDifference.get_differentiation_order
+      ~GeneralFiniteDifference.get_formula_accuracy
+      ~GeneralFiniteDifference.get_function
       ~GeneralFiniteDifference.get_indices_min_max
+      ~GeneralFiniteDifference.get_x
    
    
 

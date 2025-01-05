@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="python" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Convergence of the generalized finite differences formulas &#8212; numericalderivative 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <script src="../_static/documentation_options.js?v=8cfa8c60"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/Icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Experiments with Dumontet &amp; Vignes method" href="plot_dumontet_vignes.html" />
+    <link rel="prev" title="Use the generalized finite differences formulas" href="plot_general_fd.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-example-plot-general-fd-convergence-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="convergence-of-the-generalized-finite-differences-formulas">
+<span id="sphx-glr-auto-example-plot-general-fd-convergence-py"></span><h1>Convergence of the generalized finite differences formulas<a class="headerlink" href="#convergence-of-the-generalized-finite-differences-formulas" title="Link to this heading">¶</a></h1>
+<p>This example shows the convergence properties of the generalized finite
+difference (F.D.) formulas.</p>
+<p>The coefficients of the generalized finite difference formula are
+computed so that they approximate the derivative <span class="math notranslate nohighlight">\(f^{(d)}(x)\)</span>
+with order <span class="math notranslate nohighlight">\(p\)</span>.
+More precisely, in exact arithmetic, we have:</p>
+<div class="math notranslate nohighlight">
+\[f^{(d)}(x) = \frac{d!}{h^d} \sum_{i = i_{\min}}^{i_\max} c_i f(x + h i)
+    + R(x; h)\]</div>
+<p>where <span class="math notranslate nohighlight">\(h &gt; 0\)</span> is the step, <span class="math notranslate nohighlight">\(x\)</span> is the point where the derivative
+is to be computed, <span class="math notranslate nohighlight">\(d\)</span> is the differentiation order and <span class="math notranslate nohighlight">\(p\)</span> is the
+order of accuracy of the formula,
+The remainder of the Taylor expansion is:</p>
+<div class="math notranslate nohighlight">
+\[R(x; h) = - \frac{d!}{(d + p)!} b_{d + p} f^{(d + p)}(\xi) h^p.\]</div>
+<p>where <span class="math notranslate nohighlight">\(\xi \in (x, x + h)\)</span> and
+the coefficient <span class="math notranslate nohighlight">\(b_{d + p}\)</span> is defined by the equation:</p>
+<div class="math notranslate nohighlight">
+\[b_{d + p} = \sum_{i = i_{\min}}^{i_\max} i^{d + p} c_i.\]</div>
+<p>The goal of this example is to show the actual behaviour of the
+remainder in floating point arithmetic for particular
+values of <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><ol class="upperalpha simple" start="13">
+<li><p>Baudin (2023). Méthodes numériques. Dunod.</p></li>
+</ol>
+</li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+</pre></div>
+</div>
+<p>We consider the sinus function and we want to compute its
+first derivative i.e. <span class="math notranslate nohighlight">\(d = 1\)</span>.
+We consider an order <span class="math notranslate nohighlight">\(p = 2\)</span> formula.
+Since <span class="math notranslate nohighlight">\(d + p = 3\)</span>, the properties of the central finite difference formula
+depends on the third derivative of the function.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">SinProblem</span><span class="p">()</span>
+<span class="n">name</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+<span class="n">first_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_first_derivative</span><span class="p">()</span>
+<span class="n">third_derivative</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_third_derivative</span><span class="p">()</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_function</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We create the generalized central finite difference formula using
+<a class="reference internal" href="../user_manual/_generated/numericalderivative.GeneralFiniteDifference.html#numericalderivative.GeneralFiniteDifference" title="numericalderivative.GeneralFiniteDifference"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFiniteDifference</span></code></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formula_accuracy</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">differentiation_order</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">GeneralFiniteDifference</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">differentiation_order</span><span class="p">,</span>
+    <span class="n">formula_accuracy</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;central&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute the absolute error of approximate derivative i.e.
+<span class="math notranslate nohighlight">\(\left|f^{(d)}(x) - \widetilde{f}^{(d)}(x)\right|\)</span>
+where <span class="math notranslate nohighlight">\(f^{(d)}(x)\)</span> is the exact order <span class="math notranslate nohighlight">\(d\)</span> derivative
+of the function <span class="math notranslate nohighlight">\(f\)</span> and <span class="math notranslate nohighlight">\(\widetilde{f}^{(d)}(x)\)</span>
+is the approximation from the finite difference formula.
+Moreover, compute the absolute value of the remainder of the
+Taylor expansion, i.e. <span class="math notranslate nohighlight">\(|R(x; h)|\)</span>.
+This requires to compute the constant <span class="math notranslate nohighlight">\(b_{d + p}\)</span>,
+which is performed by <a class="reference internal" href="../user_manual/_generated/numericalderivative.GeneralFiniteDifference.html#numericalderivative.GeneralFiniteDifference.compute_b_constant" title="numericalderivative.GeneralFiniteDifference.compute_b_constant"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_b_constant()</span></code></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">first_derivative_exact</span> <span class="o">=</span> <span class="n">first_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">b_constant</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute_b_constant</span><span class="p">()</span>
+<span class="n">scaled_b_parameter</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">b_constant</span>
+    <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">differentiation_order</span><span class="p">)</span>
+    <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">differentiation_order</span> <span class="o">+</span> <span class="n">formula_accuracy</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">number_of_steps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">step_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">number_of_steps</span><span class="p">)</span>
+<span class="n">abs_error_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_steps</span><span class="p">))</span>
+<span class="n">remainder_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_steps</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_steps</span><span class="p">):</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">step_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">derivative_approx</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="n">abs_error_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">derivative_approx</span> <span class="o">-</span> <span class="n">first_derivative_exact</span><span class="p">)</span>
+    <span class="n">remainder_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">abs</span><span class="p">(</span><span class="n">scaled_b_parameter</span> <span class="o">*</span> <span class="n">third_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">step</span><span class="o">**</span><span class="n">formula_accuracy</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Derivative of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> at x=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;d=</span><span class="si">{</span><span class="n">differentiation_order</span><span class="si">}</span><span class="s2">, p=</span><span class="si">{</span><span class="n">formula_accuracy</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">abs_error_array</span><span class="p">,</span> <span class="s2">&quot;o--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Abs. error&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">step_array</span><span class="p">,</span> <span class="n">remainder_array</span><span class="p">,</span> <span class="s2">&quot;^:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Abs. remainder&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Step h&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Absolute error&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_general_fd_convergence_001.png" srcset="../_images/sphx_glr_plot_general_fd_convergence_001.png" alt="Derivative of sin at x=1.0, d=1, p=2" class = "sphx-glr-single-img"/><p>We see that there is a good agreement between the model and the
+actual error when the step size is sufficiently large.
+When the step is close to zero however, the rounding errors increase the
+absolute error and the model does not fit anymore.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.204 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-general-fd-convergence-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/83983f32768f2756ff6c7ca1a78c24ba/plot_general_fd_convergence.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_general_fd_convergence.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/3ca9867eaa02251030a2cabbfcd816a4/plot_general_fd_convergence.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_general_fd_convergence.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5ea62392283db6cfb3ef87b3fbdc82c9/plot_general_fd_convergence.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_general_fd_convergence.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">numericalderivative</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual/user_manual.html">User manual</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples/examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_numericalderivative.html">A simple demonstration of the methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_openturns.html">Applies Stepleman &amp; Winarsky method to an OpenTURNS function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_use_benchmark.html">Use the benchmark problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_finite_differences.html">Use the finite differences formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_general_fd.html">Use the generalized finite differences formulas</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Convergence of the generalized finite differences formulas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#dumontet-vignes">Dumontet &amp; Vignes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#gill-murray-saunders-wright">Gill, Murray, Saunders &amp; Wright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#stepleman-winarsky">Stepleman &amp; Winarsky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/examples.html#shi-xie-xuan-nocedal">Shi, Xie, Xuan &amp; Nocedal</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../examples/examples.html">Examples</a><ul>
+      <li>Previous: <a href="plot_general_fd.html" title="previous chapter">Use the generalized finite differences formulas</a></li>
+      <li>Next: <a href="plot_dumontet_vignes.html" title="next chapter">Experiments with Dumontet &amp; Vignes method</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;M. Baudin.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/auto_example/plot_general_fd_convergence.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

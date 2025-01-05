@@ -1182,7 +1182,7 @@ Then the error slightly increases before the algorithm stops.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.633 seconds)
+   **Total running time of the script:** (0 minutes 2.596 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_gill_murray_saunders_wright.py:

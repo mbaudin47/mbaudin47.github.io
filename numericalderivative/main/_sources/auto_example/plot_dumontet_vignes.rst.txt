@@ -1366,7 +1366,7 @@ error close to :math:`10^{-3}`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.907 seconds)
+   **Total running time of the script:** (0 minutes 1.914 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_dumontet_vignes.py:
