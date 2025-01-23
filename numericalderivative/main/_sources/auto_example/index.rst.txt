@@ -45,7 +45,7 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Finds a step which is near to optimal for a central finite difference  formula.">
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example, we consider a function and we want to compute the value of the  first derivative at a given point x using a finite difference method. To do this, we need to find a step which is near to optimal for that finite difference formula. The goal of this example is to review several algorithms to do this.">
 
 .. only:: html
 

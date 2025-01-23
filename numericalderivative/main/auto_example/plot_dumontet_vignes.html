@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Experiments with Dumontet &amp; Vignes method &#8212; numericalderivative 0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -51,11 +51,11 @@ to download the full example code.</p>
 <ul class="simple">
 <li><p>Dumontet, J., &amp; Vignes, J. (1977). Détermination du pas optimal dans le calcul des dérivées sur ordinateur. RAIRO. Analyse numérique, 11 (1), 13-25.</p></li>
 </ul>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
-<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numericalderivative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
 </pre></div>
 </div>
 </section>
@@ -155,7 +155,7 @@ f_prime_exact = 2.718281828459045
 <section id="useful-functions">
 <h2>Useful functions<a class="headerlink" href="#useful-functions" title="Link to this heading">¶</a></h2>
 <p>These functions will be used later in this example.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_ell</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_ell</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the L ratio for a given value of the step k.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -164,7 +164,7 @@ f_prime_exact = 2.718281828459045
     <span class="k">return</span> <span class="n">ell</span>
 
 
-<span class="k">def</span> <span class="nf">compute_f3_inf_sup</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_f3_inf_sup</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">relative_precision</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the upper and lower bounds of the third derivative for a given value of k.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -173,7 +173,7 @@ f_prime_exact = 2.718281828459045
     <span class="k">return</span> <span class="n">f3inf</span><span class="p">,</span> <span class="n">f3sup</span>
 
 
-<span class="k">def</span> <span class="nf">plot_step_sensitivity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_step_sensitivity</span><span class="p">(</span>
     <span class="n">x</span><span class="p">,</span>
     <span class="n">name</span><span class="p">,</span>
     <span class="n">function</span><span class="p">,</span>
@@ -274,7 +274,7 @@ f_prime_exact = 2.718281828459045
     <span class="k">return</span>
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_ell_ratio</span><span class="p">(</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_ell_ratio</span><span class="p">(</span>
     <span class="n">name</span><span class="p">,</span>
     <span class="n">function</span><span class="p">,</span>
     <span class="n">x</span><span class="p">,</span>
@@ -945,7 +945,7 @@ value of the step k in the early iterations.
 In the last iterations of the algorithm, the absolute error does not
 continue to decrease monotically and produces a final absolute
 error close to <span class="math notranslate nohighlight">\(10^{-3}\)</span>.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.902 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.054 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-dumontet-vignes-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/1ebbb955969414ca4e5ea68f00199bc8/plot_dumontet_vignes.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_dumontet_vignes.ipynb</span></code></a></p>

@@ -493,7 +493,7 @@ This produces a zero test ratio which makes the method to fail.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.233 seconds)
+   **Total running time of the script:** (0 minutes 0.239 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_shi_xie_xuan_nocedal_general_benchmark.py:

@@ -21,14 +21,29 @@
 A simple demonstration of the methods
 =====================================
 
-Finds a step which is near to optimal for a central finite difference 
+In this example, we consider a function and we want to compute the value of the 
+first derivative at a given point x using a finite difference method.
+To do this, we need to find a step which is near to optimal for that finite difference
 formula.
+The goal of this example is to review several algorithms to do this.
 
-References
-----------
-- Adaptive numerical differentiation. R. S. Stepleman and N. D. Winarsky. Journal: Math. Comp. 33 (1979), 1257-1264 
++--------------------------------------------------------------------+-------------------------------+
+| **Method**                                                         | **Finite difference formula** |
++--------------------------------------------------------------------+-------------------------------+
+| Dumontet & Vignes (1977)                                           | central, order 2              |
++--------------------------------------------------------------------+-------------------------------+
+| Stepleman & Winarsky (1979)                                        | central, order 2              |
++--------------------------------------------------------------------+-------------------------------+
+| Gill, Murray, Saunders, & Wright (1983)                            | forward, order 1              |
++--------------------------------------------------------------------+-------------------------------+
+| Shi, Xie, Xuan & Nocedal (2022) for the forward finite diff.       | forward, order 1              |
++--------------------------------------------------------------------+-------------------------------+
+| Shi, Xie, Xuan & Nocedal (2022) for any finite diff. formula       | arbitrary                     |
++--------------------------------------------------------------------+-------------------------------+
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-20
+**Table 1.** Several algorithms to compute the optimal step of a finite difference formula.
+
+.. GENERATED FROM PYTHON SOURCE LINES 32-36
 
 .. code-block:: Python
 
@@ -43,18 +58,18 @@ References
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-23
+.. GENERATED FROM PYTHON SOURCE LINES 37-39
 
 Define the function
 -------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-28
+.. GENERATED FROM PYTHON SOURCE LINES 41-44
 
 We first define a function.
 Here, we do not use the :class:`~numericalderivative.ScaledExponentialDerivativeBenchmark`
 class, for demonstration purposes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-36
+.. GENERATED FROM PYTHON SOURCE LINES 47-52
 
 .. code-block:: Python
 
@@ -70,11 +85,11 @@ class, for demonstration purposes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-38
+.. GENERATED FROM PYTHON SOURCE LINES 53-54
 
 Define its exact derivative (for testing purposes only).
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-44
+.. GENERATED FROM PYTHON SOURCE LINES 54-59
 
 .. code-block:: Python
 
@@ -90,12 +105,11 @@ Define its exact derivative (for testing purposes only).
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 45-46
+.. GENERATED FROM PYTHON SOURCE LINES 60-61
 
 We evaluate the function, its first and second derivatives at the point x.
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-54
+.. GENERATED FROM PYTHON SOURCE LINES 63-69
 
 .. code-block:: Python
 
@@ -119,12 +133,49 @@ We evaluate the function, its first and second derivatives at the point x.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-57
+.. GENERATED FROM PYTHON SOURCE LINES 70-73
+
+The next function prints the exact first derivative of the scaled exponential
+function, the approximation from the finite difference formula and the
+absolute and relative errors.
+
+.. GENERATED FROM PYTHON SOURCE LINES 76-96
+
+.. code-block:: Python
+
+    def print_results(f_prime_approx, x):
+        """
+        Prints the results of a finite difference formula
+
+        Parameters
+        ----------
+        f_prime_approx : float
+            The approximate value of the first derivative
+        x : float
+            The input point
+        """
+        exact_f_prime_value = scaled_exp_prime(x)
+        print(f"Exact f'(x)       = {exact_f_prime_value}")
+        print(f"Approximate f'(x) = {f_prime_approx}")
+        absolute_error = abs(f_prime_approx - exact_f_prime_value)
+        print(f"Absolute error = {absolute_error:.3e}")
+        relative_error = absolute_error / abs(exact_f_prime_value)
+        print(f"Relative error = {relative_error:.3e}")
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 97-99
 
 SteplemanWinarsky
 -----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-69
+.. GENERATED FROM PYTHON SOURCE LINES 101-111
 
 In order to compute the first derivative, we use the :class:`~numericalderivative.SteplemanWinarsky`.
 This class uses the central finite difference formula.
@@ -137,26 +188,20 @@ The input argument of :meth:`~numericalderivative.SteplemanWinarsky.find_step` i
 an upper bound of the optimal step (but this is not the case for all
 algorithms).
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-88
+.. GENERATED FROM PYTHON SOURCE LINES 113-124
 
 .. code-block:: Python
 
-    step_initial = 1.0e5  # An upper bound of the truly optimal step
+    initial_step = 1.0e5  # An upper bound of the truly optimal step
     x = 1.0e0
     algorithm = nd.SteplemanWinarsky(scaled_exp, x)
-    step_optimal, iterations = algorithm.find_step(step_initial)
+    step_optimal, iterations = algorithm.find_step(initial_step)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h =", step_optimal)
     print("iterations =", iterations)
     print("Function evaluations =", number_of_function_evaluations)
     f_prime_approx = algorithm.compute_first_derivative(step_optimal)
-    print("f_prime_approx = ", f_prime_approx)
-    exact_f_prime_value = scaled_exp_prime(x)
-    print("exact_f_prime_value = ", exact_f_prime_value)
-    absolute_error = abs(f_prime_approx - exact_f_prime_value)
-    print(f"Absolute error = {absolute_error:.3e}")
-    relative_error = absolute_error / abs(exact_f_prime_value)
-    print(f"Relative error = {relative_error:.3e}")
+    print_results(f_prime_approx, x)
 
 
 
@@ -169,27 +214,27 @@ algorithms).
     Optimum h = 1.52587890625
     iterations = 8
     Function evaluations = 20
-    f_prime_approx =  -9.999990000142134e-07
-    exact_f_prime_value =  -9.999990000005e-07
+    Exact f'(x)       = -9.999990000005e-07
+    Approximate f'(x) = -9.999990000142134e-07
     Absolute error = 1.371e-17
     Relative error = 1.371e-11
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-91
+.. GENERATED FROM PYTHON SOURCE LINES 125-127
 
 DumontetVignes
 --------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-97
+.. GENERATED FROM PYTHON SOURCE LINES 129-133
 
 In the next example, we use :class:`~numericalderivative.DumontetVignes` to compute an approximately
 optimal step.
 For this algorithm, we must provide an interval which contains the
 optimal step for the approximation of the third derivative.
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-118
+.. GENERATED FROM PYTHON SOURCE LINES 135-148
 
 .. code-block:: Python
 
@@ -204,13 +249,7 @@ optimal step for the approximation of the third derivative.
     print("iterations =", iterations)
     print("Function evaluations =", number_of_function_evaluations)
     f_prime_approx = algorithm.compute_first_derivative(step_optimal)
-    print("f_prime_approx = ", f_prime_approx)
-    exact_f_prime_value = scaled_exp_prime(x)
-    print("exact_f_prime_value = ", exact_f_prime_value)
-    absolute_error = abs(f_prime_approx - exact_f_prime_value)
-    print(f"Absolute error = {absolute_error:.3e}")
-    relative_error = absolute_error / abs(exact_f_prime_value)
-    print(f"Relative error = {relative_error:.3e}")
+    print_results(f_prime_approx, x)
 
 
 
@@ -223,27 +262,27 @@ optimal step for the approximation of the third derivative.
     Optimum h = 14.378359910724852
     iterations = 8
     Function evaluations = 24
-    f_prime_approx =  -9.999990000345462e-07
-    exact_f_prime_value =  -9.999990000005e-07
+    Exact f'(x)       = -9.999990000005e-07
+    Approximate f'(x) = -9.999990000345462e-07
     Absolute error = 3.405e-17
     Relative error = 3.405e-11
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-121
+.. GENERATED FROM PYTHON SOURCE LINES 149-151
 
 GillMurraySaundersWright
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-127
+.. GENERATED FROM PYTHON SOURCE LINES 153-157
 
 In the next example, we use :class:`~numericalderivative.GillMurraySaundersWright` to compute an approximately
 optimal step.
 For this algorithm, we must provide an interval which contains the
 optimal step for the approximation of the second derivative.
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-148
+.. GENERATED FROM PYTHON SOURCE LINES 159-171
 
 .. code-block:: Python
 
@@ -257,14 +296,7 @@ optimal step for the approximation of the second derivative.
     print("Optimum h for f'=", step)
     print("Function evaluations =", number_of_function_evaluations)
     f_prime_approx = algorithm.compute_first_derivative(step)
-    print("f_prime_approx = ", f_prime_approx)
-    exact_f_prime_value = scaled_exp_prime(x)
-    print("exact_f_prime_value = ", exact_f_prime_value)
-    absolute_error = abs(f_prime_approx - exact_f_prime_value)
-    print(f"Absolute error = {absolute_error:.3e}")
-    relative_error = absolute_error / abs(exact_f_prime_value)
-    print(f"Relative error = {relative_error:.3e}")
-
+    print_results(f_prime_approx, x)
 
 
 
@@ -276,20 +308,120 @@ optimal step for the approximation of the second derivative.
 
     Optimum h for f'= 0.06324695766445854
     Function evaluations = 12
-    f_prime_approx =  -9.999989679432984e-07
-    exact_f_prime_value =  -9.999990000005e-07
+    Exact f'(x)       = -9.999990000005e-07
+    Approximate f'(x) = -9.999989679432984e-07
     Absolute error = 3.206e-14
     Relative error = 3.206e-08
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-151
+.. GENERATED FROM PYTHON SOURCE LINES 172-174
+
+ShiXieXuanNocedalForward
+------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 176-180
+
+In the next example, we use :class:`~numericalderivative.ShiXieXuanNocedalForward` to compute an approximately
+optimal step.
+This method uses the forward finite difference formula to approximate
+the first derivative.
+
+.. GENERATED FROM PYTHON SOURCE LINES 182-193
+
+.. code-block:: Python
+
+    x = 1.0e0
+    absolute_precision = 1.0e-15
+    algorithm = nd.ShiXieXuanNocedalForward(scaled_exp, x, absolute_precision)
+    initial_step = 1.0e5
+    step, number_of_iterations = algorithm.find_step(initial_step)
+    number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+    print("Optimum h for f'=", step)
+    print("Function evaluations =", number_of_function_evaluations)
+    f_prime_approx = algorithm.compute_first_derivative(step)
+    print_results(f_prime_approx, x)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Optimum h for f'= 0.04768371582031251
+    Function evaluations = 16
+    Exact f'(x)       = -9.999990000005e-07
+    Approximate f'(x) = -9.999989764764906e-07
+    Absolute error = 2.352e-14
+    Relative error = 2.352e-08
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 194-196
+
+ShiXieXuanNocedalGeneral
+------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 198-203
+
+In the next example, we use :class:`~numericalderivative.ShiXieXuanNocedalGeneral` to compute an approximately
+optimal step.
+It uses :class:`~numericalderivative.GeneralFiniteDifference` to implement
+a finite difference formula with arbitrary precision order to approximate
+any derivative.
+
+.. GENERATED FROM PYTHON SOURCE LINES 205-225
+
+.. code-block:: Python
+
+    x = 1.0e0
+    differentiation_order = 1  # First derivative
+    formula_accuracy = 2  # Order 2
+    formula = nd.GeneralFiniteDifference(
+        scaled_exp,
+        x,
+        differentiation_order,
+        formula_accuracy,
+        direction="central",  # Central formula
+    )
+    absolute_precision = 1.0e-15
+    algorithm = nd.ShiXieXuanNocedalGeneral(formula, absolute_precision)
+    initial_step = 1.0e5
+    step, number_of_iterations = algorithm.find_step(initial_step)
+    number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
+    print("Optimum h for f'=", step)
+    print("Function evaluations =", number_of_function_evaluations)
+    f_prime_approx = algorithm.compute_derivative(step)
+    print_results(f_prime_approx, x)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Optimum h for f'= 17.263349150062194
+    Function evaluations = 60
+    Exact f'(x)       = -9.999990000005e-07
+    Approximate f'(x) = -9.999990000459942e-07
+    Absolute error = 4.549e-17
+    Relative error = 4.549e-11
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 226-228
 
 Function with extra arguments
 -----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-158
+.. GENERATED FROM PYTHON SOURCE LINES 230-235
 
 Some function use extra arguments, such as parameters for examples.
 For such a function, the `args` optionnal argument can be used
@@ -297,11 +429,11 @@ to pass extra parameters to the function.
 The goal of the :class:`~numericalderivative.FunctionWithArguments` class
 is to evaluate such a function.
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-162
+.. GENERATED FROM PYTHON SOURCE LINES 238-239
 
 Define a function with arguments.
 
-.. GENERATED FROM PYTHON SOURCE LINES 162-166
+.. GENERATED FROM PYTHON SOURCE LINES 239-243
 
 .. code-block:: Python
 
@@ -316,19 +448,19 @@ Define a function with arguments.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-168
+.. GENERATED FROM PYTHON SOURCE LINES 244-245
 
 Compute the derivative of a function with extra input arguments.
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-180
+.. GENERATED FROM PYTHON SOURCE LINES 247-257
 
 .. code-block:: Python
 
-    step_initial = 1.0e5
+    initial_step = 1.0e5
     x = 1.0e0
     scaling = 1.0e-6
     algorithm = nd.SteplemanWinarsky(my_exp_with_args, x, args=[scaling])
-    step_optimal, iterations = algorithm.find_step(step_initial)
+    step_optimal, iterations = algorithm.find_step(initial_step)
     number_of_function_evaluations = algorithm.get_number_of_function_evaluations()
     print("Optimum h for f''=", step_optimal)
     print("iterations =", iterations)
@@ -352,7 +484,7 @@ Compute the derivative of a function with extra input arguments.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.003 seconds)
+   **Total running time of the script:** (0 minutes 0.005 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_numericalderivative.py:

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Benchmark Shi, Xie, Xuan &amp; Nocedal&#39;s general method &#8212; numericalderivative 0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -49,16 +49,16 @@ to download the full example code.</p>
 class on a collection of test problems.
 These problems are created by the <a class="reference internal" href="../user_manual/_generated/numericalderivative.build_benchmark.html#numericalderivative.build_benchmark" title="numericalderivative.build_benchmark"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_benchmark()</span></code></a>
 static method, which returns a list of problems.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
-<span class="kn">import</span> <span class="nn">tabulate</span>
-<span class="kn">import</span> <span class="nn">numericalderivative</span> <span class="k">as</span> <span class="nn">nd</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tabulate</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numericalderivative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nd</span>
 </pre></div>
 </div>
 <section id="compute-the-first-derivative">
 <h2>Compute the first derivative<a class="headerlink" href="#compute-the-first-derivative" title="Link to this heading">¶</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ShiXieXuanNocedalGeneralMethod</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ShiXieXuanNocedalGeneralMethod</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">relative_precision</span><span class="p">,</span>
         <span class="n">initial_step</span><span class="p">,</span>
@@ -82,7 +82,7 @@ static method, which returns a list of problems.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">formula_accuracy</span> <span class="o">=</span> <span class="n">formula_accuracy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
 
-    <span class="k">def</span> <span class="nf">compute_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the first derivative using ShiXieXuanNocedal</span>
 
@@ -414,7 +414,7 @@ number of test points is odd.</p>
 <p>Notice that the method cannot perform correctly for the polynomial
 problem because the third derivative is zero.
 This produces a zero test ratio which makes the method to fail.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.233 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.239 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-example-plot-shi-xie-xuan-nocedal-general-benchmark-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/59214d75983258cd7a24cda57f009067/plot_shi_xie_xuan_nocedal_general_benchmark.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_shi_xie_xuan_nocedal_general_benchmark.ipynb</span></code></a></p>
