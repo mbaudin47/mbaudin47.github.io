@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:10.902** total execution time for 17 files **from auto_example**:
+**00:10.176** total execution time for 17 files **from auto_example**:
 
 .. container::
 
@@ -33,49 +33,49 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright.py` (``plot_gill_murray_saunders_wright.py``)
-     - 00:02.934
+     - 00:02.695
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes.py` (``plot_dumontet_vignes.py``)
-     - 00:02.054
+     - 00:01.940
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky.py` (``plot_stepleman_winarsky.py``)
-     - 00:01.163
+     - 00:01.074
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_plots.py` (``plot_stepleman_winarsky_plots.py``)
-     - 00:01.024
+     - 00:00.923
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_shi_xie_xuan_nocedal_general.py` (``plot_shi_xie_xuan_nocedal_general.py``)
-     - 00:00.694
+     - 00:00.644
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_shi_xie_xuan_nocedal_forward.py` (``plot_shi_xie_xuan_nocedal_forward.py``)
-     - 00:00.688
+     - 00:00.642
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_finite_differences.py` (``plot_finite_differences.py``)
-     - 00:00.640
+     - 00:00.615
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_general_fd.py` (``plot_general_fd.py``)
-     - 00:00.425
+     - 00:00.400
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_use_benchmark.py` (``plot_use_benchmark.py``)
-     - 00:00.390
-     - 0.0
-   * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``plot_openturns.py``)
-     - 00:00.243
+     - 00:00.377
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_shi_xie_xuan_nocedal_general_benchmark.py` (``plot_shi_xie_xuan_nocedal_general_benchmark.py``)
-     - 00:00.239
+     - 00:00.245
+     - 0.0
+   * - :ref:`sphx_glr_auto_example_plot_openturns.py` (``plot_openturns.py``)
+     - 00:00.215
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_general_fd_convergence.py` (``plot_general_fd_convergence.py``)
-     - 00:00.219
+     - 00:00.210
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_gill_murray_saunders_wright_benchmark.py` (``plot_gill_murray_saunders_wright_benchmark.py``)
-     - 00:00.063
+     - 00:00.065
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_shi_xie_xuan_nocedal_forward_benchmark.py` (``plot_shi_xie_xuan_nocedal_forward_benchmark.py``)
-     - 00:00.059
+     - 00:00.060
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_stepleman_winarsky_benchmark.py` (``plot_stepleman_winarsky_benchmark.py``)
-     - 00:00.055
+     - 00:00.057
      - 0.0
    * - :ref:`sphx_glr_auto_example_plot_dumontet_vignes_benchmark.py` (``plot_dumontet_vignes_benchmark.py``)
      - 00:00.008

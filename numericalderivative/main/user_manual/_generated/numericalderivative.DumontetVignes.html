@@ -7,7 +7,7 @@
 
     <title>numericalderivative.DumontetVignes &#8212; numericalderivative 0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -43,7 +43,7 @@
 <h1>numericalderivative.DumontetVignes<a class="headerlink" href="#numericalderivative-dumontetvignes" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="numericalderivative.DumontetVignes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">DumontetVignes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">numericalderivative.</span></span><span class="sig-name descname"><span class="pre">DumontetVignes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#numericalderivative.DumontetVignes" title="Link to this definition">¶</a></dt>
 <dd><p>Compute an approximately optimal step for the central F.D. formula for the first derivative</p>
 <p>The method is based on computing the third derivative.
 Then the optimal step for the central formula for the first derivative is computed
@@ -72,7 +72,7 @@ function evaluations only.</p>
 (see (Dumontet &amp; Vignes, 1977) eq. 25 page 18):</p>
 <div class="math notranslate nohighlight">
 \[f^{(3)}_k(x) 
-= \frac{f(x + 2k) - f(x - 2k) - 2 (f(x + k) - f(x - k))}{2k^3}\]</div>
+\approx \frac{f(x + 2k) - f(x - 2k) - 2 (f(x + k) - f(x - k))}{2k^3}\]</div>
 <p>where <span class="math notranslate nohighlight">\(k &gt; 0\)</span> is the step used for the third derivative.
 The method introduces <span class="math notranslate nohighlight">\(f^{(3)}_{inf}(x)\)</span> and <span class="math notranslate nohighlight">\(f^{(3)}_{sup}(x)\)</span>
 such that:</p>
@@ -98,8 +98,8 @@ f^{(3)}_{sup}(x)
 We introduce the ratio (see (Dumontet &amp; Vignes, 1977) eq. 32 page 20):</p>
 <div class="math notranslate nohighlight">
 \[L(k) = \frac{f^{(3)}_{sup}(x)}{f^{(3)}_{inf}(x)}.\]</div>
-<p>If <span class="math notranslate nohighlight">\(0 &lt; f^{(3)}_{inf}(x) &lt; f^{(3)}_{sup}(x)\)</span>, then <span class="math notranslate nohighlight">\(L(k) &gt; 1\)</span>.
-If <span class="math notranslate nohighlight">\(f^{(3)}_{inf}(x) &lt; f^{(3)}_{sup}(x) &lt; 0\)</span>, then <span class="math notranslate nohighlight">\(L(k) &lt; 1\)</span>.
+<p>If <span class="math notranslate nohighlight">\(0 &lt; f^{(3)}_{inf}(x) \leq f^{(3)}_{sup}(x)\)</span>, then <span class="math notranslate nohighlight">\(L(k) &gt; 1\)</span>.
+If <span class="math notranslate nohighlight">\(f^{(3)}_{inf}(x) \leq f^{(3)}_{sup}(x) &lt; 0\)</span>, then <span class="math notranslate nohighlight">\(L(k) &lt; 1\)</span>.
 Moreover, if <span class="math notranslate nohighlight">\(k \rightarrow 0\)</span>, then <span class="math notranslate nohighlight">\(L(k) \rightarrow -1\)</span>.</p>
 <p>We search for <span class="math notranslate nohighlight">\(k\)</span> such that the ratio <span class="math notranslate nohighlight">\(L\)</span> is:</p>
 <ul class="simple">
@@ -538,7 +538,7 @@ This is updated by <a class="reference internal" href="#numericalderivative.Dumo
       &#169;M. Baudin.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

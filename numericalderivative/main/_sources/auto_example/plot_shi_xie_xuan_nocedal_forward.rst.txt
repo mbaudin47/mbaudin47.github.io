@@ -542,7 +542,7 @@ The absolute error does not evolve monotically.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.688 seconds)
+   **Total running time of the script:** (0 minutes 0.642 seconds)
 
 
 .. _sphx_glr_download_auto_example_plot_shi_xie_xuan_nocedal_forward.py:
